@@ -1,0 +1,65 @@
+.petal {
+  position: fixed;
+  top: -10%;
+  width: 60px;
+  height: auto;
+  pointer-events: none;
+  animation: fall 4s linear;
+}
+
+.celebrationicon {
+  background: deeppink;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.petal_btn {
+  position: fixed;
+  bottom: 100px;
+  right: 28px;
+  z-index: 10000;
+}
+
+.petals_icon {
+  position: fixed;
+  z-index: 999;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(150vh) rotate(900deg);
+  }
+}
+.celebrationicon {
+  background: deeppink;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.celebrationicon:active {
+  transform: scale(0.9);
+}
+
+.vibrate {
+  animation: vibrate 0.3s ease-in-out;
+}
+
+@keyframes vibrate {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

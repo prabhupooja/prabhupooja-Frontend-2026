@@ -1,0 +1,61 @@
+a {
+  list-style: none;
+  text-decoration: none;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  top: 0 !important;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.whatsapp-icon {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #25d366;
+  border-radius: 50%;
+  padding: 0;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  color: white;
+  z-index: 1000;
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+  font-size: 24px;
+  animation: whatsapp-bubble 2.5s ease-in-out infinite;
+}
+
+.whatsapp-icon:hover {
+  background-color: #128c7e;
+  transform: scale(1.06);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes whatsapp-bubble {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30%,
+  60% {
+    transform: translateY(-6px);
+  }
+}
+
+
+
+

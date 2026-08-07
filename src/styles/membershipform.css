@@ -1,0 +1,82 @@
+.addUser_membership h3 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 28px;
+  margin-top: 25px;
+  color: rgb(248, 117, 69);
+  text-transform: uppercase;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.addUserForm_membership {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.inputGroup_membership {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inputGroup_membership label {
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.inputGroup_membership input,
+.inputGroup_membership select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.inputGroup_membership input:focus,
+.inputGroup_membership select:focus {
+  border-color: #cd5702;
+  box-shadow: 0 0 5px #f76a06;
+}
+
+.bookerror {
+  color: red;
+  font-size: 12px;
+}
+
+.btn-success-membership {
+  background: #cd5702;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  /* padding: 10px; */
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-success-membership:hover {
+  background: #f76a06;
+  color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .addUserForm_membership {
+    max-width: 100%;
+    padding: 15px;
+    margin: 15px;
+  }
+}

@@ -1,0 +1,237 @@
+/* problemPooja.css */
+.sub_header_problem {
+  background-image: url("../Assets/16.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 80px;
+}
+
+.sub_header_problem .subheader_inner_problem {
+  padding: 200px 0px 180px;
+}
+
+.subheader_inner_problem {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+}
+
+.subheader_text_problem h1 {
+  font-size: 80px;
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+
+.sub_header_problem .breadcrumb {
+  padding: 20px 28px;
+  margin: 0;
+  background-color: #fff;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0px 10px 20px 0px rgb(53 82 99 / 9%);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+
+.sub_header_problem .breadcrumb li {
+  margin: 0;
+  color: #f1f1f1;
+}
+
+.sub_header_problem .breadcrumb li a {
+  position: relative;
+  list-style: none;
+  text-decoration: none;
+  color: #161616;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.btn-link {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sub_header_problem .breadcrumb .breadcrumb-item.active {
+  color: #fc6805;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.sub_header_problem .breadcrumb .breadcrumb-item {
+  padding-left: 15px;
+}
+
+.pooja-category-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+.pooja-category-title {
+  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
+  color: #000;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.problem-cart-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  justify-content: center;
+}
+
+.cart-item {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.cart-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.cart-item-image img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.cart-item-details {
+  padding: 15px;
+  text-align: left;
+  flex-grow: 1;
+}
+
+.cart-item-title {
+  margin-top: -10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.cart-item-details p {
+  margin-top: -5px;
+  /* margin: -5px 0; */
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.cart-item-price {
+  font-size: 14px;
+  color: #2e2e2e;
+  margin-top: 8px;
+}
+
+.book-now-btn {
+  display: block;
+  margin-top: auto;
+  width: 100%;
+  /* margin-top: 10px; */
+  padding: 10px 0;
+  background-color: #cd5502;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 0 0 12px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.book-now-btn:hover {
+  background-color: #ff6a00;
+}
+
+@media (max-width: 992px) {
+  .problem-cart-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cart-item-image img {
+    height: 200px;
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 576px) {
+  .problem-cart-container {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item-image img {
+    height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub_header_problem .subheader_inner_problem {
+    padding: 75px 0px 60px !important;
+  }
+
+  .subheader_text_problem h1 {
+    font-size: 40px !important;
+  }
+
+  .sub_header_problem .breadcrumb {
+    padding: 10px 5px !important;
+    margin: 0;
+    bottom: -22px !important;
+    left: 50%;
+  }
+
+  .sub_header_problem .breadcrumb .breadcrumb-item {
+    padding-left: 10px;
+  }
+
+  .sub_header_problem .breadcrumb li a {
+    font-size: 12px !important;
+  }
+
+  .sub_header_problem .breadcrumb .breadcrumb-item.active {
+    font-size: 12px !important;
+  }
+
+  .cart-item-image img {
+    height: auto;
+    object-fit: contain;
+  }
+  .cart-item-title {
+    white-space: normal;
+  }
+}

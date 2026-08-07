@@ -1,0 +1,143 @@
+.hanuman-event-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.hanuman-event-popup {
+  width: 600px;
+  max-width: 95%;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  animation: popupScale 0.4s ease;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.hanuman-event-popup-close {
+  position: absolute;
+  top: 5px;
+  right: 12px;
+  font-weight: 700;
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  color: #000;
+  background-color: #ffffffb2;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+/* banner */
+
+.hanuman-event-banner {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.hanuman-event-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.hanuman-event-banner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 70%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85),
+    rgba(0, 0, 0, 0.4),
+    transparent
+  );
+  z-index: 1;
+}
+
+.hanuman-event-banner-text {
+  position: absolute;
+  bottom: 10px;
+  left: 15px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  z-index: 2;
+}
+
+.hanuman-event-banner-text h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.hanuman-event-banner-text h3 {
+  margin: 2px 0 0;
+  font-size: 16px;
+}
+
+/* content */
+
+.hanuman-event-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.hanuman-event-images img {
+  width: 160px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.hanuman-event-description {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.hanuman-event-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff4d00;
+  margin-bottom: 15px;
+}
+
+.hanuman-event-book-btn {
+  display: inline-block;
+  background: linear-gradient(45deg, #ff6a00, #ff2d00);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.hanuman-event-book-btn:hover {
+  transform: scale(1.05);
+}
+
+/* animation */
+
+@keyframes popupScale {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

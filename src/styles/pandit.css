@@ -1,0 +1,539 @@
+.loading_text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.pandit_section {
+  margin-top: 92px;
+  background-color: #fff;
+  text-align: center;
+}
+
+.tp-box3 {    
+  border: 1px solid #dadada;
+  border-radius: 8px;
+  margin: 1px 0 15px;
+  overflow: hidden;
+  width: 400px;
+}
+
+.pandit_baar {
+  padding: 16px 0;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heading_chat_with_pandit {
+  margin-bottom: 0;
+  border-radius: 4px;
+  background-color: #cd5702;
+  color: #fff;
+  padding: 10px 40px;
+  box-shadow: 0 0 2px 1px #c1c1c1;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.recharge_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.recharge_btn a {
+  color: rgb(248, 117, 69);
+  border: 1px solid rgb(248, 117, 69);
+  border-radius: 5px;
+  padding: 7px 25px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.search-mobile {
+  position: relative;
+  margin-left: 10px;
+}
+
+.search-input {
+  position: relative;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 7px 45px 7px 10px;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  font-weight: 400;
+  line-height: 1.5;
+  appearance: none;
+}
+
+.search_icon {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  font-size: 16px;
+  color: #fff;
+  height: 100%;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(248, 117, 69);
+  border-radius: 0 5px 5px 0;
+  transform: translateY(-50%);
+}
+
+.pandit-section-start {
+  display: flex;
+}
+
+.pandit-box {
+  box-shadow: 0 0 10px #ccc;
+  border: 1px solid #cd5702;
+  border-radius: 20px;
+  margin-bottom: 40px;
+  margin-top: 40px;
+  text-decoration: none;
+  position: relative;
+  width: 100%;
+}
+
+.box-upper-details {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 15px 8px;
+}
+
+.pandit-details {
+  /* width: 75%; */
+  display: flex;
+}
+
+.pandit_image {
+  width: 90px;
+  height: 90px;
+  margin-top: 15px;
+  margin-left: 20px;
+  object-fit: cover;
+  overflow: hidden;
+  position: relative;
+}
+
+.pandit_image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.star-rate {
+  margin-top: 2px;
+}
+
+.star-rate i {
+  color: rgb(214, 211, 211);
+  font-size: 12px;
+}
+
+.pandit-bio {
+  margin-top: 10px;
+  margin-left: 25px;
+  font-size: 14px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.pandit-name {
+  margin-left: 1px;
+  font-size: 22px;
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  cursor: pointer;
+}
+
+.ProfileImgPandit {
+  margin-top: 10px;
+  margin-left: 50px;
+}
+
+.light-clr {
+  /* margin-top: 4px; */
+  color: #65270b;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.light-clr span {
+  color: #332d2d;
+  font-size: 18px;
+}
+
+.star-rate span {
+  margin-right: 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+.pandit-price-chat {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.pandit-price-chat .redBold {
+  color: #d05100;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.pandit_all_btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 40px 10px 25px;
+  gap: 10px;
+}
+
+.chat-btn-pandit {
+  /* flex: 1; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn_chat {
+  font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  text-transform: capitalize;
+  transition: all 0.3s ease-in-out;
+  text-align: center;
+  width: 100%;
+  margin: 10px 0px;
+  font-weight: 500;
+}
+
+.btn_chat_online {
+  color: #d05100;
+  background-color: #fff;
+  border: 2px solid #d05100;
+}
+
+.btn_chat:hover {
+  background-color: #f05f0b;
+  color: #fff;
+  border-color: #f05f0b;
+  transform: scale(1.1);
+}
+.message-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.available_balance_1 {
+  align-items: center;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.balance_avail_1 {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.filter_1 {
+  width: auto;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 7px 25px;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #313131;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.filter_1 i {
+  font-size: 14px;
+  color: #7e7e7e;
+  margin-right: 5px;
+}
+
+@media (max-width: 1200px) {
+  .pandit_baar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .recharge_btn {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1%;
+  }
+
+  .search-mobile {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .search-input {
+    width: calc(100% - 60px);
+    padding: 7px 45px 7px 10px;
+  }
+
+  .recharge_btn a {
+    margin-bottom: 10px;
+    padding: 7px 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .tp-box3 {
+    width: 100%;
+    /* Adjust width and other properties as needed */
+  }
+
+  .pandit-section-start {
+    flex-direction: column;
+  }
+
+  .pandit-box {
+    margin-bottom: 15px;
+    /* Adjust margin or padding if needed */
+  }
+
+  .box-upper-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pandit-details {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 5%;
+  }
+
+  .pandit_image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .pandit-bio {
+    font-size: 12px;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .tp-box3 {
+    width: 100%;
+    /* Ensure box width fits smaller screens */
+  }
+
+  .pandit-section-start {
+    flex-direction: column;
+  }
+
+  .pandit-box {
+    margin-bottom: 15px;
+  }
+
+  .box-upper-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pandit-details {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .pandit_image {
+    width: 50px;
+    height: 50px;
+  }
+
+  .pandit-bio {
+    font-size: 11px;
+    margin-left: 0;
+  }
+
+  .search-input {
+    font-size: 14px;
+    padding: 5px 30px 5px 8px;
+  }
+
+  .btn_chat {
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+
+  .star-rate i {
+    font-size: 10px;
+  }
+
+  .pandit-name {
+    font-size: 14px;
+  }
+
+  .pandit-bio {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heading_chat_with_pandit {
+    font-size: 18px;
+    padding: 10px 20px;
+  }
+
+  .search-input {
+    font-size: 14px;
+    padding: 5px 30px 5px 8px;
+  }
+
+  .btn_chat {
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+
+  .star-rate i {
+    font-size: 10px;
+  }
+
+  .pandit-name {
+    font-size: 14px;
+  }
+
+  .pandit-bio {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .available_balance_1 {
+    margin-top: 25px;
+  }
+
+  .heading_chat_with_pandit {
+    margin-top: -50px;
+    margin-bottom: -20px;
+    font-size: 16px;
+    padding: 8px 15px;
+  }
+
+  .search-input {
+    font-size: 12px;
+    padding: 4px 20px 4px 6px;
+  }
+
+  .btn_chat {
+    font-size: 10px;
+    padding: 8px 10px;
+  }
+
+  .star-rate i {
+    font-size: 8px;
+  }
+
+  .pandit-name {
+    font-size: 12px;
+  }
+
+  .pandit-bio {
+    font-size: 10px;
+  }
+
+  .search_icon {
+    font-size: 14px;
+    width: 30px;
+  }
+  .filter_1 {
+    font-size: 14px;
+    padding: 7px 14px;
+    margin-left: 0px;
+  }
+  .availble_balance_pandit {
+    margin-top: -20px;
+    margin-bottom: -20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .tp-box3 {
+    width: 100%;
+  }
+
+  .pandit-section-start {
+    flex-direction: column;
+  }
+
+  .pandit-box {
+    margin-bottom: 40px;
+  }
+
+  .box-upper-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pandit-details {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 5%;
+  }
+
+  .pandit_image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .pandit-bio {
+    font-size: 12px;
+    margin-left: 0;
+  }
+
+  .search-input {
+    width: calc(100% - 10px);
+  }
+
+  .btn_chat {
+    font-size: 12px;
+    padding: 5px 25px;
+  }
+
+  .star-rate i {
+    font-size: 10px;
+  }
+
+  .pandit-name {
+    font-size: 14px;
+  }
+}

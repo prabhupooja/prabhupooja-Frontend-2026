@@ -1,0 +1,119 @@
+.addUser {
+  background-color: white;
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.065);
+}
+.addUserForm .inputGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.singnupForm {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.addUserForm .inputGroup label {
+  margin-top: 10px;
+}
+
+.addUserForm .inputGroup input {
+  margin-top: 5px;
+  padding: 10px;
+}
+
+.inputGroup button {
+  /* margin-top: 10px; */
+}
+.login {
+  margin-top: 15px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.login p{
+  margin: 0;
+}
+
+.login .btn.btn-primary {
+  border: none;
+  outline: none;
+  background: rgb(248, 117, 69);
+}
+
+.singnupFormInputes {
+  margin: 0 10px;
+  width: 100%;
+}
+
+.addUser h3 {
+  text-align: center;
+  font-weight: bold;
+  color: rgb(248, 117, 69);
+  font-size: 25px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.role_select {
+  border: 1px solid #bbb5b5;
+  margin: 5px 0px 15px 0px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.error {
+  font-size: 13px;
+  color: #e70808;
+}
+
+.rashi_field {
+  border: 1px solid rgb(184, 180, 180);
+  height: 45px;
+}
+
+.loginPopup1 {
+  width: 100%;
+  height: 50%;
+}
+
+.loginBtninsing-p {
+  margin: 0 !important;
+}
+
+.loginBtninsing {
+  background: transparent !important;
+  color: rgb(81, 97, 243) !important;
+  box-shadow: none;
+  padding: 2px !important;
+  margin: 0;
+  font-weight: bold;
+}
+
+.loginBtninsing :hover {
+  color: rgb(10, 10, 212) !important;
+}
+
+.loginAccountNot{
+  display: flex;
+}
+
+@media only screen and (max-width: 768px) {
+  .addUser {
+    width: 90%;
+  }
+  .addUser h3 {
+    font-size: 22px;
+  }
+}

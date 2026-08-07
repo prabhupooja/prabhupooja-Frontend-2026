@@ -1,0 +1,164 @@
+.loading_text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sub_header_delivery {
+  background-image: url("../Components/Assets/Deliverybanner.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 80px;
+}
+
+.sub_header_delivery .subheader_inner_delivery {
+  padding: 200px 0px 180px;
+}
+
+.subheader_inner_delivery {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.subheader_text_delivery h1 {
+  font-size: 70px;
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #fff;
+  text-align: left;
+}
+
+.sub_header_delivery .breadcrumb {
+  padding: 20px 28px;
+  margin: 0;
+  background-color: #fff;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0px 10px 20px 0px rgb(53 82 99 / 9%);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+
+.sub_header_delivery .breadcrumb li {
+  margin: 0;
+  color: #f1f1f1;
+}
+
+.sub_header_delivery .breadcrumb li a {
+  position: relative;
+  list-style: none;
+  text-decoration: none;
+  color: #161616;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.btn-link {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sub_header_delivery .breadcrumb .breadcrumb-item.active {
+  color: #fc6805;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.sub_header_delivery .breadcrumb .breadcrumb-item {
+  padding-left: 15px;
+}
+
+.prasad_section {
+  padding: 0px 0px;
+  margin-bottom: 40px;
+}
+
+.prasad_section .tp-box-prasad {
+  box-shadow: 0 0 10px #ccc;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.prasad_section .tp-box-prasad .tp-img img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.prasad_section .tp-box-prasad .tp-box-content {
+  margin-top: -10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.prasad_section .tp-box-prasad .tp-box-content h6 {
+  min-height: 30px;
+  line-height: 1.4;
+  overflow: hidden;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.prasad_section .tp-box-prasad .tp-box-content .price-booknow .price-grp p {
+  font-size: 1rem !important;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px !important;
+  color: #343d3c;
+  transition: all 0.4s ease;
+  margin-bottom: -5px;
+}
+
+.prasad_section .tp-box-prasad .tp-box-content .price-booknow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media only screen and (max-width: 480px) {
+  .sub_header_delivery .subheader_inner_delivery {
+    padding: 75px 0px 60px !important;
+  }
+  .subheader_text_delivery h1 {
+    font-size: 20px !important;
+  }
+  .sub_header_delivery .breadcrumb {
+    padding: 10px 5px !important;
+    margin: 0;
+    bottom: -22px !important;
+    left: 50%;
+  }
+  .sub_header_delivery .breadcrumb .breadcrumb-item {
+    padding-left: 10px;
+  }
+  .sub_header_delivery .breadcrumb li a {
+    font-size: 12px !important;
+  }
+  .sub_header_delivery .breadcrumb .breadcrumb-item.active {
+    font-size: 12px !important;
+  }
+}

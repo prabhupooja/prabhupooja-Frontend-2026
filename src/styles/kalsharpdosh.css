@@ -1,0 +1,506 @@
+.loading_text {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.countdown-timer {
+  display: flex;
+  /* justify-content: center; */
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+
+.timer-box {
+  background-color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.time {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.timer_label {
+  font-size: 14px;
+  color: #777;
+}
+
+.rating-section {
+  margin-top: 10px;
+  margin-left: -7px;
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+}
+
+.rating-header {
+  display: flex
+;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: -20px;
+    margin-bottom: -5px;
+    margin-left: 5px;
+}
+
+.view-comments-btn {
+  margin-top: 2px;
+  font-size: 14px;
+  margin-left: 5px;
+  color: #000;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+}
+
+.rating-section p {
+  font-size: 14px;
+  color: #d05100;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+.category_heading {
+  padding-top: 80px;
+}
+
+.category_heading .product_image {
+  width: 100%;
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+}
+
+.category_heading .product_image img {
+  width: 100%;
+  height: 90%;
+  object-fit: cover;
+  object-position: center;
+  background-color: lightyellow;
+  border-radius: 8px;
+}
+
+.category_heading .product_content {
+  text-align: left;
+  font-size: 35px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  color: #000;
+  font-weight: 600;
+}
+
+.category_heading .product_name {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.category_heading .product_name p {
+  margin-bottom: 0;
+  color: #515969;
+  font-size: 15px;
+  line-height: 0.5;
+  text-align: left;
+}
+
+.category_heading .product_price {
+  display: flex;
+  margin-top: 15px;
+}
+
+.category_heading .product_price .product_current_price {
+  font-size: 18px;
+  line-height: 1.2;
+  text-align: left;
+  color: #2e2e2e;
+  font-weight: 500;
+}
+
+.category_heading .product_price .product_current_price span {
+  color: #515969;
+  font-size: 15px;
+  line-height: 1.2;
+  text-decoration: line-through;
+}
+
+.category_heading .product_price .product_final_price {
+  color: #d75701;
+  font-weight: 600;
+  font-size: 15px;
+  margin-left: 10px;
+  text-align: left;
+}
+
+.category_heading .booknow_support_btn {
+  display: flex;
+  gap: 25px;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.category_heading .booknow_support_btn .timeshedule_section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #000;
+  font-size: 16px;
+  border-radius: 3px;
+}
+
+.category_heading .booknow_support_btn .timeshedule_section .bothbtn {
+  display: flex;
+  margin-top: 5px;
+  margin-left: -10px;
+}
+
+.category_heading .booknow_support_btn .timeshedule_section .booknow-btn {
+  display: flex;
+  flex-direction: column;
+  margin-left: -12px;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .booknow-btn
+  .booknoww {
+  border: none;
+  color: #fff;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(
+      120deg,
+      #0000 33%,
+      hsla(0, 0%, 100%, 0.5) 50%,
+      #0000 66%
+    ),
+    linear-gradient(90deg, #ff9800, #ff5757);
+  background-size: 250% 250%, 100% 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pujaDetails 2s infinite;
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+}
+
+@keyframes pujaDetails {
+  0% {
+    background-position: 100%;
+  }
+
+  100% {
+    background-position: 0;
+  }
+}
+
+.loading_text {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.category_heading .countdown-timer {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+
+.category_heading .countdown-timer .timer-box {
+  background-color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category_heading .countdown-timer .timer-box .time {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.timer_label {
+  font-size: 14px;
+  color: #777;
+}
+
+.category_heading .rating-section {
+  margin-top: 10px;
+  margin-left: -7px;
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+}
+
+.category_heading .rating-section .rating-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-left: 5px;
+  margin-bottom: -10px;
+}
+
+.category_heading .rating-section .view-comments-btn {
+  margin-top: 2px;
+  font-size: 14px;
+  margin-left: 5px;
+  color: #000;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+}
+
+.category_heading .rating-section .rating-header p {
+  font-size: 14px;
+  color: #d05100;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+.about_according {
+  padding: 40px 0px;
+}
+
+.details_content {
+  display: flex;
+  border-top: 1px solid #adadad;
+  padding: 10px;
+  margin-bottom: 0;
+  width: 100%;
+  flex-direction: column;
+}
+
+.details_content .pandit_profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  width: max-content;
+}
+
+.details_content .pandit_profile .profile_pic {
+  width: 60px;
+  min-width: 60px;
+  height: 60px;
+  border: 1px solid #333;
+  border-radius: 50%;
+  background-color: lightyellow;
+}
+
+.details_content .pandit_profile .profile_pic img {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+.details_content .pandit_profile .profile_details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 7px;
+}
+
+.details_content .pandit_profile .profile_details .profile_name {
+  font-weight: 600;
+  color: #000;
+  font-size: 16px;
+}
+
+.details_content .pandit_profile .profile_details .profile_skill {
+  font-size: 15px;
+  color: #515969;
+}
+
+.details_content .profile_bio {
+  font-size: 15px;
+  color: #616161;
+  margin-bottom: 0;
+  text-align: justify;
+}
+
+.about_according .next_section {
+  padding: 10px;
+  margin-bottom: 0;
+  width: 100%;
+  border-bottom: none;
+  border-top: 1px solid #adadad;
+}
+
+.about_according .next_section h2 {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #000;
+  font-size: 16px;
+  text-align: left;
+}
+
+.about_according .next_section .next_details {
+  color: #616161;
+}
+
+.about_according .next_section .next_details p {
+  margin-bottom: 0;
+  color: #616161;
+  text-align: left;
+}
+
+.about_according .next_section .next_details ul li {
+  list-style: disc;
+  margin-left: 12px;
+  font-size: 15px;
+}
+
+.pooja-booking-info {
+  font-size: 15px;
+  margin-bottom: 5px;
+  color: #2e2e2e;
+  font-weight: 500;
+  margin-left: -10px;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .join-now-btn {
+  outline: none;
+  border: none;
+  font-weight: 600;
+  border-radius: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 25px;
+  padding-right: 25px;
+  color: #fff;
+  background: linear-gradient(
+      120deg,
+      #0000 33%,
+      hsla(0, 0%, 100%, 0.5) 50%,
+      #0000 66%
+    ),
+    linear-gradient(90deg, #ff9800, #ff5757);
+  background-size: 250% 250%, 100% 100%;
+  cursor: pointer;
+  animation: pujaDetails 2s infinite;
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .feedback-btn {
+  outline: none;
+  border: none;
+  font-weight: 600;
+  border-radius: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 25px;
+  padding-right: 25px;
+  margin-left: 15px;
+  color: #fff;
+  background: linear-gradient(
+      120deg,
+      #0000 33%,
+      hsla(0, 0%, 100%, 0.5) 50%,
+      #0000 66%
+    ),
+    linear-gradient(90deg, #91ff48, #08b116);
+  background-size: 250% 250%, 100% 100%;
+  cursor: pointer;
+  animation: pujaDetails 2s infinite;
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .join-now-btn:hover {
+  background-color: #ff5420;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .feedback-btn:hover {
+  background-color: #215200;
+}
+
+.toggle-button {
+  border: none;
+  background: transparent;
+}
+
+@media (max-width: 480px) {
+  .category_heading {
+    padding-bottom: 0px;
+  }
+
+  .category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .booknow-btn
+  .booknoww {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-left: 25px;
+    font-size: 14px;
+  }
+
+  .support-btn {
+    padding-right: 25px;
+    padding-left: 25px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-size: 15px;
+  }
+
+  .booknow_support_btn {
+    margin-bottom: 20px;
+  }
+
+  .category_heading .countdown-timer .timer-box {
+    padding: 5px 10px;
+  }
+
+  .category_heading .countdown-timer .timer-box .time {
+    font-size: 18px;
+  }
+
+  .timer_label {
+    padding-left: 5px;
+    font-size: 12px;
+  }
+
+  .profile_skill {
+    font-size: 12px;
+  }
+  .category_heading .product_content {
+    font-size: 25px;
+    margin-bottom: 10px;
+    margin-top: 0px;
+}
+}

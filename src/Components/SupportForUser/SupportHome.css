@@ -1,0 +1,63 @@
+.support-home-container {
+    padding: 60px 20px;
+    text-align: center;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .support-home-container .support-title {
+    font-size: 32px;
+    color: rgb(236, 95, 1);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  .support-home-container .support-subtitle {
+    color: #555;
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+  
+  .support-home-container .support-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .support-home-container .support-card {
+    background-color: white;
+    width: 280px;
+    padding: 30px 20px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    border: 2px solid transparent;
+  }
+  
+  .support-home-container .support-card:hover {
+    transform: translateY(-8px);
+    border-color:  rgb(236, 95, 1);
+
+  }
+  
+  .support-home-container .support-card-icon {
+    font-size: 50px;
+    color:  rgb(236, 95, 1);
+    margin-bottom: 15px;
+  }
+  
+  .support-home-container .support-card h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .support-home-container .support-card p {
+    font-size: 14px;
+    color: #666;
+  }
+  

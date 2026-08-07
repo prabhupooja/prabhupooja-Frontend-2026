@@ -1,0 +1,95 @@
+.ReviewDetails_Section {
+  padding: 12px;
+  margin-top: 45px;
+  background-color: #fff8ec;
+}
+
+.reviewTitle {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.reviews {
+  margin-top: 16px;
+}
+
+.Reviewdetails_card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: bold;
+  font-size: 15px;
+  color: #4a2c2a;
+}
+
+.date {
+  color: #777;
+  font-size: 12px;
+}
+
+.body {
+  display: flex;
+}
+
+.productThumbnail {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+.textContent {
+  flex: 1;
+  justify-content: center;
+}
+
+.productName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #7a4b2d;
+  margin-bottom: 4px;
+}
+
+.rating {
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.star {
+  color: #ccc;
+}
+
+.star.filled {
+  color: #f1c40f;
+}
+
+.reviewText {
+  font-size: 13px;
+  color: #333;
+  font-style: italic;
+}

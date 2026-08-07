@@ -1,0 +1,338 @@
+.loading_text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -10px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.sub_header_pooja {
+  background-image: url("../Components/Assets/OnlinePoojabanner.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 80px;
+}
+
+.sub_header_pooja .subheader_inner_pooja {
+  padding: 200px 20px 180px;
+  /* text-align: center; */
+}
+
+.subheader_inner_pooja h1 {
+  font-size: 70px;
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #fff;
+  /* opacity: 0; */
+  /* animation: fadeIn 1s forwards; */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.breadcrumb {
+  padding: 20px 28px;
+  margin: 0;
+  background-color: #fff;
+  border-radius: 50px;
+  box-shadow: 0px 10px 20px rgba(53, 82, 99, 0.09);
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.breadcrumb li {
+  margin: 0;
+  color: #f1f1f1;
+}
+
+.breadcrumb li a {
+  text-decoration: none;
+  color: #161616;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.breadcrumb .breadcrumb-item.active {
+  color: #fc6805;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Puja Category Section */
+.puja_category {
+  padding-bottom: 80px;
+}
+
+.puja_category .tp-box-pooja {
+  margin-top: 20px;
+  border: 1px solid #dadada;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 300px;
+  height: 400px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.95);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.puja_category .tp-box-pooja:hover {
+  transform: scale(1);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.puja_category .tp-box-pooja img {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.puja_category .tp-box-pooja .tp-img-pooja img {
+  height: 250px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.puja_category .tp-box-pooja .tp-box-content {
+  margin-top: -10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.puja_category .tp-box-pooja .tp-box-content h2 {
+  color: #212121;
+  font-size: 22px;
+  margin-top: 5px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.puja_category
+  .tp-box-pooja
+  .tp-box-content
+  .price-booknow
+  .price-grp
+  .current_price
+  .current_price_pooja {
+  margin-left: -25px;
+  font-size: 12px;
+  color: #555;
+  font-weight: 300;
+  text-decoration: line-through;
+}
+
+.tp-box-pooja:hover img {
+  transform: scale(1.05);
+}
+
+.puja_category .tp-box-pooja .tp-box-content .price-booknow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.puja_category
+  .tp-box-pooja
+  .tp-box-content
+  .price-booknow
+  .price-grp
+  .current_price {
+  color: #f55216;
+  font-size: 10px;
+}
+
+.puja_category .tp-box-pooja .tp-box-content .price-booknow .booknow_btn {
+  background-color: #cd5702;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 8px 20px;
+  font-size: 14px;
+  border: none;
+  white-space: nowrap;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.puja_category .tp-box-pooja .tp-box-content .price-booknow .booknow_btn:hover {
+  background-color: #e44c02;
+}
+
+/* Responsive Styles */
+@media (min-width: 1200px) {
+  .subheader_inner_pooja {
+    padding: 180px 0 150px;
+  }
+}
+
+@media (max-width: 1199px) {
+  .tp-box {
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 991px) {
+  .subheader_inner_pooja {
+    padding: 120px 20px 100px;
+  }
+
+  .subheader_inner_pooja h1 {
+    font-size: 50px;
+  }
+
+  .breadcrumb {
+    padding: 15px 20px;
+    bottom: -25px;
+  }
+
+  .puja_title {
+    font-size: 22px;
+  }
+
+  .tp-box-pooja {
+    max-width: 220px;
+    height: 280px;
+  }
+
+  .tp-box-pooja img {
+    height: 180px;
+  }
+
+  .tp-box-content h6 {
+    font-size: 20px;
+  }
+
+  .booknow_btn {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .subheader_inner_pooja {
+    padding: 100px 15px 80px;
+  }
+
+  .subheader_inner_pooja h1 {
+    font-size: 40px;
+  }
+
+  .breadcrumb {
+    padding: 10px 15px;
+    bottom: -20px;
+  }
+
+  .puja_title {
+    font-size: 20px;
+  }
+
+  .tp-box-pooja {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+  }
+
+  .tp-box-pooja img {
+    height: auto;
+  }
+
+  .tp-box-content h6 {
+    font-size: 18px;
+  }
+
+  .booknow_btn {
+    font-size: 12px;
+    padding: 8px 20px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .sub_header_pooja .subheader_inner_pooja {
+    padding: 75px 0px 60px !important;
+  }
+  .subheader_text_pooja h1 {
+    font-size: 25px !important;
+  }
+  .sub_header_pooja .breadcrumb {
+    padding: 10px 5px !important;
+    margin: 0;
+    bottom: -22px !important;
+    left: 50%;
+  }
+  .sub_header_pooja .breadcrumb .breadcrumb-item {
+    padding-left: 10px;
+  }
+  .sub_header_pooja .breadcrumb li a {
+    font-size: 12px !important;
+  }
+  .sub_header_pooja .breadcrumb .breadcrumb-item.active {
+    font-size: 12px !important;
+  }
+  .popup-content {
+    padding: 15px;
+    max-width: 320px;
+  }
+  .puja_category .tp-box-pooja {
+    margin-left: 30px;
+    margin-right: 40px;
+    max-width: 320px;
+  }
+}

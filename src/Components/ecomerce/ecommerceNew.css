@@ -1,0 +1,381 @@
+.ecom-wrapper {
+  padding: 2rem;
+}
+
+.ecom-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ecomContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.ecom-breadcrumb {
+  color: #777;
+  font-size: 14px;
+  margin-top: 0.5rem;
+}
+
+.ecom-filters {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  position: relative;
+}
+
+.filter-buttons button {
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.filter-buttons .active {
+  background-color: #cd5702;
+  color: #fff;
+}
+
+.ecom-search-input {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  width: 50%;
+}
+
+.ecom-popup {
+  position: absolute;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  z-index: 10;
+  overflow-y: auto;
+  right: 250px;
+  top: 60px;
+  width: 200px;
+}
+
+.ecom-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ecom-popup li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.ecom-clear-filter-btn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  text-align: center;
+  color: red;
+  margin-left: 10px;
+}
+
+.ecom-popup li:hover {
+  background-color: #eee;
+}
+
+.ecom-close {
+  float: right;
+  cursor: pointer;
+  font-size: 20px;
+  color: #f44336;
+}
+
+.ecom-product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ecom-card {
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+  width: 100%;
+  max-width: 260px;
+}
+
+.ecom-card:hover {
+  transform: translateY(-5px);
+}
+
+.ecom-card-img {
+  width: 100%;
+  height: 250px;
+  object-fit: fill;
+}
+
+.ecom-card-body {
+  padding: 1rem;
+  text-align: center;
+}
+.ecom-card-body h4 {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.ecom-price {
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.ecom-original {
+  text-decoration: line-through;
+  color: #999;
+  margin-right: 0.5rem;
+}
+
+.ecom-offer {
+  color: #077207;
+}
+
+.ecom-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.ecom-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ecom-btn.primary {
+  background: #cd5702;
+  color: #fff;
+}
+
+.ecom-btn.secondary {
+  background: transparent;
+  color: #000;
+  border: 1px solid #cd5702;
+}
+
+.ecom-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.ecom-no-results {
+  text-align: center;
+  padding: 40px 0;
+  font-size: 18px;
+  color: #777;
+}
+
+@media (max-width: 800px) {
+  .ecom-wrapper {
+    padding: 1rem;
+  }
+  .ecom-filters {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    position: relative;
+  }
+  
+  .filter-buttons button {
+    padding: 0.5rem 1rem;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .filter-buttons .active {
+    background-color: #ff9800;
+    color: #fff;
+  }
+  
+  .ecom-search-input {
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    width: 50%;
+  }
+  
+  .ecom-popup {
+    position: absolute;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    z-index: 10;
+    overflow-y: auto;
+    right: 250px;
+    top:60px;
+    width: 200px;
+  }
+  
+  .ecom-popup ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .ecom-popup li {
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+
+  .ecom-clear-filter-btn{
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    text-align: center;
+    color: red;
+    margin-left: 10px;
+  }
+  
+  .ecom-popup li:hover {
+    background-color: #eee;
+  }
+  
+  .ecom-close {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+    color: #f44336;
+  }
+  
+  .ecom-product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .ecom-card {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+    width: 300px;
+    max-width: 300px;
+  }
+  
+  .ecom-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .ecom-card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .ecom-card-body {
+    padding: 1rem;
+    text-align: center;
+  }
+  .ecom-card-body h4{
+    font-size: 16px;
+  }
+  
+  .ecom-price {
+    margin: 0.5rem 0;
+    font-weight: bold;
+  }
+  
+  .ecom-original {
+    text-decoration: line-through;
+    color: #999;
+    margin-right: 0.5rem;
+  }
+  
+  .ecom-offer {
+    color: #077207;
+  }
+  
+  .ecom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .ecom-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .ecom-btn.primary {
+    background: #cd5702;
+    color: #fff;
+  }
+  
+  .ecom-btn.secondary {
+    background: transparent;
+    color: #000;
+    border: 1px solid #cd5702;
+  }
+  
+  .ecom-loader {
+    display: flex;
+    flex-direction: column;
+  }
+  .ecom-card-img {
+    height: auto;
+  }
+  .ecom-search-input {
+    width: 100%;
+  }
+  .ecom-popup {
+    left: 0;
+    top: 120px;
+  }
+  .ecom-product-grid {
+    /* padding: 100px; */
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .ecom-card {
+    max-width: 400px;
+  }
+  .ecom-card-body h4 {
+    font-size: 20px;
+  }
+  .ecom-price {
+    font-size: 18px;
+  }
+  .ecom-btn {
+    padding: 0.4rem 1.5rem;
+  }
+  .ecom-btn.secondary {
+    font-weight: 500;
+  }
+  .ecom-btn.primary {
+    font-weight: 500;
+  }
+}

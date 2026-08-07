@@ -1,0 +1,41 @@
+.booking_heading {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #d75502;
+  margin-bottom: 20px;
+}
+
+.card_container {
+  display: flex;
+}
+
+.card {
+  /* width: 100%; */
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.label {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+.value {
+  color: #555;
+  font-size: 16px;
+}

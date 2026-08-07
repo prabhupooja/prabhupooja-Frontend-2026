@@ -1,0 +1,85 @@
+.chathistory_section {
+  /* margin-top: -350px; */
+}
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.userCard {
+  background-color: #fff;
+  width: 300px;
+  padding: 5px 18px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  /* width: 50%; */
+  border: none;
+}
+
+.userCard:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.userName {
+  font-size: 18px;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+.loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0;
+  color: #555;
+  font-size: 1.2rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 5px solid #ddd;
+  border-top: 3px solid #cd5702;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.no-history-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 60px 0;
+  color: #494949;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.no-history-icon {
+  width: 100px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+

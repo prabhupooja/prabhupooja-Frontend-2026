@@ -1,0 +1,222 @@
+.profile-container {
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+  background-color: #f1f3f6;
+}
+
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading-overlay {
+  opacity: 0.5;
+  filter: brightness(0.5);
+}
+
+.userimage-container {
+  position: relative;
+  display: inline-block;
+}
+
+.sidebar {
+  width: 25%;
+  /* margin: 40px; */
+  margin-left: 80px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.form_section {
+  display: flex;
+  gap: 20px;
+}
+
+.editprofile_section {
+  display: flex;
+  justify-content: center;
+}
+
+.profileimage {
+  border-radius: 50px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid orange;
+  width: 100px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.editprofile_name_section {
+  margin-top: 10px;
+}
+
+.editprofile_name_section span {
+  font-size: 12px;
+}
+
+.editprofile_name_section h6 {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.sidebar-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2874f0;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.sidebar-menu li {
+  padding: 10px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+}
+
+.profile_icon,
+.logout_icon {
+  margin-top: 3px;
+  font-size: 20px;
+}
+
+.sidebar-menu .active {
+  gap: 8px;
+  font-weight: bold;
+  color: #2874f0;
+  display: flex;
+}
+
+.sidebar-menu .logout {
+  gap: 5px;
+  color: red;
+  font-weight: bold;
+  display: flex;
+}
+
+.profile-content {
+  /* flex: 1; */
+  width: 75%;
+  padding: 40px;
+  background-color: white;
+  /* margin: 20px; */
+  margin-top: 40px;
+  margin-bottom: 40px;
+  margin-right: 40px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.profile-form {
+  max-width: 500px;
+}
+
+.form-group-editprofile {
+  margin-bottom: 15px;
+}
+
+.form-group-editprofile label {
+  /* display: block; */
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.number {
+  cursor: not-allowed;
+  color: rgb(179, 175, 175);
+}
+
+.address-input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.gender-options {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.gender-options label {
+  font-size: 14px;
+}
+
+.save-btn {
+  background-color: #cd5702;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.save-btn:hover {
+  background-color: #f5630e;
+}
+
+.line-md--loading-loop {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-dasharray='16' stroke-dashoffset='16' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 3c4.97 0 9 4.03 9 9'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='0.2s' values='16;0'/%3E%3CanimateTransform attributeName='transform' dur='1.5s' repeatCount='indefinite' type='rotate' values='0 12 12;360 12 12'/%3E%3C/path%3E%3C/svg%3E");
+  background-color: orange;
+  -webkit-mask-image: var(--svg);
+  mask-image: var(--svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+@media only screen and (max-width: 480px) {
+  .profile-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 80%;
+    margin-right: 40px;
+    margin-left: 40px;
+    margin-top: 40px;
+  }
+
+  .profile-content {
+    width: 90%;
+    padding: 20px;
+    margin-top: 5px;
+    margin-bottom: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}

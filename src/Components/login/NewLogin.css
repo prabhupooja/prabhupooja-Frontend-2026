@@ -1,0 +1,252 @@
+/* Overlay background */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  /* Main popup container */
+  .popupContainer {
+    width: 90%;
+    max-width: 1000px;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Close button */
+  .closeBtn {
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+  }
+  
+  /* Flex layout */
+  .loginPopupContent {
+    display: flex;
+    height: "auto";
+  }
+  
+  .loginPopupContent input:focus{
+    outline: none;
+  }
+
+  /* Left image area */
+  .popupLeft {
+    flex: 2;
+    background:url("../Assets/login_illustrationsImg.png");
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-repeat: round;
+
+  }
+  
+  .popupIllustration {
+    max-width: 80%;
+    height: auto;
+  }
+  
+  /* Right form area */
+  .popupRight {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .popupCard {
+    width: 100%;
+    max-width: 350px;
+  }
+  
+  .logo {
+    font-size: 28px;
+    font-weight: 600;
+    color: #5c2d91;
+    text-align: center;
+  }
+  
+  .Loginsubtitle {
+    text-align: center;
+    color: #555;
+  }
+  
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .inputGroup label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .inputGroup input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  
+  .loginButton {
+    width: 100%;
+    background-color: #cd5702;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  .divider {
+    text-align: center;
+    margin: 20px 0;
+    color: #aaa;
+  }
+  
+  .signupButton {
+    width: 100%;
+    background: none;
+    border: 2px solid #cd5702;
+    color: #cd5702;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  
+.googleLoginbtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 5px 5px;
+    background-color: #ffffff;
+    color: #444;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  
+  .googleLoginbtn img {
+    width: 25px;
+    height: 25px;
+  }
+  .googleLoginbtn:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .signupButtonCointainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* OTP container and input styles */
+.otpFields {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .otpInput {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    text-align: center;
+    margin: 0 5px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .otpInput:focus {
+    outline: none;
+    border-color: #cd5702;
+  }
+
+  .otpInput.normal {
+    border-color: #ccc;
+  }
+  
+  .otpFields input {
+    transition: border-color 0.3s;
+  }
+  
+  .otpInput:invalid {
+    border-color: red;
+  }
+  
+  .otpInput:valid {
+    border-color: green;
+  }
+
+  .login-error-message{
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom:0;
+    color: red;
+  }
+
+
+  .resend-otp {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+  }
+  
+  .resend-otp span {
+    transition: color 0.3s;
+  }
+
+  
+  .resend-otp strong {
+    color: #007bff;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 700px) {
+    .popupLeft {
+      display: none;
+    }
+    .signup-illustration{
+      display: none !important;
+    }
+    .signup-form{
+      display: block;
+    }
+    .signup-form button{
+      width: 100%;
+    }
+  }
+  
+  

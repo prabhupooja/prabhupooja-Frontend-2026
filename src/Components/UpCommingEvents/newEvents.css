@@ -1,0 +1,775 @@
+/* ================= SECTION ================= */
+
+.sawan-event-section {
+  width: 100%;
+  min-height: 100vh;
+  padding: 100px 70px;
+  position: relative;
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  align-items: center;
+}
+
+/* ================= OVERLAY ================= */
+
+.sawan-event-section .overlay {
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.82) 10%,
+    rgba(0, 0, 0, 0.58) 45%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+
+  z-index: 1;
+}
+
+/* ================= BLUR EFFECTS ================= */
+
+.sawan-event-section .blur-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 1;
+}
+
+.sawan-event-section .blur-one {
+  width: 320px;
+  height: 320px;
+  background: rgba(255, 132, 0, 0.28);
+
+  top: 0;
+  left: -100px;
+}
+
+.sawan-event-section .blur-two {
+  width: 280px;
+  height: 280px;
+  background: rgba(255, 98, 0, 0.18);
+
+  bottom: 0;
+  right: 0;
+}
+
+/* ================= CONTAINER ================= */
+
+.sawan-event-section .event-container {
+  width: 100%;
+  max-width: 1450px;
+  margin: auto;
+
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 70px;
+  align-items: center;
+
+  position: relative;
+  z-index: 5;
+}
+
+/* ================= CONTENT ================= */
+
+.sawan-event-section .event-content {
+  color: white;
+}
+
+.sawan-event-section .event-tag {
+  display: inline-block;
+  padding: 12px 24px;
+
+  border-radius: 60px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  backdrop-filter: blur(10px);
+
+  color: #ffffff;
+  font-size: 14px;
+
+  margin-bottom: 25px;
+}
+
+/* HEADING */
+
+.sawan-event-section .event-content h1 {
+  font-size: 78px;
+  line-height: 1.05;
+
+  margin-bottom: 25px;
+
+  font-weight: 800;
+  color: #ffffff;
+
+  text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* PARAGRAPH */
+
+.sawan-event-section .event-content p {
+  font-size: 18px;
+  line-height: 1.9;
+
+  color: #f3f3f3;
+
+  margin-bottom: 40px;
+  max-width: 650px;
+}
+
+/* ================= DETAILS ================= */
+
+.sawan-event-section .event-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+
+  margin-bottom: 40px;
+}
+
+.sawan-event-section .detail-box {
+  padding: 24px;
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(14px);
+
+  transition: 0.4s ease;
+}
+
+.sawan-event-section .detail-box:hover {
+  transform: translateY(-8px);
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sawan-event-section .detail-box span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sawan-event-section .detail-box h4 {
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+.sawan-event-section .detail-box h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.sawan-event-section .detail-box p {
+  font-size: 15px;
+  line-height: 1.6;
+
+  color: #ededed;
+
+  margin: 0;
+}
+
+/* ================= BUTTONS ================= */
+
+.sawan-event-section .event-buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.sawan-event-section .book-btn,
+.sawan-event-section .watch-btn {
+  padding: 17px 34px;
+
+  border-radius: 60px;
+  border: none;
+
+  font-size: 16px;
+  cursor: pointer;
+
+  transition: 0.4s ease;
+}
+
+/* BOOK BUTTON */
+
+.sawan-event-section .book-btn {
+  background: linear-gradient(135deg, #ff8c00, #ff5100);
+
+  color: white;
+  font-weight: 600;
+
+  box-shadow: 0 10px 30px rgba(255, 119, 0, 0.4);
+}
+
+.sawan-event-section .book-btn:hover {
+  transform: translateY(-5px) scale(1.03);
+}
+
+/* WATCH BUTTON */
+
+.sawan-event-section .watch-btn {
+  background: rgba(255, 255, 255, 0.08);
+
+  color: white;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  backdrop-filter: blur(10px);
+}
+
+.sawan-event-section .watch-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ================= IMAGE ================= */
+
+.sawan-event-section .event-image {
+  width: 100%;
+  position: relative;
+}
+
+.sawan-event-section .event-image img {
+  width: 100%;
+  height: 700px;
+
+  object-fit: fill;
+
+  border-radius: 35px;
+
+  border: 3px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+
+  display: block;
+}
+
+.book-btn,
+.sawan-view-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+/* ================= POPUP OVERLAY ================= */
+
+/* ================= OVERLAY ================= */
+
+.sawan-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+/* ================= POPUP BOX ================= */
+
+.sawan-popup-box {
+  width: 100%;
+  max-width: 900px;
+
+  background: linear-gradient(
+    135deg,
+    #f3e7d5 0%,
+    #ffffff 100%
+  );
+
+  color: #000;
+
+  padding: 35px;
+
+  border-radius: 24px;
+
+  position: relative;
+
+  border: 1px solid rgba(31, 30, 30, 0.08);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 123, 0, 0.12);
+
+  animation: sawanPopupShow 0.35s ease;
+
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+/* ================= TITLE ================= */
+
+.sawan-popup-box h2 {
+  font-size: 30px;
+  font-weight: 700;
+
+  margin-bottom: 28px;
+
+  text-align: center;
+
+  color: #ff9a2f !important;
+}
+
+/* ================= CLOSE BUTTON ================= */
+
+.sawan-close-popup {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 50%;
+
+  color: #000 !important;
+
+  background: #fff !important;
+
+  font-size: 18px;
+
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+.sawan-close-popup:hover {
+  background: #ff7b00 !important;
+   color: #fff !important;
+
+  transform: rotate(90deg);
+}
+
+/* ================= FORM ================= */
+
+.sawan-popup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ================= ROW ================= */
+
+.sawan-form-row {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+}
+
+/* ================= INPUT GROUP ================= */
+
+.sawan-input-group {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= LABEL ================= */
+
+.sawan-input-group label {
+  font-size: 15px;
+
+  font-weight: 600;
+
+  margin-bottom: 8px;
+
+  color: #000;
+}
+
+/* ================= INPUTS ================= */
+
+.sawan-popup-form input,
+.sawan-popup-form select,
+.sawan-popup-form textarea {
+  width: 100%;
+
+  height: 58px;
+
+  background: rgba(56, 55, 55, 0.05) !important; 
+
+  border: 1px solid rgb(128, 126, 126) !important;
+
+  color: #000 !important;
+
+  padding: 0 18px;
+
+  border-radius: 16px;
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition: 0.3s ease;
+
+  box-sizing: border-box;
+}
+
+/* ================= TEXTAREA ================= */
+
+.sawan-popup-form textarea {
+  height: 120px;
+
+  padding-top: 16px;
+
+  resize: none;
+}
+
+/* ================= PLACEHOLDER ================= */
+
+.sawan-popup-form input::placeholder,
+.sawan-popup-form textarea::placeholder {
+  color: gray !important;
+}
+
+/* ================= SELECT ================= */
+
+.sawan-popup-form select {
+  appearance: none;
+
+  cursor: pointer;
+}
+
+.sawan-popup-form select option {
+  color: #111;
+  background: #fff;
+}
+
+/* ================= DATE INPUT FIX ================= */
+
+.sawan-popup-form input[type="date"] {
+  color: black !important;
+}
+
+.sawan-popup-form input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* ================= FOCUS ================= */
+
+.sawan-popup-form input:focus,
+.sawan-popup-form select:focus,
+.sawan-popup-form textarea:focus {
+  border-color: #ff7b00 !important;
+  box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.15);
+}
+
+/* ================= BUTTON ================= */
+
+.sawan-submit-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff7b00, #ffb347);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.sawan-submit-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 12px 30px rgba(255, 123, 0, 0.35);
+}
+
+.sawan-submit-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.sawan-loader-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* SPINNER */
+.sawan-loader {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: sawanSpin 0.7s linear infinite;
+}
+
+@keyframes sawanSpin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= SCROLLBAR ================= */
+
+.sawan-popup-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sawan-popup-box::-webkit-scrollbar-thumb {
+  background: #ff7b00;
+
+  border-radius: 20px;
+}
+
+.sawan-popup-note {
+  margin-top: 12px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5c4b2e;
+  background: #fff8e8;
+  border: 1px solid #f1d9a8;
+  padding: 12px 14px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes sawanPopupShow {
+  from {
+    opacity: 0;
+
+    transform: scale(0.92) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+  .sawan-popup-box {
+    padding: 22px;
+
+    border-radius: 22px;
+  }
+
+  .sawan-popup-box h2 {
+    font-size: 24px;
+
+    margin-bottom: 22px;
+  }
+
+  .sawan-form-row {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+
+  .sawan-popup-form input,
+  .sawan-popup-form select,
+  .sawan-popup-form textarea {
+    height: 54px;
+
+    font-size: 14px;
+  }
+
+  .sawan-popup-form textarea {
+    height: 110px;
+  }
+
+  .sawan-submit-btn {
+    height: 54px;
+
+    font-size: 15px;
+  }
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes sawanPopupShow {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ================= TITLE ================= */
+
+.sawan-popup-box h2 {
+  font-size: 32px;
+
+  margin-bottom: 25px;
+
+  text-align: center;
+
+  color: #ffffff;
+}
+
+/* ================= CLOSE BUTTON ================= */
+
+.sawan-close-popup {
+  position: absolute;
+
+  top: 15px;
+  right: 18px;
+
+  background: transparent;
+
+  border: none;
+
+  color: white;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+/* ================= FORM ================= */
+
+.sawan-popup-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+/* ================= INPUTS ================= */
+
+.sawan-popup-form input,
+.sawan-popup-form textarea {
+  width: 100%;
+
+  padding: 16px 18px;
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: white;
+
+  font-size: 15px;
+
+  outline: none;
+}
+
+/* ================= PLACEHOLDER ================= */
+
+.sawan-popup-form input::placeholder,
+.sawan-popup-form textarea::placeholder {
+  color: #cccccc;
+}
+
+/* ================= SUBMIT BUTTON ================= */
+
+.sawan-submit-btn {
+  padding: 16px;
+
+  border: none;
+
+  border-radius: 50px;
+
+  background: linear-gradient(135deg, #ff8c00, #ff5100);
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+.sawan-submit-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 600px) {
+  .sawan-popup-box {
+    margin: 20px;
+
+    padding: 30px 20px;
+  }
+
+  .sawan-popup-box h2 {
+    font-size: 24px;
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1200px) {
+  .sawan-event-section .event-content h1 {
+    font-size: 58px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .sawan-event-section .event-container {
+    grid-template-columns: 1fr;
+  }
+
+  .sawan-event-section .event-image img {
+    height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sawan-event-section {
+    padding: 80px 20px;
+  }
+
+  .sawan-event-section .event-content h1 {
+    font-size: 42px;
+  }
+
+  .sawan-event-section .event-content p {
+    font-size: 16px;
+  }
+
+  .sawan-event-section .event-details {
+    grid-template-columns: 1fr;
+  }
+
+  .sawan-event-section .event-buttons {
+    flex-direction: column;
+  }
+
+  .sawan-event-section .book-btn,
+  .sawan-event-section .watch-btn {
+    width: 100%;
+  }
+
+  .sawan-event-section .event-image img {
+    height: 380px;
+  }
+}

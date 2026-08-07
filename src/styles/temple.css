@@ -1,0 +1,271 @@
+/* General Styles */
+
+/* Header Styles */
+.temple-header {
+  background: #feecdc;
+  margin-bottom: 40px;
+  padding-top: 40px;
+}
+
+.temple-intro h1 {
+  font-size: 50px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.temple-features {
+  margin-top: 20px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.feature-icon {
+  background: #f87545;
+  border-radius: 30px;
+  color: #fff;
+  font-weight: 600;
+  margin-right: 15px;
+  margin-top: 3px;
+}
+
+/* Map Image */
+.temple-map-image {
+  height: auto; /* Adjusted to maintain aspect ratio */
+  width: 100%;  /* Ensures it scales with its container */
+  max-width: 400px; /* Keeps a maximum size */
+}
+
+/* Gallery Styles */
+.temple-gallery {
+  padding: 20px 0;
+}
+
+.temple-gallery-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scroll-container {
+  overflow: hidden;
+}
+
+.scroll-content {
+  display: flex;
+  overflow-x: auto;
+}
+
+.temple-gallery-item {
+  margin-bottom: 20px;
+}
+
+.temple-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 5px;
+}
+
+.temple-info {
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.temple-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.temple-description {
+  color: #777;
+  margin: 5px 0;
+}
+
+.temple-price {
+  font-size: 1.1em;
+  color: #e91e63;
+  margin: 10px 0;
+}
+
+.temple-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.temple-action-link {
+  text-decoration: none;
+}
+
+.temple-action-link button {
+  background-color: #f87545;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.temple-action-link1 {
+  background-color: #f87545;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.temple-action-link button:hover {
+  background-color: red;
+  transform: scale(1.1);
+}
+
+.book-action-link button {
+  background-color: #f87545;
+}
+
+.book-action-link button:hover {
+  background-color: red;
+  transform: scale(1.1);
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive Styles */
+
+/* Extra Small Devices (Phones, 600px and down) */
+@media (max-width: 600px) {
+  .temple-header {
+    padding-top: 20px;
+  }
+
+  .temple-intro h1 {
+    font-size: 30px;
+  }
+
+  .feature-item {
+    font-size: 1em;
+  }
+
+  .feature-icon {
+    margin-right: 10px;
+    font-size: 1.2em;
+  }
+
+  .temple-map-image {
+    height: auto;
+    width: 100%;
+  }
+
+  .temple-gallery-item {
+    margin-bottom: 40px;
+  }
+
+  .temple-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .temple-action-link button {
+    width: 100%;
+  }
+}
+
+/* Small Devices (Tablets, 768px and up) */
+@media (min-width: 601px) and (max-width: 768px) {
+  .temple-intro h1 {
+    font-size: 40px;
+  }
+
+  .feature-item {
+    font-size: 1.05em;
+  }
+
+  .feature-icon {
+    margin-right: 12px;
+    font-size: 1.5em;
+  }
+
+  .temple-map-image {
+    height: auto;
+    width: 100%;
+  }
+}
+
+/* Medium Devices (Desktops, 992px and up) */
+@media (min-width: 769px) and (max-width: 992px) {
+  .temple-intro h1 {
+    font-size: 45px;
+  }
+
+  .feature-item {
+    font-size: 1.1em;
+  }
+
+  .feature-icon {
+    margin-right: 15px;
+    font-size: 1.6em;
+  }
+}
+
+/* Large Devices (Large desktops, 1200px and up) */
+@media (min-width: 993px) and (max-width: 1200px) {
+  .temple-intro h1 {
+    font-size: 50px;
+  }
+
+  .feature-icon {
+    margin-right: 15px;
+    font-size: 1.7em;
+  }
+}
+
+/* Extra Large Devices (Larger desktops, 1200px and up) */
+@media (min-width: 1201px) {
+  .temple-intro h1 {
+    font-size: 50px;
+  }
+
+  .feature-icon {
+    margin-right: 15px;
+    font-size: 1.8em;
+  }
+}

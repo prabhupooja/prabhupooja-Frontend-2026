@@ -1,0 +1,78 @@
+.addUser_temple h3 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 28px;
+  margin-top: 25px;
+  color: rgb(248, 117, 69);
+  text-transform: uppercase;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.addUserForm_temple {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.inputGroup_temple {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.inputGroup_temple label {
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-control-temple,
+.inputGroup_temple input,
+.inputGroup_temple select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.form-control-temple:focus,
+.inputGroup_temple input:focus,
+.inputGroup_temple select:focus {
+  border-color: #cd5702;
+  box-shadow: 0 0 5px #f76a06;
+}
+
+.bookerror {
+  color: red;
+  font-size: 12px;
+}
+
+.btn-success {
+  background: #cd5702;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-success:hover {
+  background: #f76a06;
+}
+
+@media (max-width: 480px) {
+  .addUserForm_temple {
+    max-width: 100%;
+    padding: 15px;
+    margin: 15px;
+  }
+}

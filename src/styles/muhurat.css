@@ -1,0 +1,307 @@
+.loading_text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sub_header_muhurat {
+  background-image: url("../Components/Assets/muhuratbannerimg1.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 80px;
+}
+
+.sub_header_muhurat .subheader_inner_muhurat {
+  padding: 200px 0px 200px;
+}
+.profile-picture {
+  flex: 1;
+  text-align: center;
+}
+.profile-img {
+  width: 100%;
+  max-width: 228px;
+  height: auto;
+  max-height: 228px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.3s ease; 
+}
+
+.profile-img:hover {
+  transform: scale(1.1); 
+}
+
+.subheader_inner_muhurat {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+}
+
+.subheader_text_muhurat h1 {
+  font-size: 80px;
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #fff;
+  text-align: left;
+}
+
+.sub_header_muhurat .breadcrumb {
+  padding: 20px 28px;
+  margin: 0;
+  background-color: #fff;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0px 10px 20px 0px rgb(53 82 99 / 9%);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+
+.sub_header_muhurat .breadcrumb li {
+  margin: 0;
+  color: #f1f1f1;
+}
+
+.sub_header_muhurat .breadcrumb li a {
+  position: relative;
+  list-style: none;
+  text-decoration: none;
+  color: #161616;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.btn-link {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sub_header_muhurat .breadcrumb .breadcrumb-item.active {
+  color: #fc6805;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.sub_header_muhurat .breadcrumb .breadcrumb-item {
+  padding-left: 15px;
+}
+
+.muhurat-list {
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+
+.muhurat-list .muhurat-img-box {
+  background-color: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.muhurat-list .muhurat-img-box img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.muhurat-list .muhurat-img-box p {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.muhurat-list .muhurat-img-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.muhurat-list .muhurat-img-box img:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.astrologer_profile_background {
+  flex: 1;
+  text-align: center;
+}
+
+.muhurat-profile-img {
+  width: 100%;
+  max-width: 228px;
+  height: auto;
+  max-height: 228px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+@media (max-width: 1200px) {
+  .muhurat-list .muhurat-img-box {
+    flex: 1 1 calc(50% - 20px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .sub_header_muhurat .subheader_inner_muhurat {
+    padding: 100px 0px 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .muhurat-list .muhurat-img-box {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub_header_muhurat .subheader_inner_muhurat {
+    padding: 75px 0px 60px;
+  }
+  .subheader_text_muhurat h1 {
+    margin-top: 22px;
+    font-size: 20px;
+  }
+  .sub_header_muhurat .breadcrumb {
+    padding: 10px 5px;
+    margin: 0;
+    bottom: -22px;
+    left: 50%;
+  }
+  .sub_header_muhurat .breadcrumb .breadcrumb-item {
+    padding-left: 10px;
+  }
+  .sub_header_muhurat .breadcrumb li a {
+    font-size: 12px;
+  }
+  .sub_header_muhurat .breadcrumb .breadcrumb-item.active {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .muhurat-list {
+    padding: 0px 0;
+  }
+  .astrologer_profile_section .container {
+    padding: 0 15px;
+  }
+  .muhurat-profile-img {
+    height: 150px;
+    width: 150px;
+  }
+  .astrologer_profile_picture1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .astrologer_profile_background1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40%;
+    width: 40%;
+  }
+
+  .astrologer_profile_section .border_outline {
+    padding: 15px;
+    margin: 0;
+  }
+
+  .astrologer_profile_section .row {
+    flex-direction: column;
+  }
+
+  .astrologer_profile_section .col-sm-3,
+  .astrologer_profile_section .col-sm-9 {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .astrologer_profile_picture1 {
+    text-align: center;
+  }
+
+  .astrologer_profile_picture1 .astrologer_profile_background1 {
+    margin: 0 auto;
+  }
+
+  .astrologer_name,
+  .astrologer_profession,
+  .astrologer_language,
+  .astrologer_experience,
+  .price_rate {
+    text-align: center;
+  }
+
+  .astrologer_profession,
+  .astrologer_language,
+  .astrologer_experience {
+    margin-bottom: 10px;
+  }
+
+  .chat_call_btns {
+    justify-content: center;
+  }
+
+  .chat_call_btns .col-sm-3 {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .chat_call_btns .astrologer_btn_chat {
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .aboutme_content {
+    margin-top: 20px;
+  }
+
+  .aboutme_heading {
+    text-align: center;
+  }
+
+  .aboutme_para {
+    font-size: 14px;
+    text-align: justify;
+  }
+
+  .loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .spinner img {
+    width: 50px;
+    height: 50px;
+  }
+}

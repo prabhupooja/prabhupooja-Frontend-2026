@@ -1,0 +1,232 @@
+.sub_header_ktemple {
+  background-image: url("../Components/Assets/3.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 80px;
+}
+
+.sub_header_ktemple .subheader_inner_ktemple {
+  padding: 200px 0px 180px;
+}
+
+.subheader_inner_ktemple {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+}
+
+.subheader_text_ktemple h1 {
+  font-size: 70px;
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #000;
+  text-align: left;
+}
+
+.sub_header_ktemple .breadcrumb {
+  padding: 20px 28px;
+  margin: 0;
+  background-color: #fff;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0px 10px 20px 0px rgb(53 82 99 / 9%);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+
+.sub_header_ktemple .breadcrumb li {
+  margin: 0;
+  color: #f1f1f1;
+}
+
+.sub_header_ktemple .breadcrumb li a {
+  position: relative;
+  list-style: none;
+  text-decoration: none;
+  color: #161616;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.btn-link {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sub_header_ktemple .breadcrumb .breadcrumb-item.active {
+  color: #fc6805;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.sub_header_ktemple .breadcrumb .breadcrumb-item {
+  padding-left: 15px;
+}
+
+.section {
+  /*padding: 60px 0px;*/
+}
+
+.heading {
+  color: #fc6805;
+  font-size: 28px;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.primary_btn {
+  background-color: #9d1220;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+  padding: 9px 18px;
+  transition: 0.3s;
+  border: none;
+  display: inline-block;
+}
+
+.primary_btn.blue {
+  background-color: #4867aa;
+  margin-left: 10px;
+}
+
+.primary_btn.yellow {
+  background-color: #d0973a;
+  margin-left: 10px;
+}
+
+.templeimg {
+  width: 100%;
+  /* margin: 0.5rem; */
+  margin-right: 40px;
+  float: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.templeimg:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.temple_content {
+  width: 150%;
+  margin-bottom: 40px;
+}
+
+.temple_content p {
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.temple_content ul {
+  padding: 0px 0px 0px 20px;
+  margin: 0 0 15px 0;
+}
+
+.temple_content ul li {
+  list-style-type: disc;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.darkorange {
+  background-color: #e75216;
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 480px) {
+  .sub_header_ktemple .subheader_inner_ktemple {
+    padding: 75px 0px 60px !important;
+  }
+  .subheader_text_ktemple h1 {
+    font-size: 25px !important;
+  }
+  .sub_header_ktemple .breadcrumb {
+    padding: 10px 5px !important;
+    margin: 0;
+    bottom: -22px !important;
+    left: 50%;
+  }
+  .sub_header_ktemple .breadcrumb .breadcrumb-item {
+    padding-left: 10px;
+  }
+  .sub_header_ktemple .breadcrumb li a {
+    font-size: 12px !important;
+  }
+  .sub_header_ktemple .breadcrumb .breadcrumb-item.active {
+    font-size: 12px !important;
+  }
+
+  .section {
+    padding: 20px 0;
+  }
+
+  .heading {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .templeimg {
+    width: 100%;
+    margin: 0 auto 20px;
+    float: none;
+  }
+
+  .primary_btn {
+    width: 100%;
+    text-align: center;
+    margin: 5px 0;
+  }
+
+  .temple_content {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .temple_content p,
+  .temple_content ul li {
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .temple_content ul {
+    padding-left: 20px;
+  }
+
+  .darkorange {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .primary_btn.blue,
+  .primary_btn.yellow {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-left: 0;
+    width: 100%;
+  }
+  .sub_header_ktemple {
+    margin-bottom: 20px;
+  }
+}

@@ -1,0 +1,488 @@
+.error {
+  color: red;
+  font-size: 0.9rem;
+}
+
+.checkout {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.checkout-heading {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333;
+}
+
+.checkout-left {
+  flex: 0.6;
+}
+
+.checkout-right {
+  flex: 0.4;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  height: auto;
+  border-radius: 5px;
+}
+
+.checkout-right h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.checkout-summary {
+  width: 100%;
+  max-width: 800px;
+  margin: 30px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+}
+
+.checkout-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.checkout-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 20px;
+  border: 1px solid #ddd;
+}
+
+.checkout-details {
+  flex: 1;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.checkout-total {
+  margin-top: 25px;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 20px;
+  text-align: right;
+}
+
+.checkout-total p {
+  font-size: 16px;
+  margin: 6px 0;
+}
+
+.checkout-form {
+  padding: 30px;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 20px;
+}
+
+
+.checkoutform-group{
+
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+
+
+.OrdetNowBtn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  background-color: #f86200;
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+}
+
+.primary_btn:hover {
+  background-color: #e65700;
+}
+
+.primary_btn:focus,
+.primary_btn:active {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+.payment-method {
+  padding: 15px;
+  text-align: left;
+}
+
+.payment-method h4 {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #333;
+  text-transform: uppercase;
+  /* font-weight: bold; */
+}
+
+.payment-method label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 10px;
+  font-size: 1rem;
+  color: #495057;
+  cursor: pointer;
+}
+
+.payment-method input[type="radio"] {
+  margin-right: 10px;
+  accent-color: #f86200;
+}
+
+.payment-method label:hover {
+  color: #f86200;
+}
+
+
+.customerCoupon {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.05); 
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.customerCoupon .customerCoupon-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.customerCoupon input[type="text"] {
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  background-color: transparent;
+  transition: border-color 0.3s ease;
+}
+
+.customerCoupon input[type="text"]:focus {
+  border-color: #f86200;;
+}
+
+.customerCoupon button {
+  padding: 12px;
+  background-color: transparent;
+  color: #f86200;
+  border: 2px solid #f86200;;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.customerCoupon button:hover {
+  background-color: #f86200;;
+  color: #fff;
+}
+
+.customerCoupon .coupon-msg {
+  color: green;
+  font-size: 15px;
+  font-weight: 500;
+  background-color: rgba(0, 128, 0, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid green;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customerCoupon .coupon-msg .remove-button{
+  color: red;
+  background: transparent;
+}
+.customerCoupon .error{
+  color: red;
+  border: 1px solid red;
+  background-color: rgba(128, 30, 0, 0.05);
+
+}
+
+.coupon-btn.applied {
+  border:1px solid #07632d; 
+  color: #16974c;
+  cursor:not-allowed;
+}
+.coupon-btn.applied:hover{
+  background: transparent !important;
+  color: #16974c;
+}
+
+
+
+
+.submit-btn {
+  background: rgb(237, 59, 59);
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ccc;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.store-addressDetails {
+  padding: 20px 0;
+  cursor: pointer;
+}
+
+.store-addressDetails h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+}
+
+.address-card {
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  width: 100%;
+  position: relative;
+}
+
+.add-address-btn {
+  padding: 5px 20px;
+  background-color: transparent;
+  color: black;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  border: 1px solid #f86200;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.add-address-btn:hover {
+  border: 1px solid #411b02;
+}
+
+.address-list .addressSelectedBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 16px;
+  background-color: transparent;
+  color: #D35400;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.address-list .addressSelectedBtn.selected {
+  border: none;
+  color:#27ae60; 
+  cursor: default;
+  pointer-events: none;
+  background: transparent;
+
+}
+
+.address-list .addressEditdBtn, .address-list .addressRemoveBtn {
+  background-color: transparent;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.address-list .addressRemoveBtn{
+  color: rgb(216, 8, 8);
+}
+
+.address-list .addressEditdBtn{
+  color: rgb(33, 107, 245);
+}
+
+.address-card strong{
+  font-size: 18px;
+}
+.address-card p{
+ margin: 2px;
+ font-size: 12px;
+}
+
+.deliveryadd-wrapper {
+  margin: 20px;
+}
+
+.deliveryadd-add-btn {
+  background-color: #ed3b3b;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.deliveryadd-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.deliveryadd-modal {
+  background: #fff;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.deliveryadd-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+.deliveryadd-field {
+  margin-bottom: 15px;
+}
+
+.deliveryadd-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top:0
+}
+
+.deliveryadd-error {
+  color: red;
+  font-size: 12px;
+  margin: 0;
+}
+
+.deliveryadd-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+
+.deliveryadd-submit {
+  background-color: #f86200;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.deliveryadd-cancel {
+  background-color: #b9bdc0;
+  color: rgb(0, 0, 0);
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.deliveryadd-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.deliveryadd-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.deliveryadd-actions-btn{
+  width: 100%;
+}
+
+.selectedAddressactionbtn{
+  display: flex;
+  align-self: center;
+  gap: 10px;
+}
+.selectedAddressactionbtn button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 750px) {
+  .checkout {
+    flex-direction:column-reverse;
+  }
+  .checkout-left, .checkout-right {
+    width: 100%;
+  }
+  .checkout-right {
+    margin-top: 20px;
+  }
+  
+}
+
+

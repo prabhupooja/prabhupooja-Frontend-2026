@@ -1,0 +1,12 @@
+.title_refund {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+@media only screen and (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+}

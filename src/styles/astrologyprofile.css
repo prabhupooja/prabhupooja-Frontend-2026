@@ -1,0 +1,291 @@
+/* astrologyprofile.css */
+.loading_text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.astrology-profile {
+  padding: 20px;
+  margin-bottom: 40px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.profile-header {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.profile-picture {
+  flex: 1;
+  text-align: center;
+}
+
+.profile-img {
+  width: 100%;
+  max-width: 228px;
+  height: auto;
+  max-height: 228px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.profile-img:hover {
+  transform: scale(1.1);
+}
+
+.profile-details {
+  flex: 3;
+  padding-left: 20px;
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.profile-profession,
+.profile-language,
+.profile-experience {
+  margin: 5px 0;
+}
+
+.profile-price {
+  margin: 10px 0;
+}
+
+.price-amount {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.profile-actions {
+  margin-top: 10px;
+}
+
+.action-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.chat-btn {
+  background-color: rgb(248, 117, 69);
+}
+
+.call-btn {
+  background-color: rgb(248, 117, 69);
+}
+
+.video-call-btn {
+  background-color: rgb(248, 117, 69);
+}
+
+.action-btn:hover {
+  background-color: rgb(243, 32, 5);
+  transform: translateY(-2px);
+}
+
+.chat-btn:hover {
+  background-color: rgb(243, 32, 5);
+}
+
+.call-btn:hover {
+  background-color: rgb(243, 32, 5);
+}
+
+.video-call-btn:hover {
+  background-color: rgb(243, 32, 5);
+}
+
+.profile-about {
+  padding: 20px;
+}
+
+.about-heading {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.about-text {
+  line-height: 1.6;
+}
+
+.recent-chats-container {
+  width: 100%;
+  max-width: 800px;
+  margin-left: 125px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recent-chats-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.chat-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.user-image-comment {
+  width: 70px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.comment-content {
+  flex: 1;
+  margin-top: 0px;
+}
+
+.chat-name {
+  font-size: 1rem;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #222;
+}
+
+.chat-message {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+.rating-container {
+  display: flex;
+  gap: 3px;
+}
+
+.no_availble {
+  text-align: center;
+}
+
+/* Responsive Styles */
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 1200px;
+  }
+
+  .profile-header {
+    padding: 30px;
+  }
+
+  .profile-img {
+    width: 228px;
+    height: 228px;
+  }
+
+  .profile-name {
+    font-size: 32px;
+  }
+
+  .price-amount {
+    font-size: 28px;
+  }
+
+  .profile-details {
+    padding-left: 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profile-details {
+    padding-left: 0;
+    text-align: center;
+  }
+
+  .profile-name {
+    font-size: 20px;
+  }
+
+  .price-amount {
+    font-size: 18px;
+  }
+
+  .action-btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .recent-chats-container {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px;
+    width: 95%;
+  }
+
+  .chat-item {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 10px 0;
+  }
+
+  .user-image-comment {
+    width: 60px;
+    height: 45px;
+    margin-bottom: 10px;
+  }
+
+  .comment-content {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .chat-name {
+    font-size: 1rem;
+  }
+
+  .chat-message {
+    font-size: 0.9rem;
+  }
+
+  .rating-container {
+    margin-top: 8px;
+  }
+}

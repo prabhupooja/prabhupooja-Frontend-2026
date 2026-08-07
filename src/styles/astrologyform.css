@@ -1,0 +1,86 @@
+.chat-form {
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  
+  .form-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .form-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: auto 100px;
+    justify-content: center;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .full-width {
+    grid-column: span 3;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  .extra-space {
+    grid-column: 2 / span 2;
+  }
+  
+  .chatform-button {
+    background-color: #cd5702;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    /* width: 100%; */
+    margin-top: 10px;
+    /* margin-bottom: 20px; */
+  }
+  
+  .chatform-button:hover {
+    background-color: #fc751c;
+  }
+  
+  @media (max-width: 768px) {
+    .form-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .extra-space {
+      grid-column: span 2;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .form-container {
+      grid-template-columns: 1fr;
+    }
+  
+    .extra-space {
+      grid-column: span 1;
+    }
+  }

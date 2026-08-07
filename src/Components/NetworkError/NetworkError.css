@@ -1,0 +1,54 @@
+
+.network-error-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    margin: auto;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+
+  .network-error-container p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  .network-error-button {
+    background-color: #e9802b;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    max-width: 180px;
+  }
+  
+  .network-error-button:hover {
+    background-color: #f29728;
+  }
+  
+  .online-container {
+    font-size: 18px;
+    color: #28a745;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

@@ -1,0 +1,354 @@
+.NewproductContainerFull {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+.NewproductContainerFull .leftProductContainer {
+  width: 25%;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.NewproductContainerFull .leftConatilnerBox {
+  margin-bottom: 30px;
+}
+
+.NewproductContainerFull .leftConatilnerBox h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #cd5702;
+  color: #333;
+}
+
+.NewproductContainerFull .categoryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.NewproductContainerFull .categoryList li {
+  padding: 10px;
+  margin-bottom: 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #555;
+}
+
+.NewproductContainerFull .categoryList li:hover,
+.NewproductContainerFull .categoryList li.active {
+  background-color: #cd5702;
+  color: #fff;
+}
+
+.NewproductContainerFull .radioGroup label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.NewproductContainerFull .radioGroup input {
+  margin-right: 8px;
+}
+
+.NewproductContainerFull .rightProductContainer {
+  width: 75%;
+}
+
+.NewproductContainerFull .bannerContainer img {
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+
+.NewproductContainerFull .bannerContainer p {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.NewproductContainerFull .fillterContainer h2 {
+  font-size: 20px;
+  color: #222;
+  margin-bottom: 12px;
+}
+
+.NewproductContainerFull .fillterButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.NewproductContainerFull .searchInput {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: 70%;
+  gap: 8px;
+}
+
+.NewproductContainerFull .searchInput input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  margin-top: 0;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+.NewproductContainerFull .filterButtons {
+  display: flex;
+  gap: 10px;
+  align-items:center
+}
+
+.NewproductContainerFull .filterButtons button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #eee;
+}
+
+.filterButtons label{
+    width: 100px;
+}
+
+.NewproductContainerFull .filterButtons button.active {
+  background-color: #cd5702;
+  color: white;
+}
+
+.NewproductContainerFull .productBoxs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.NewproductContainerFull .box {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.NewproductContainerFull .box:hover {
+  box-shadow: 0 0 12px rgba(0,0,0,0.08);
+}
+
+.NewproductContainerFull .box img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  min-height: 45vh;
+}
+
+.NewproductContainerFull .box h3 {
+  font-size: 16px;
+  color: #333;
+}
+
+.NewproductContainerFull .box p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.NewproductContainerFull .box button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  background-color: #cd5702;
+  border: none;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.NewproductContainerFull .box button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.NewproductContainerFull .ecom-loader {
+  text-align: center;
+  padding: 60px;
+  font-size: 18px;
+  color: #666;
+  align-items:center !important;
+}
+
+.NewproductContainerFull .checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.NewproductContainerFull .checkboxContainer {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #555;
+  user-select: none;
+}
+
+.NewproductContainerFull .checkboxContainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.NewproductContainerFull .checkmark {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #eee;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.NewproductContainerFull .checkboxContainer:hover input ~ .checkmark {
+  background-color: #ddd;
+}
+
+.NewproductContainerFull .checkboxContainer input:checked ~ .checkmark {
+  background-color: #cd5702;
+  border: 1px solid #cd5702;
+}
+
+.NewproductContainerFull .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.NewproductContainerFull .checkboxContainer input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.NewproductContainerFull .checkboxContainer .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.NewproductContainerFull .bestSellerbox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: #fff;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.NewproductContainerFull .bestSellerbox img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.NewproductContainerFull .bestSellerDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.NewproductContainerFull .bestSellerDetails .productName {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.NewproductContainerFull .bestSellerDetails .rating {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 6px;
+}
+
+.NewproductContainerFull .bestSellerDetails .price {
+  font-size: 12px;
+  font-weight: bold;
+  color: #cd5702;
+}
+
+
+.NewproductContainerFull .no-products{
+  text-align: start;
+  margin-top:10px
+}
+
+@media (max-width: 780px) {
+  .NewproductContainerFull {
+    flex-direction: column;
+  }
+
+  .NewproductContainerFull .leftProductContainer {
+    width: 100%;
+    position: relative;
+    top: auto;
+  }
+
+  .NewproductContainerFull .rightProductContainer {
+    width: 100%;
+  }
+
+  .NewproductContainerFull .bannerContainer img {
+    height: 150px;
+  }
+
+  .NewproductContainerFull .bannerContainer img,
+  .filterButtons label{
+    display: none;
+  }
+
+  .NewproductContainerFull .fillterButtons{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .NewproductContainerFull .searchInput{
+    width: 100%;
+  }
+
+.sortDropdown{
+    width: 100%;
+}
+.NewproductContainerFull .filterButtons{
+    width: 100%;
+}
+    
+}
+
+

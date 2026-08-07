@@ -1,0 +1,150 @@
+.Productreview_section {
+  background-color: #f5f5f5;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.Productreview_card {
+  background-color: #fff;
+  padding: 25px;
+  max-width: 600px;
+  margin: 30px auto;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Productreview_heading {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.Productreview_starsRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  padding: 0 10px;
+}
+
+.starWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  width: 60px;
+}
+
+.star {
+  font-size: 30px;
+  color: #ccc;
+  transition: color 0.3s;
+}
+
+.star.filled {
+  color: #ffd700;
+}
+
+.starLabel {
+  font-size: 11px;
+  color: #777;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.subHeading {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 12px 0;
+  color: #444;
+}
+
+.imageUploadButton {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e6e6e6;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.imageUploadText {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.imageUploadRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.imageUploadRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.previewImage {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+}
+
+.reasonsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.reasonChip {
+  background-color: #eee;
+  padding: 8px 14px;
+  border-radius: 20px;
+  margin: 5px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.reasonChip.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.reviewInput {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 12px;
+  resize: none;
+  background-color: #fafafa;
+  margin-bottom: 20px;
+}
+
+.submitButton {
+  width: 100%;
+  background-color: #cd5702;
+  padding: 15px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submitButton:hover {
+  background-color: #b54d01;
+}

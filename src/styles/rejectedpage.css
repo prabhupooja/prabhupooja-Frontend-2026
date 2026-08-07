@@ -1,0 +1,62 @@
+.rejectedpage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8d7da;
+  font-family: Arial, sans-serif;
+}
+
+.rejected_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.rejected_box {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  padding: 20px;
+}
+
+.rejected_img {
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+.maincontent_rejected {
+  font-size: 24px;
+  font-weight: bold;
+  color: #d9534f;
+  margin-bottom: 10px;
+}
+
+.subcontent_rejected {
+  font-size: 18px;
+  color: #721c24;
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .rejected_box {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .rejected_img {
+    max-width: 150px;
+  }
+
+  .maincontent_rejected {
+    font-size: 20px;
+  }
+
+  .subcontent_rejected {
+    font-size: 16px;
+  }
+}
