@@ -1,0 +1,1265 @@
+.loading_text {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.countdown-timer {
+  display: flex;
+  /* justify-content: center; */
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+
+.timer-box {
+  background-color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.time {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.timer_label {
+  font-size: 14px;
+  color: #777;
+}
+
+.rating-section {
+  margin-top: 10px;
+  margin-left: -7px;
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+}
+
+.rating-header {
+  display: flex
+;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: -20px;
+    margin-bottom: -5px;
+    margin-left: 5px;
+}
+
+.view-comments-btn {
+  margin-top: 2px;
+  font-size: 14px;
+  margin-left: 5px;
+  color: #000;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+}
+
+.rating-section p {
+  font-size: 14px;
+  color: #d05100;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+.category_heading {
+  padding-top: 80px;
+}
+
+.category_heading .product_image {
+  width: 100%;
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+}
+
+.category_heading .product_image img {
+  width: 100%;
+  height: 90%;
+  object-fit: cover;
+  object-position: center;
+  background-color: lightyellow;
+  border-radius: 8px;
+}
+
+.category_heading .product_content {
+  text-align: left;
+  font-size: 35px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  color: #000;
+  font-weight: 600;
+}
+
+.category_heading .product_name {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.category_heading .product_name p {
+  margin-bottom: 0;
+  color: #515969;
+  font-size: 15px;
+  line-height: 0.5;
+  text-align: left;
+}
+
+.category_heading .product_price {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category_heading .product_price .product_current_price {
+  font-size: 16px;
+  line-height: 1.2;
+  text-align: left;
+  color: #2e2e2e;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.category_heading .product_price .product_current_price span {
+  color: #888;
+  font-size: 15px;
+  line-height: 1.2;
+  text-decoration: line-through;
+}
+
+.category_heading .product_price .product_final_price {
+  color: #d75701;
+  font-weight: 700;
+  font-size: 18px;
+  margin-left: 5px;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.category_heading .product_price .discount_badge {
+  background-color: #2e7d32;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+
+.category_heading .booknow_support_btn {
+  display: flex;
+  gap: 25px;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.category_heading .booknow_support_btn .timeshedule_section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #000;
+  font-size: 16px;
+  border-radius: 3px;
+}
+
+.category_heading .booknow_support_btn .timeshedule_section .bothbtn {
+  display: flex;
+  margin-top: 5px;
+  margin-left: -10px;
+}
+
+.category_heading .booknow_support_btn .timeshedule_section .booknow-btn {
+  display: flex;
+  flex-direction: column;
+  margin-left: -12px;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .booknow-btn
+  .booknoww {
+  border: none;
+  color: #fff;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(
+      120deg,
+      #0000 33%,
+      hsla(0, 0%, 100%, 0.5) 50%,
+      #0000 66%
+    ),
+    linear-gradient(90deg, #ff9800, #ff5757);
+  background-size: 250% 250%, 100% 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pujaDetails 2s infinite;
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+}
+
+@keyframes pujaDetails {
+  0% {
+    background-position: 100%;
+  }
+
+  100% {
+    background-position: 0;
+  }
+}
+
+.loading_text {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.category_heading .countdown-timer {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+
+.category_heading .countdown-timer .timer-box {
+  background-color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category_heading .countdown-timer .timer-box .time {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.timer_label {
+  font-size: 14px;
+  color: #777;
+}
+
+.category_heading .rating-section {
+  margin-top: 10px;
+  margin-left: -7px;
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+}
+
+.category_heading .rating-section .rating-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-left: 5px;
+  margin-bottom: -10px;
+}
+
+.category_heading .rating-section .view-comments-btn {
+  margin-top: 2px;
+  font-size: 14px;
+  margin-left: 5px;
+  color: #000;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+}
+
+.category_heading .rating-section .rating-header p {
+  font-size: 14px;
+  color: #d05100;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+.about_according {
+  padding: 40px 0px;
+}
+
+.details_content {
+  display: flex;
+  border-top: 1px solid #adadad;
+  padding: 10px;
+  margin-bottom: 0;
+  width: 100%;
+  flex-direction: column;
+}
+
+.details_content .pandit_profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  width: max-content;
+}
+
+.details_content .pandit_profile .profile_pic {
+  width: 60px;
+  min-width: 60px;
+  height: 60px;
+  border: 1px solid #333;
+  border-radius: 50%;
+  background-color: lightyellow;
+}
+
+.details_content .pandit_profile .profile_pic img {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+.details_content .pandit_profile .profile_details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 7px;
+}
+
+.details_content .pandit_profile .profile_details .profile_name {
+  font-weight: 600;
+  color: #000;
+  font-size: 16px;
+}
+
+.details_content .pandit_profile .profile_details .profile_skill {
+  font-size: 15px;
+  color: #515969;
+}
+
+.details_content .profile_bio {
+  font-size: 15px;
+  color: #616161;
+  margin-bottom: 0;
+  text-align: justify;
+}
+
+.about_according .next_section {
+  padding: 10px;
+  margin-bottom: 0;
+  width: 100%;
+  border-bottom: none;
+  border-top: 1px solid #adadad;
+}
+
+.about_according .next_section h2 {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #000;
+  font-size: 16px;
+  text-align: left;
+}
+
+.about_according .next_section .next_details {
+  color: #616161;
+}
+
+.about_according .next_section .next_details p {
+  margin-bottom: 0;
+  color: #616161;
+  text-align: left;
+}
+
+.about_according .next_section .next_details ul li {
+  list-style: disc;
+  margin-left: 12px;
+  font-size: 15px;
+}
+
+.pooja-booking-info {
+  font-size: 15px;
+  margin-bottom: 5px;
+  color: #2e2e2e;
+  font-weight: 500;
+  margin-left: -10px;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .join-now-btn {
+  outline: none;
+  border: none;
+  font-weight: 600;
+  border-radius: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 25px;
+  padding-right: 25px;
+  color: #fff;
+  background: linear-gradient(
+      120deg,
+      #0000 33%,
+      hsla(0, 0%, 100%, 0.5) 50%,
+      #0000 66%
+    ),
+    linear-gradient(90deg, #ff9800, #ff5757);
+  background-size: 250% 250%, 100% 100%;
+  cursor: pointer;
+  animation: pujaDetails 2s infinite;
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .feedback-btn {
+  outline: none;
+  border: none;
+  font-weight: 600;
+  border-radius: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 25px;
+  padding-right: 25px;
+  margin-left: 15px;
+  color: #fff;
+  background: linear-gradient(
+      120deg,
+      #0000 33%,
+      hsla(0, 0%, 100%, 0.5) 50%,
+      #0000 66%
+    ),
+    linear-gradient(90deg, #91ff48, #08b116);
+  background-size: 250% 250%, 100% 100%;
+  cursor: pointer;
+  animation: pujaDetails 2s infinite;
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .join-now-btn:hover {
+  background-color: #ff5420;
+}
+
+.category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .bothbtn
+  .feedback-btn:hover {
+  background-color: #215200;
+}
+
+.toggle-button {
+  border: none;
+  background: transparent;
+  color: #cd5702;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+/* Packages Section */
+.pooja_packages_section {
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.pooja_packages_section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2e2e2e;
+  margin-bottom: 20px;
+}
+
+.packages_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.package_card {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.package_card:hover {
+  border-color: #f97316;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.15);
+}
+
+.package_card.selected {
+  border-color: #cd5702;
+  background: #fffbf7;
+  box-shadow: 0 10px 25px -5px rgba(205, 87, 2, 0.2);
+}
+
+.package_card .package_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.package_card .package_name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.package_card .package_radio {
+  accent-color: #cd5702;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.package_card .package_price {
+  font-size: 22px;
+  font-weight: 800;
+  color: #cd5702;
+  margin-bottom: 8px;
+}
+
+.package_card .package_desc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.package_card .package_features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.package_card .package_features li {
+  font-size: 12px;
+  color: #475569;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.package_card .package_features li::before {
+  content: "✓";
+  color: #16a34a;
+  font-weight: bold;
+}
+
+@media (max-width: 480px) {
+  .category_heading {
+    padding-bottom: 0px;
+  }
+
+  .category_heading
+  .booknow_support_btn
+  .timeshedule_section
+  .booknow-btn
+  .booknoww {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-left: 25px;
+    font-size: 14px;
+  }
+
+  .support-btn {
+    padding-right: 25px;
+    padding-left: 25px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-size: 15px;
+  }
+
+  .booknow_support_btn {
+    margin-bottom: 20px;
+  }
+
+  .category_heading .countdown-timer .timer-box {
+    padding: 5px 10px;
+  }
+
+  .category_heading .countdown-timer .timer-box .time {
+    font-size: 18px;
+  }
+
+  .timer_label {
+    padding-left: 5px;
+    font-size: 12px;
+  }
+
+  .profile_skill {
+    font-size: 12px;
+  }
+
+  .category_heading .product_content {
+    font-size: 25px;
+    margin-bottom: 10px;
+    margin-top: 0px;
+  }
+}
+
+/* ---------------- FULL WIDTH PANDITS SECTION ---------------- */
+.fullwidth_pandits_section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.fullwidth_pandits_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fullwidth_pandits_header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fullwidth_pandits_header .available_badge {
+  font-size: 12px;
+  background-color: #ffedd5;
+  color: #c2410c;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.slider_nav_arrows {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slider_arrow_btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+
+.slider_arrow_btn:hover {
+  background: #ea580c;
+  color: #ffffff;
+  border-color: #ea580c;
+  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+  transform: scale(1.05);
+}
+
+.slider_arrow_btn:active {
+  transform: scale(0.95);
+}
+
+.pandits_slider_track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 8px 4px 14px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #fed7aa #f8fafc;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pandits_slider_track::-webkit-scrollbar {
+  height: 6px;
+}
+
+.pandits_slider_track::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.pandits_slider_track::-webkit-scrollbar-thumb {
+  background: #fed7aa;
+  border-radius: 10px;
+}
+
+.pandits_slider_track::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+.pandit_slider_card {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  flex: 0 0 290px;
+  min-width: 290px;
+  max-width: 310px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pandit_slider_card:hover {
+  border-color: #fdba74;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.12);
+}
+
+.pandit_grid_avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fdba74;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.pandit_grid_info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pandit_grid_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+}
+
+.pandit_grid_name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.pandit_grid_badge {
+  font-size: 9px;
+  background-color: #dcfce7;
+  color: #166534;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.pandit_grid_meta {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pandit_grid_skills {
+  font-size: 11px;
+  font-weight: 600;
+  color: #c2410c;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------- POOJA ACCORDION DROPDOWN SECTIONS ---------------- */
+.pooja_accordion_container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.pooja_accordion_card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease;
+}
+
+.pooja_accordion_card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.pooja_accordion_card.is_open {
+  border-color: #fed7aa;
+  box-shadow: 0 4px 18px rgba(234, 88, 12, 0.08);
+}
+
+.pooja_accordion_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  cursor: pointer;
+  background: #ffffff;
+  transition: background 0.2s ease;
+  user-select: none;
+}
+
+.pooja_accordion_card.is_open .pooja_accordion_header {
+  background: #fffaf5;
+  border-bottom: 1px solid #ffedd5;
+}
+
+.pooja_accordion_title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pooja_accordion_toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pooja_accordion_card.is_open .pooja_accordion_toggle {
+  background: #ea580c;
+  color: #ffffff;
+  transform: rotate(180deg);
+}
+
+.pooja_accordion_body {
+  padding: 20px 24px;
+  background: #ffffff;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.7;
+}
+
+.pooja_accordion_body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .pooja_accordion_body ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pooja_accordion_body li {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+.pooja_accordion_body li::before {
+  content: "✨";
+  font-size: 12px;
+}
+
+/* ---------------- STICKY BOTTOM BOOKING BAR (DESKTOP BASE) ---------------- */
+.sticky_bottom_booking_bar {
+  position: sticky;
+  bottom: 20px;
+  z-index: 100;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 18px 28px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.45);
+  border: 1px solid #334155;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.sticky_bottom_booking_bar .bar_price_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.sticky_bottom_booking_bar .bar_label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.sticky_bottom_booking_bar .bar_price {
+  font-size: 28px;
+  font-weight: 900;
+  color: #fb923c;
+  line-height: 1.2;
+}
+
+.sticky_bottom_booking_bar .bar_meta {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-top: 2px;
+}
+
+.sticky_bottom_booking_bar .bar_meta strong {
+  color: #ffffff;
+}
+
+.sticky_bottom_booking_bar .bar_btn {
+  background: linear-gradient(135deg, #ea580c 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 800;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.45);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.sticky_bottom_booking_bar .bar_btn:hover {
+  background: linear-gradient(135deg, #c2410c 0%, #b45309 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(234, 88, 12, 0.55);
+}
+
+.sticky_bottom_booking_bar .bar_btn:active {
+  transform: scale(0.98);
+}
+
+/* ---------------- RESPONSIVE STYLING (TABLET & MOBILE) ---------------- */
+
+/* Tablet (max-width: 991px) */
+@media (max-width: 991px) {
+  .category_heading {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .category_heading .product_image {
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+  }
+
+  .category_heading .product_content {
+    font-size: 28px;
+  }
+
+  .packages_grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .fullwidth_pandits_section {
+    padding: 20px 16px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+
+  .pandit_slider_card {
+    flex: 0 0 270px;
+    min-width: 270px;
+    padding: 12px 14px;
+  }
+
+  .pooja_accordion_body ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile (max-width: 640px) */
+@media (max-width: 640px) {
+  .category_heading {
+    padding-top: 10px;
+    padding-bottom: 80px; /* space for sticky bottom bar */
+  }
+
+  .category_heading .product_image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .category_heading .product_content {
+    font-size: 22px;
+    line-height: 1.3;
+    margin-top: 5px;
+    margin-bottom: 8px;
+  }
+
+  .category_heading .product_name p {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .category_heading .product_price {
+    margin-top: 10px;
+    gap: 8px;
+  }
+
+  .category_heading .product_price .product_final_price {
+    font-size: 22px;
+  }
+
+  .countdown-timer {
+    gap: 8px;
+    margin-top: 14px;
+    margin-bottom: 14px;
+  }
+
+  .timer-box {
+    padding: 6px 10px;
+    min-width: 58px;
+  }
+
+  .timer-box .time {
+    font-size: 16px;
+  }
+
+  .timer_label {
+    font-size: 11px;
+  }
+
+  .rating-section {
+    margin-top: 6px;
+  }
+
+  /* Packages */
+  .pooja_packages_section {
+    margin-top: 24px;
+    margin-bottom: 20px;
+  }
+
+  .pooja_packages_section h2 {
+    font-size: 19px;
+    margin-bottom: 14px;
+  }
+
+  .packages_grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .package_card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .package_card .package_name {
+    font-size: 15px;
+  }
+
+  .package_card .package_price {
+    font-size: 20px;
+  }
+
+  /* Pandits Section */
+  .fullwidth_pandits_section {
+    padding: 16px 12px;
+    border-radius: 14px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .fullwidth_pandits_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .fullwidth_pandits_header h2 {
+    font-size: 17px;
+  }
+
+  .fullwidth_pandits_header > div:last-child {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .pandits_slider_track {
+    gap: 12px;
+    padding: 4px 2px 12px 2px;
+  }
+
+  .pandit_slider_card {
+    flex: 0 0 255px;
+    min-width: 255px;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .pandit_grid_avatar {
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+  }
+
+  .pandit_grid_name {
+    font-size: 13px;
+  }
+
+  .slider_arrow_btn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  /* Accordions */
+  .pooja_accordion_container {
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .pooja_accordion_card {
+    border-radius: 12px;
+  }
+
+  .pooja_accordion_header {
+    padding: 14px 16px;
+  }
+
+  .pooja_accordion_title {
+    font-size: 14px;
+    gap: 8px;
+  }
+
+  .pooja_accordion_toggle {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .pooja_accordion_body {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  .pooja_accordion_body ul {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .pooja_accordion_body li {
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  /* Sticky Bottom Bar */
+  .sticky_bottom_booking_bar {
+    bottom: 8px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .sticky_bottom_booking_bar .bar_price_info {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sticky_bottom_booking_bar .bar_label {
+    font-size: 10px;
+  }
+
+  .sticky_bottom_booking_bar .bar_price {
+    font-size: 22px;
+  }
+
+  .sticky_bottom_booking_bar .bar_meta {
+    display: none; /* keep clean on tiny screens */
+  }
+
+  .sticky_bottom_booking_bar .bar_btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 10px;
+  }
+}
+
+

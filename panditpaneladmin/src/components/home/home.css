@@ -1,0 +1,178 @@
+.admin_dashboard {
+  margin-top: 20px;
+}
+
+.admin_home {
+  padding: 20px;
+  /* margin-left: -100px; */
+}
+
+.dashboard_cards {
+  align-items: center;
+  justify-content: center;
+  display: grid;
+  margin-left: 260px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card_content {
+  display: flex;
+}
+
+.card_icon {
+  font-size: 20px;
+  text-align: center;
+  margin-top: 25px;
+  display: flex;
+}
+
+.card_info {
+  /* text-align: right; */
+  margin-left: 30px;
+}
+
+.pandit_icon {
+  background: #ffefe0;
+  padding: 10px;
+  border-radius: 10%;
+}
+
+.card_info h4 {
+  font-size: 18px;
+  color: #555;
+}
+
+.card_info p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.growth {
+  font-size: 14px;
+  margin-top: 28px;
+  font-weight: bold;
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
+
+.recent-orders {
+  margin-top: 40px;
+  padding: 20px;
+  margin-left: 250px;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0px 0px 7px 0px #c3bebe;
+}
+
+.create_orderbox {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.createorder_btn {
+  border: none;
+  background: #cd5702;
+  padding-right: 10px;
+  padding-left: 10px;
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.createorder_btn:hover {
+  background: #fc6c05;
+}
+
+.orders_title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+}
+
+.order-table th,
+.order-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.order-table td {
+  font-size: 14px;
+}
+
+.order-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.status {
+  font-weight: bold;
+  text-transform: capitalize;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.status.delivered {
+  color: green;
+}
+
+.status.pending {
+  color: orange;
+}
+
+.status.cancelled {
+  color: red;
+}
+
+@media screen and (max-width: 768px) {
+  .order-table th,
+  .order-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .order-table th,
+  .order-table td {
+    padding: 6px;
+    font-size: 12px;
+  }
+}

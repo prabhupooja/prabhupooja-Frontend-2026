@@ -1,0 +1,78 @@
+.chat-history-container {
+  /* max-width: 800px; */
+  width: 40vw;
+  margin: 100px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-history-container .chat_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.chat-history-container .user_icon {
+  font-size: 30px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.chat-history-container .chat-history-container h2 {
+  text-align: center;
+  color: #333;
+  font-size: 22px;
+}
+
+.chat-history-container .chat-history {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chat-history-container .message {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 15px;
+  max-width: 75%;
+  word-wrap: break-word;
+}
+
+.chat-history-container .message p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chat-history-container .user {
+  background-color: #cd5702;
+  align-self: flex-end;
+  text-align: right;
+  color: #fff;
+}
+
+.chat-history-container .bot {
+  background-color: #e0dddd;
+  align-self: flex-start;
+  text-align: left;
+}
+
+.chat-history-container .timestamp-text {
+  font-size: 12px;
+  color: #888;
+}
+
+.chat-history-container .timestamp-right {
+  text-align: right;
+  float: right;
+  color: white;
+}
+
+.chat-history-container .timestamp-left {
+  text-align: left;
+  float: left;
+
+}

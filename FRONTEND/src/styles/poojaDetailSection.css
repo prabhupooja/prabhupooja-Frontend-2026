@@ -1,0 +1,371 @@
+/* Pooja Detail & Pandit Selection Styles */
+.pooja-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: 'Poppins', sans-serif;
+  color: #1e293b;
+}
+
+.pooja-hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  margin-bottom: 30px;
+}
+
+@media (min-width: 768px) {
+  .pooja-hero-card {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.pooja-hero-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 768px) {
+  .pooja-hero-image {
+    width: 320px;
+    height: 220px;
+  }
+}
+
+.pooja-hero-content {
+  flex: 1;
+}
+
+.pooja-hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.pooja-price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.pooja-final-price {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ea580c;
+}
+
+.pooja-original-price {
+  font-size: 18px;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.pooja-discount-tag {
+  background-color: #dcfce7;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.pooja-about-text {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* Section Containers */
+.section-block {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* Package Grid */
+.packages-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .packages-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .packages-grid-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.package-item-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.package-item-card:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+.package-item-card.selected {
+  border-color: #f97316;
+  background: #fffaf5;
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.15);
+  outline: 2px solid #fdba74;
+}
+
+.package-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.package-item-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.package-item-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ea580c;
+}
+
+.package-item-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.package-item-specs {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  font-size: 12px;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Pandits Grid */
+.pandits-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .pandits-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pandits-grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pandit-item-card {
+  display: flex;
+  align-items: flex-start;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pandit-item-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.pandit-item-card.selected {
+  border-color: #ea580c;
+  background: #fff7ed;
+  box-shadow: 0 6px 18px rgba(234, 88, 12, 0.18);
+  outline: 2px solid #fdba74;
+}
+
+.pandit-card-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fdba74;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.pandit-card-info {
+  flex: 1;
+}
+
+.pandit-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.pandit-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pandit-verified-badge {
+  font-size: 10px;
+  background-color: #dcfce7;
+  color: #166534;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+.pandit-card-meta {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.pandit-card-skills {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c2410c;
+  margin-bottom: 4px;
+}
+
+.pandit-card-qual {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.pandit-selected-tag {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #c2410c;
+  background-color: #ffedd5;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* Booking Bottom Summary Bar */
+.booking-summary-bar {
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4);
+  margin-top: 32px;
+}
+
+@media (min-width: 640px) {
+  .booking-summary-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.summary-price-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.summary-price-value {
+  font-size: 30px;
+  font-weight: 900;
+  color: #fb923c;
+}
+
+.summary-details {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-top: 2px;
+}
+
+.summary-details span {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.book-now-main-btn {
+  background: linear-gradient(135deg, #f97316 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.book-now-main-btn:hover {
+  background: linear-gradient(135deg, #ea580c 0%, #b45309 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.45);
+}
+
+.book-now-main-btn:active {
+  transform: scale(0.98);
+}
