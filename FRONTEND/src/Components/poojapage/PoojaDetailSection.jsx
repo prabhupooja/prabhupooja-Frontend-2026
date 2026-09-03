@@ -96,7 +96,7 @@ const PoojaDetailSection = ({ poojaId: propPoojaId }) => {
         } catch (e1) {
           // Fallback to direct URL if needed
           try {
-            const fallbackRes = await axios.get(`http://localhost:5000/onlinePuja/get/${activePoojaId}`);
+            const fallbackRes = await axios.get(`/user/onlinePuja/get/${activePoojaId}`);
             if (fallbackRes.data?.success && fallbackRes.data?.data) {
               poojaData = fallbackRes.data.data;
             }

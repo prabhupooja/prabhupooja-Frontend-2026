@@ -120,62 +120,126 @@ p {
 }
 
 /* ============================================
-   HERO SECTION - Modern Glassmorphism
+   HERO SECTION - Banner Slider
    ============================================ */
 .hero-section {
   width: 100%;
-  height: 100vh;
-  min-height: 600px;
-  overflow: hidden;
   position: relative;
-  background: var(--gradient-hero);
+  overflow: hidden;
+  background: #0d1117;
+  padding: 0;
+  margin: 0;
 }
 
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(ellipse at 20% 80%, rgba(184, 134, 11, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(233, 69, 96, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(22, 33, 62, 0.8) 0%, transparent 70%);
-  z-index: 1;
+.hero-swiper {
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 2;
 }
 
-/* Floating decorative elements */
-.hero-section::after {
-  content: '';
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
-  top: -200px;
-  right: -200px;
-  animation: float 20s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(30px, 30px) rotate(10deg); }
-}
-
-.hero-swiper,
 .hero-slide {
   width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.hero-slide {
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-size: cover;
-  background-position: center;
+  position: relative;
+  background: #0d1117;
+  overflow: hidden;
+}
+
+.hero-banner-img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Swiper navigation controls */
+.hero-swiper .swiper-button-prev,
+.hero-swiper .swiper-button-next {
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.55);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.hero-swiper .swiper-button-prev {
+  left: 20px;
+}
+
+.hero-swiper .swiper-button-next {
+  right: 20px;
+}
+
+.hero-swiper .swiper-button-prev:after,
+.hero-swiper .swiper-button-next:after {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.hero-swiper .swiper-button-prev:hover,
+.hero-swiper .swiper-button-next:hover {
+  background: #ff9800;
+  border-color: #ff9800;
+  color: #fff;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 16px rgba(255, 152, 0, 0.6);
+}
+
+.hero-swiper .swiper-pagination {
+  bottom: 12px !important;
+  z-index: 10;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.75);
+  opacity: 0.6;
+  width: 10px;
+  height: 10px;
+  transition: all 0.3s ease;
+  margin: 0 4px !important;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background: #ff9800;
+  opacity: 1;
+  width: 26px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.7);
+}
+
+@media (max-width: 767px) {
+  .hero-swiper .swiper-button-prev,
+  .hero-swiper .swiper-button-next {
+    width: 32px;
+    height: 32px;
+  }
+  .hero-swiper .swiper-button-prev:after,
+  .hero-swiper .swiper-button-next:after {
+    font-size: 13px;
+  }
+  .hero-swiper .swiper-button-prev {
+    left: 8px;
+  }
+  .hero-swiper .swiper-button-next {
+    right: 8px;
+  }
+  .hero-swiper .swiper-pagination {
+    bottom: 6px !important;
+  }
 }
 
 
@@ -1412,18 +1476,35 @@ p {
   font-size: clamp(1.75rem, 4vw, 2.75rem);
   font-weight: var(--font-weight-extrabold);
   color: var(--white);
-  margin-bottom: 20px;
+  margin-bottom: 32px;
   line-height: 1.3;
 }
 
-.spirituality-desc {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.82);
-  line-height: 1.75;
+.spirituality-countdown {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
   margin-bottom: 32px;
-  max-width: 540px;
-  margin-left: auto;
-  margin-right: auto;
+  flex-wrap: wrap;
+}
+
+.spirituality-timer-box {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--white);
+  min-width: 80px;
+  text-align: center;
+  transition: var(--transition-smooth);
+}
+
+.spirituality-timer-box:hover {
+  background: var(--primary);
+  transform: scale(1.05);
 }
 
 .shop-button {
@@ -2344,16 +2425,7 @@ html {
   background: var(--primary-dark);
 }
 
-.hero-swiper,
-.hero-slide {
-  width: 100%;
-  height: 100vh;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+
 
 .hero-overlay {
   position: absolute;
@@ -3899,14 +3971,6 @@ html {
 
   .media-images img {
     height: 180px;
-  }
-  .hero-section {
-    height: 30vh !important;
-  }
-
-  .hero-swiper,
-  .hero-slide {
-    height: 30vh !important;
   }
 }
 

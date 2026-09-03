@@ -74,15 +74,25 @@ const useHomeStore = create((set, get) => ({
   },
 
   getProducts: async (force = false) => {
-    if (!force && isFresh("products") && get().products?.length > 0) {
-      return { data: { success: true, data: [get().products] } };
+    if (!force && isFresh("products") && Array.isArray(get().products) && get().products.length > 0) {
+      return { data: { success: true, data: get().products } };
     }
 
     set({ isLoading: true });
     try {
       const response = await api.get("/products/get");
       if (response.data.success) {
-        set({ products: response.data.data[0], error: null });
+        let productList = [];
+        if (Array.isArray(response.data.data)) {
+          if (Array.isArray(response.data.data[0])) {
+            productList = response.data.data[0];
+          } else {
+            productList = response.data.data;
+          }
+        } else if (Array.isArray(response.data.products)) {
+          productList = response.data.products;
+        }
+        set({ products: productList, error: null });
         markFresh("products");
       } else {
         set({ error: response.data.message || "Failed to fetch products." });
@@ -277,6 +287,27 @@ const useHomeStore = create((set, get) => ({
 
   getAllCouponBanner: async () => {
     try {
+      try {
+        const bannerRes = await api.get(`/banner/getbanner`);
+        if (bannerRes?.data?.data && (Array.isArray(bannerRes.data.data) ? bannerRes.data.data.length > 0 : true)) {
+          return bannerRes;
+        }
+      } catch (_) {}
+
+      try {
+        const bannerRes2 = await api.get(`/banner/all`);
+        if (bannerRes2?.data?.data && (Array.isArray(bannerRes2.data.data) ? bannerRes2.data.data.length > 0 : true)) {
+          return bannerRes2;
+        }
+      } catch (_) {}
+
+      try {
+        const bannerRes3 = await api.get(`/banner`);
+        if (bannerRes3?.data?.data && (Array.isArray(bannerRes3.data.data) ? bannerRes3.data.data.length > 0 : true)) {
+          return bannerRes3;
+        }
+      } catch (_) {}
+
       const response = await api.get(`/users/getPublicOfferBanners?isMobile=0`);
       if (response?.data) {
         return response;

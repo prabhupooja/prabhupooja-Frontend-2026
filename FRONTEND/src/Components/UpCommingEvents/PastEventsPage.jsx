@@ -5,10 +5,12 @@ import "./PastEvents.css";
 
 // Fallback images
 import img1 from "../Assets/Sounds/55.jpeg";
+import img2 from "../Assets/pooja-img.jpg";
+import img3 from "../Assets/adhiyogi2.jpg";
 
 const fallbackPastEvents = [
   {
-    id: 2,
+    id: 101,
     title: "Bhagwat Katha, Indore",
     speaker: "डॉ. मनोज मोहन शास्त्री जी महाराज",
     date: "अप्रैल 2026",
@@ -19,15 +21,26 @@ const fallbackPastEvents = [
     website: "https://drmanojmohanshastriji.com",
   },
   {
-    id: 1,
+    id: 102,
     title: "शिवपुरी नववर्ष महोत्सव 2026",
     speaker: "सहस्त्र चंडी महायज्ञ",
     date: "मार्च 2026",
     location: "शिवपुरी, मध्य प्रदेश",
     description:
       "विश्व कल्याण एवं परिवार की शांति-समृद्धि हेतु इस पवित्र सहस्त्र चंडी महायज्ञ में भाग लें। इस महायज्ञ में भाग लेकर आप अपने जीवन को आध्यात्मिक ऊर्जा से आलोकित कर सकते हैं।",
-    image: "https://shivpurikatha.com/assets/1-CDLcTgCy.jpeg",
+    image: img2,
     website: "https://shivpurikatha.com/",
+  },
+  {
+    id: 2,
+    title: "Shravan Somwar Akhand Mahapuja",
+    speaker: "आचार्य पंडित समूह",
+    date: "14th August 2025",
+    location: "Prabhu Pooja Dham, Haridwar",
+    description:
+      "A grand gathering of devotees witnessed the sacred Somwar Mahapuja with over 10,000 online and offline participants.",
+    image: img3,
+    website: null,
   },
 ];
 
@@ -36,8 +49,9 @@ const PastEventsPage = () => {
   const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getImageUrl = (image) => {
-    if (!image) return img1;
+  const getImageUrl = (image, index = 0) => {
+    const fallbacks = [img1, img2, img3];
+    if (!image) return fallbacks[index % fallbacks.length];
     if (image.startsWith("http://") || image.startsWith("https://")) return image;
     const backendBase = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
     return `${backendBase}/uploads/${image}`;
@@ -49,7 +63,14 @@ const PastEventsPage = () => {
       try {
         const response = await api.get("/events/getall?type=past");
         if (response.data.success && response.data.data && response.data.data.length > 0) {
-          setPastEvents(response.data.data);
+          const apiData = response.data.data;
+          const merged = [...apiData];
+          fallbackPastEvents.forEach((fb) => {
+            if (!merged.some((m) => String(m.title).toLowerCase().includes(String(fb.title).toLowerCase().slice(0, 8)))) {
+              merged.push(fb);
+            }
+          });
+          setPastEvents(merged);
         } else {
           setPastEvents(fallbackPastEvents);
         }
@@ -74,7 +95,7 @@ const PastEventsPage = () => {
           <span className="past-events-hero-tag">✨ Our Spiritual Journey</span>
           <h1>Past Events (सम्पन्न हुए कार्यक्रम)</h1>
           <p>
-            Relive the divine moments from our previous spiritual gatherings and events.
+            Relive the divine moments and blessings from our previous spiritual gatherings and events.
           </p>
         </div>
       </section>
@@ -86,24 +107,32 @@ const PastEventsPage = () => {
             <h2>
               All <span>Past Events</span>
             </h2>
-            <p>Browse through our archive of completed spiritual events and programs.</p>
+            <p>Browse through our archive of completed spiritual events and divine programs.</p>
           </div>
 
           <div className="past-events-grid">
             {loading ? (
               <p style={{ textAlign: "center", width: "100%", padding: "30px 0" }}>Loading past events...</p>
             ) : (
-              displayEvents.map((event) => {
-                const eventImage = getImageUrl(event.image);
+              displayEvents.map((event, index) => {
+                const defaultImg = [img1, img2, img3][index % 3];
+                const eventImage = getImageUrl(event.image, index);
                 const eventDate = event.date_info || event.date || (event.start_date ? `${event.start_date}` : "");
                 const eventSpeaker = event.speaker || event.tag || event.special_pooja || "";
                 const eventLocation = event.location || event.service_type || "भारत";
                 const linkUrl = event.website || event.redirect_url;
 
                 return (
-                  <div className="pe-card" key={event.id}>
+                  <div className="pe-card" key={event.id || index}>
                     <div className="pe-card-img">
-                      <img src={eventImage} alt={event.title} />
+                      <img
+                        src={eventImage}
+                        alt={event.title}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = defaultImg;
+                        }}
+                      />
                       {eventDate && <span className="pe-card-date-badge">{eventDate}</span>}
                     </div>
                     <div className="pe-card-body">
@@ -111,8 +140,8 @@ const PastEventsPage = () => {
                       {eventSpeaker && <p className="pe-card-speaker">🙏 {eventSpeaker}</p>}
                       {eventLocation && <p className="pe-card-location">📍 {eventLocation}</p>}
                       <p className="pe-card-desc">
-                        {event.description?.length > 120
-                          ? event.description.slice(0, 120) + "..."
+                        {event.description?.length > 130
+                          ? event.description.slice(0, 130) + "..."
                           : event.description}
                       </p>
                       <button

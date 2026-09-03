@@ -19,9 +19,6 @@ const PoojaDetailMasterPage = lazy(() => import("./Components/poojapage/PoojaDet
 const Temple = lazy(() => import("./Components/temple/temple"));
 const TempleDetail = lazy(() => import("./Components/temple/TempleDetail"));
 const Booknowform = lazy(() => import("./Components/temple/booknowform"));
-const Khajranatemple = lazy(() => import("./Components/khajranatemple/khajranatemple"));
-const Ujjaintemple = lazy(() => import("./Components/ujjaintemple/ujjaintemple"));
-const PanchmukhiShaniHanumanMandir = lazy(() => import("./Components/PanchmukhiShaniHanumanMandir/PanchmukhiShaniHanumanMandir"));
 
 const Prasaddelivery = lazy(() => import("./Components/prasaddelivery/prasaddelivery"));
 const Khajranaprasad = lazy(() => import("./Components/khajranaprasadonline/khajranaprasad"));
@@ -188,6 +185,8 @@ function App() {
             <Route path="/onlinepooja/:id" element={<PoojaDetailMasterPage />} />
             <Route path="/pooja/:id" element={<PoojaDetailMasterPage />} />
             <Route path="/pooja/:slug/:id" element={<PoojaDetailMasterPage />} />
+            <Route path="/poojadetail/:id" element={<PoojaDetailMasterPage />} />
+            <Route path="/pooja-detail/:id" element={<PoojaDetailMasterPage />} />
 
             {/* Legacy Pooja Routes mapped to Master Template for backward compatibility */}
             <Route path="/kaalsarppooja/:id" element={<PoojaDetailMasterPage />} />
@@ -205,14 +204,20 @@ function App() {
               path="/mahamrityunjayajaap/:id"
               element={<PoojaDetailMasterPage />}
             />
+            
+            {/* Universal Dynamic Temple Routes */}
             <Route path="/temple" element={<Temple />} />
             <Route path="/booknowform" element={<Booknowform />} />
             <Route path="/temple/:id" element={<TempleDetail />} />
             <Route path="/temple/1" element={<TempleDetail />} />
             <Route path="/temple/2" element={<TempleDetail />} />
             <Route path="/temple/3" element={<TempleDetail />} />
+            <Route path="/khajranatemple" element={<TempleDetail />} />
+            <Route path="/ujjaintemple" element={<TempleDetail />} />
+            <Route path="/panchmukhishanihanumanmandir" element={<TempleDetail />} />
 
             <Route path="/prasaddelivery" element={<Prasaddelivery />} />
+            <Route path="/prasad/:id" element={<Khajranaprasad />} />
             <Route path="/prasad/1" element={<Khajranaprasad />} />
             <Route path="/prasad/2" element={<Ujjainprasad />} />
             <Route path="/astrology" element={<Astrology />} />
@@ -322,6 +327,11 @@ function App() {
             <Route path="/productreview" element={<Productreview />} />
 
             <Route path="/e-commerce" element={<EcommerceNew2 />} />
+            <Route path="/ecommerce" element={<EcommerceNew2 />} />
+            <Route path="/shop" element={<EcommerceNew2 />} />
+            <Route path="/pooja-samagri" element={<EcommerceNew2 />} />
+            <Route path="/contact" element={<Enquiryform />} />
+            <Route path="/contactus" element={<Enquiryform />} />
 
             <Route path="/past-events" element={<PastEventsPage />} />
             <Route path="/past-events/:id" element={<PastEventDetailPage />} />

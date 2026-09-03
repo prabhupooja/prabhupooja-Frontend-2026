@@ -6,12 +6,76 @@ import { TailSpin } from "react-loader-spinner";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 import CryptoJS from "crypto-js";
 import Swal from "sweetalert2";
-import { FaShoppingCart } from "react-icons/fa";
-import { AiFillForward } from "react-icons/ai";
+import {
+  FaShoppingCart,
+  FaStar,
+  FaRegStar,
+  FaStarHalfAlt,
+  FaTruck,
+  FaShieldAlt,
+  FaUndo,
+  FaCheck,
+  FaBolt,
+  FaExpand,
+  FaChevronLeft,
+  FaChevronRight,
+  FaTag,
+} from "react-icons/fa";
+import { MdVerified, MdOutlineSecurity } from "react-icons/md";
 import useUserCardStore from "../../Store/userCardStore/userCardStore";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
-import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
+
+// 🛡️ Helper: Parse array of images safely from any format
+export const parseAllImages = (imgData) => {
+  const fallback = [
+    "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=600&q=80",
+  ];
+  if (!imgData) return fallback;
+
+  if (Array.isArray(imgData)) {
+    const cleaned = imgData
+      .map((img) =>
+        typeof img === "string"
+          ? img.trim().replace(/^["'[\]]+|["'[\]]+$/g, "")
+          : img
+      )
+      .filter(Boolean);
+    return cleaned.length > 0 ? cleaned : fallback;
+  }
+
+  if (typeof imgData === "string") {
+    const trimmed = imgData.trim();
+    if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed
+            .map((img) =>
+              typeof img === "string"
+                ? img.trim().replace(/^["'[\]]+|["'[\]]+$/g, "")
+                : img
+            )
+            .filter(Boolean);
+          if (cleaned.length > 0) return cleaned;
+        }
+      } catch (e) {
+        // continue
+      }
+    }
+    if (trimmed.includes(",")) {
+      const parts = trimmed
+        .split(",")
+        .map((s) => s.trim().replace(/^["'[\]]+|["'[\]]+$/g, ""))
+        .filter(Boolean);
+      if (parts.length > 0) return parts;
+    }
+    const clean = trimmed.replace(/^["'[\]]+|["'[\]]+$/g, "");
+    return clean ? [clean] : fallback;
+  }
+
+  return fallback;
+};
 
 const Productdetails = () => {
   const { productId } = useParams();
@@ -19,166 +83,37 @@ const Productdetails = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const { addToCart, getCartItems } = useUserCardStore();
   const [loading, setLoading] = useState(true);
+  const [addingToCart, setAddingToCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
-  const { user1, setIsLoginPopup } = useAuthStore();
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [allImages, setAllImages] = useState([]);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const { user1 } = useAuthStore();
   const navigate = useNavigate();
+
   const mainImageRef = useRef(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [images, setImages] = useState([]);
+  const autoRotateTimerRef = useRef(null);
+
+  // Lightbox State
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
+
+  // Tabs State
   const [selectedTab, setSelectedTab] = useState("description");
   const [reviews, setReviews] = useState([]);
 
-  const openImageViewer = (img, imgArray) => {
-    setImages(imgArray);
-    setPhotoIndex(imgArray.indexOf(img));
-    setIsOpen(true);
-  };
-
-  useEffect(() => {
-    images.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, [images]);
-
+  // Decrypt ID helper
   const decryptId = (encryptedIdFromUrl) => {
-    const decodedId = decodeURIComponent(encryptedIdFromUrl);
-    const bytes = CryptoJS.AES.decrypt(decodedId, "prabhupooja2024");
-    return bytes.toString(CryptoJS.enc.Utf8);
-  };
-
-  const parseImages = (imgData) => {
-    if (!imgData) return [];
-    if (Array.isArray(imgData)) return imgData;
-    if (typeof imgData === "string") {
-      try {
-        const parsed = JSON.parse(imgData);
-        if (Array.isArray(parsed)) return parsed;
-        if (typeof parsed === "string") return [parsed];
-      } catch (e) {
-        if (imgData.includes(",")) {
-          return imgData.split(",").map((s) => s.trim());
-        }
-        return [imgData];
-      }
-    }
-    return [];
-  };
-
-  const fetchProductData = async () => {
     try {
-      const res = await api.get(`/products/get/${decryptId(productId)}`);
-      const item = res.data?.data?.[0];
-      if (item) {
-        const parsedImgs = parseImages(item.image);
-        setProductData({ ...item, image: parsedImgs });
-        setMainImage(parsedImgs[0] || "");
-      }
-    } catch (err) {
-      console.error("Error fetching product data:", err);
-    } finally {
-      setLoading(false);
+      const decodedId = decodeURIComponent(encryptedIdFromUrl);
+      const bytes = CryptoJS.AES.decrypt(decodedId, "prabhupooja2024");
+      return bytes.toString(CryptoJS.enc.Utf8);
+    } catch {
+      return encryptedIdFromUrl;
     }
-  };
-
-  const fetchRelatedProducts = async () => {
-    const res = await api.get(
-      `/products/reletedProduct/${decryptId(productId)}`
-    );
-    setRelatedProducts(res.data.data);
-  };
-
-  const fetchReviews = async () => {
-    const res = await api.get(`/products/getReview/${decryptId(productId)}`);
-    setReviews(res.data.data);
-  };
-
-  useEffect(() => {
-    if (productId) {
-      fetchRelatedProducts();
-      fetchProductData();
-      fetchReviews();
-    }
-  }, [productId]);
-
-  const totalPrice = quantity * (productData?.offerPrice || 0);
-
-  const handleAddToCart = async (product) => {
-   
-      try {
-        const response = await addToCart({
-          user_id: user1?.id,
-          product: product,
-          quantity: quantity,
-        });
-
-        // console.log(response.success, "Product add status");
-        getCartItems(user1?.id);
-
-        if (response.success) {
-          Swal.fire({
-            icon: "success",
-            title: "Product added to cart",
-            text: "The product has been successfully added to your cart!",
-            confirmButtonText: "Ok",
-          });
-        }
-        if (!response.success) {
-          Swal.fire({
-            icon: "error",
-            title: "Failed to add product",
-            text: "There was an issue adding the product to your cart.",
-            confirmButtonText: "Try Again",
-          });
-        }
-      } catch (error) {
-        console.error("Error adding product to cart: ", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred while adding the product to the cart.",
-          confirmButtonText: "Ok",
-        });
-      }
-  };
-
-  const handleBuyNow = () => {
-    
-      navigate("/checkout", {
-        state: {
-          productId: decryptId(productId),
-          quantity,
-          totalPrice,
-          user: user1 || null,
-          booking: "normal",
-          images: productData.image[0],
-          marchentId: productData.merchantId,
-          productName: productData.productName,
-        },
-      });
-  };
-
-  const handleThumbnailClick = (image) => {
-    setMainImage(image);
-  };
-
-  const handleMouseMove = (e) => {
-    const image = mainImageRef.current;
-    const rect = image.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    image.style.transformOrigin = `${x}% ${y}%`;
-    image.style.transform = "scale(2)";
-    image.style.transition = "transform 0.2s ease-out";
-    image.style.cursor = "zoom-in";
-  };
-
-  const handleMouseLeave = () => {
-    const image = mainImageRef.current;
-    image.style.transform = "scale(1)";
-    image.style.transformOrigin = "center center";
   };
 
   const encryptId = (id) => {
@@ -189,365 +124,777 @@ const Productdetails = () => {
     return encodeURIComponent(encrypted);
   };
 
+  // Fetch product data
+  const fetchProductData = async () => {
+    setLoading(true);
+    try {
+      const resolvedId = decryptId(productId);
+      const res = await api.get(`/products/get/${resolvedId}`);
+      const item = res.data?.data?.[0];
+      if (item) {
+        const parsedImgs = parseAllImages(item.image);
+        setProductData({ ...item, image: parsedImgs });
+        setAllImages(parsedImgs);
+        setMainImage(parsedImgs[0] || "");
+        setActiveImageIndex(0);
+      }
+    } catch (err) {
+      console.error("Error fetching product data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRelatedProducts = async () => {
+    try {
+      const resolvedId = decryptId(productId);
+      const res = await api.get(`/products/reletedProduct/${resolvedId}`);
+      if (res.data?.data) {
+        setRelatedProducts(res.data.data);
+      }
+    } catch (err) {
+      console.warn("Could not fetch related products:", err);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const resolvedId = decryptId(productId);
+      const res = await api.get(`/products/getReview/${resolvedId}`);
+      if (res.data?.data) {
+        setReviews(res.data.data);
+      }
+    } catch (err) {
+      console.warn("Could not fetch reviews:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (productId) {
+      fetchProductData();
+      fetchRelatedProducts();
+      fetchReviews();
+      window.scrollTo(0, 0);
+    }
+  }, [productId]);
+
+  // 🔄 Auto Rotate Main Image Every 4 Seconds (Pauses when user hovers or interacts)
+  useEffect(() => {
+    if (allImages.length > 1 && !isHovered) {
+      autoRotateTimerRef.current = setInterval(() => {
+        setActiveImageIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % allImages.length;
+          setMainImage(allImages[nextIndex]);
+          return nextIndex;
+        });
+      }, 4000);
+    }
+
+    return () => {
+      if (autoRotateTimerRef.current) {
+        clearInterval(autoRotateTimerRef.current);
+      }
+    };
+  }, [allImages, isHovered]);
+
+  const handleSelectThumbnail = (img, index) => {
+    setMainImage(img);
+    setActiveImageIndex(index);
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    if (allImages.length <= 1) return;
+    const nextIndex = (activeImageIndex + 1) % allImages.length;
+    setActiveImageIndex(nextIndex);
+    setMainImage(allImages[nextIndex]);
+  };
+
+  const handlePrevImage = (e) => {
+    e.stopPropagation();
+    if (allImages.length <= 1) return;
+    const prevIndex =
+      (activeImageIndex - 1 + allImages.length) % allImages.length;
+    setActiveImageIndex(prevIndex);
+    setMainImage(allImages[prevIndex]);
+  };
+
+  // 🔍 Smooth Cursor Zoom Lens
+  const handleMouseMove = (e) => {
+    const image = mainImageRef.current;
+    if (!image) return;
+    const rect = image.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    image.style.transformOrigin = `${x}% ${y}%`;
+    image.style.transform = "scale(2)";
+    image.style.transition = "transform 0.15s ease-out";
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    const image = mainImageRef.current;
+    if (image) {
+      image.style.transform = "scale(1)";
+      image.style.transformOrigin = "center center";
+    }
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  // Open Fullscreen Lightbox
+  const openLightbox = (imgArray, index = 0) => {
+    setLightboxImages(imgArray);
+    setLightboxIndex(index);
+    setIsLightboxOpen(true);
+  };
+
+  // Quantity Stepper
   const handleIncrement = () => {
-    setQuantity((prevQuantity) => Number(prevQuantity) + 1);
+    setQuantity((prev) => Math.min(prev + 1, productData.noOfItems || 10));
   };
 
   const handleDecrement = () => {
-    setQuantity((prevQuantity) => Math.max(Number(prevQuantity) - 1, 1));
+    setQuantity((prev) => Math.max(prev - 1, 1));
+  };
+
+  // Calculations
+  const originalPrice = Number(productData.price) || 0;
+  const offerPrice = Number(productData.offerPrice) || originalPrice;
+  const hasDiscount = originalPrice > offerPrice && offerPrice > 0;
+  const discountPercent = hasDiscount
+    ? Math.round(((originalPrice - offerPrice) / originalPrice) * 100)
+    : 0;
+  const totalSubtotal = quantity * offerPrice;
+  const isStockAvailable = (productData.noOfItems || 1) > 0;
+
+  // Add To Cart
+  const handleAddToCart = async () => {
+    setAddingToCart(true);
+    try {
+      const response = await addToCart({
+        user_id: user1?.id,
+        product: productData,
+        quantity: quantity,
+      });
+      getCartItems(user1?.id);
+      Swal.fire({
+        icon: response.success ? "success" : "error",
+        title: response.success ? "Sacred Item Added!" : "Could Not Add",
+        text: response.success
+          ? `${quantity}x "${productData.productName}" added to your cart.`
+          : "Please try again.",
+        confirmButtonColor: "#ea580c",
+      });
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Something went wrong while adding to cart.",
+        confirmButtonColor: "#ea580c",
+      });
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
+  // Buy Now
+  const handleBuyNow = () => {
+    navigate("/checkout", {
+      state: {
+        productId: decryptId(productId),
+        quantity,
+        totalPrice: totalSubtotal,
+        user: user1 || null,
+        booking: "normal",
+        images: allImages[0],
+        marchentId: productData.merchantId,
+        productName: productData.productName,
+      },
+    });
   };
 
   if (loading) {
     return (
-      <>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "5vh",
-            marginTop: "50px",
-          }}
-        >
-          <TailSpin height="50" width="50" color="orange" />
-        </div>
-        <p className="loading_text">Loading...</p>
-      </>
+      <div className="product-detail-loader-wrap">
+        <TailSpin height="60" width="60" color="#ea580c" />
+        <p>Invoking Sacred Product Details...</p>
+      </div>
     );
   }
 
-  const stockStatus = productData.noOfItems > 0 ? "In Stock" : "Out of Stock";
-  const isStockAvailable = productData.noOfItems > 0;
   return (
-    <section className="section">
-      <div className="container">
-        <div className="productdetails_box">
-          <div className="productdetails_imagebox">
+    <div className="pdetail-page-wrapper">
+      {/* 🧭 Breadcrumbs */}
+      <div className="pdetail-breadcrumb-bar">
+        <div className="pdetail-container">
+          <div className="pdetail-crumbs">
+            <Link to="/">Home</Link>
+            <span className="crumb-sep">/</span>
+            <Link to="/e-commerce">Spiritual Store</Link>
+            <span className="crumb-sep">/</span>
+            <span className="crumb-active">{productData.productName}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="pdetail-container">
+        {/* 🛍️ MAIN PRODUCT HERO GRID */}
+        <div className="pdetail-hero-grid">
+          {/* 🖼️ LEFT: IMAGE GALLERY WITH AUTO-ROTATE & HOVER ZOOM */}
+          <div className="pdetail-gallery-col">
             <div
-              className="product-img"
+              className="pdetail-main-img-box"
+              onMouseEnter={handleMouseEnter}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
+              onClick={() => openLightbox(allImages, activeImageIndex)}
             >
-              <Link>
-                <img
-                  src={mainImage}
-                  alt="Main Product"
-                  ref={mainImageRef}
-                  className="zoom-image"
-                />
-              </Link>
-            </div>
-
-            <div className="thumbnails">
-              {Array.isArray(productData?.image) &&
-                productData.image.map((thumbnail, index) => (
-                  <img
-                    key={index}
-                    src={thumbnail}
-                    alt={`Thumbnail ${index + 1}`}
-                    className="thumbnail-img"
-                    onClick={() => handleThumbnailClick(thumbnail)}
-                  />
-                ))}
-            </div>
-          </div>
-
-          <div className="productdetails_detailpage">
-            <h1 className="product_title">{productData.productName}</h1>
-            <div className="productdetails_prices">
-              <p className="product_originalprice">₹{productData.price}</p>
-              <p className="product_offerprice">₹{productData.offerPrice}</p>
-            </div>
-
-            <div className="productdetails_ratings">
-              <div className="product-rating-stars">
-                {Array.from({ length: 5 }, (_, i) => {
-                  const rating = productData.average_rating;
-                  if (i < Math.floor(rating)) {
-                    return <FaStar key={i} className="product-star filled" />;
-                  } else if (i < rating) {
-                    return (
-                      <FaStarHalfAlt key={i} className="product-star half" />
-                    );
-                  } else {
-                    return <FaRegStar key={i} className="product-star" />;
-                  }
-                })}
-              </div>
-              <div className="rating-label">
-                {productData.average_rating >= 4.5
-                  ? " Excellent"
-                  : productData.average_rating >= 3.5
-                    ? " Good"
-                    : productData.average_rating >= 2.5
-                      ? " Average"
-                      : " Poor"}{" "}
-                (
-                {productData.average_rating
-                  ? parseFloat(productData.average_rating).toFixed(2)
-                  : "0.00"}{" "}
-                ratings)
-              </div>
-            </div>
-
-            <p className="product-detail">Details:</p>
-            <div className="product-content">
-              <div className="product-pane active">
-                <div className="productsingle_details">
-                  <span className="product-detail-titile">Height:</span>
-                  <span className="product-detail-titlename">
-                    {productData?.Height}
-                  </span>
-                </div>
-                <div className="productsingle_details">
-                  <span className="product-detail-titile">
-                    Base Dimension:{" "}
-                  </span>
-                  <span className="product-detail-titlename">
-                    {productData?.Dimension}
-                  </span>
-                </div>
-                <div className="productsingle_details">
-                  <span className="product-detail-titile">Weight: </span>
-                  <span className="product-detail-titlename">
-                    {" "}
-                    {productData?.Weight}
-                  </span>
-                </div>
-                <div className="productsingle_details">
-                  <span className="product-detail-titile">Product Code: </span>
-                  <span className="product-detail-titlename">
-                    {productData?.ProductCode}
-                  </span>
-                </div>
-
-                <div className="productsingle_details">
-                  <span className="product-detail-titile">
-                    Number of Items: 
-                  </span>
-                   <span
-                    className={`stock-status ${isStockAvailable ? " in-stock" : " out-of-stock"
-                      }`}
-                  >
-                     {stockStatus}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="product-detail-btnrow">
-              <div className="quantity-selector">
-                <button
-                  onClick={handleDecrement}
-                  className="quantity-btn quantity-btn-decrement"
-                >
-                  -
-                </button>
-                <input
-                  type="text"
-                  value={quantity}
-                  readOnly
-                  className="quantity-input"
-                />
-                <button
-                  onClick={handleIncrement}
-                  className="quantity-btn quantity-btn-increment"
-                >
-                  +
-                </button>
-              </div>
-              <button
-                className="product-addcart-btn"
-                onClick={() => handleAddToCart(productData)}
-              >
-                <FaShoppingCart className="product_carticon" />
-                Add to Cart
-              </button>
-              <button
-                className="product-buynow-btn"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleBuyNow();
+              <img
+                src={mainImage}
+                alt={productData.productName}
+                ref={mainImageRef}
+                className="pdetail-main-img"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=600&q=80";
                 }}
-                disabled={!isStockAvailable}
-              >
-                <AiFillForward className="product_buyicon" />
-                Buy Now
-              </button>
-            </div>
-          </div>
-        </div>
+              />
 
-        <div className="tabs">
-          <div
-            className={`tab ${selectedTab === "description" ? "active" : ""}`}
-            onClick={() => setSelectedTab("description")}
-          >
-            Description
-          </div>
-          <div
-            className={`tab ${selectedTab === "reviews" ? "active" : ""}`}
-            onClick={() => setSelectedTab("reviews")}
-          >
-            Reviews ({reviews.length})
-          </div>
-        </div>
-
-        <div className="content">
-          {selectedTab === "description" && (
-            <div className="Description_section">
-              <div>
-                {/* <h3 className="productdes_maintitle">Description</h3> */}
-                <p className="productdes_para">{productData.description}</p>
-              </div>
-
-              <div>
-                <h3 className="productdes_title">Product Highlights</h3>
-                {(Array.isArray(productData?.ProductHighlights)
-                  ? productData.ProductHighlights
-                  : productData?.ProductHighlights?.split("\n")
-                )?.map((point, index) => (
-                  <li className="productdes_list" key={index}>
-                    {point}
-                  </li>
-                ))}
-              </div>
-
-              <div>
-                <h3 className="productdes_title">Benefits</h3>
-                {(Array.isArray(productData?.Benefits)
-                  ? productData.Benefits
-                  : productData?.Benefits?.split("\n")
-                )?.map((point, index) => (
-                  <li className="productdes_list" key={index}>
-                    {point}
-                  </li>
-                ))}
-              </div>
-
-              <div>
-                <h3 className="productdes_title">Usage & Care Instructions</h3>
-                {(Array.isArray(productData?.UsageAndCareInstructions)
-                  ? productData.UsageAndCareInstructions
-                  : productData?.UsageAndCareInstructions?.split("\n")
-                )?.map((point, index) => (
-                  <li className="productdes_list" key={index}>
-                    {point}
-                  </li>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {selectedTab === "reviews" && (
-            <div className="productReviewView">
-              <div className="productReviewViewbox">
-                {reviews?.map((review) => (
-                  <div key={review.id} className="reviewItem">
-                    <img
-                      src={
-                        review.userImage || require("../Assets/profile-pic.png")
-                      }
-                      alt="User"
-                      className="reviewUserImage"
-                    />
-                    <div className="reviewContent">
-                      <div className="reviewHeader">
-                        <span className="reviewUserName">
-                          {review.name + " " + review.lastname || "unknown"}
-                        </span>
-                        <span className="reviewStars">
-                          {"★".repeat(review.stars)}
-                        </span>
-                      </div>
-                      <p className="reviewText">Reason: {review.reason}</p>
-
-                      <p className="reviewText">{review.text}</p>
-                      <div className="reviewImages">
-                        {review?.reviewImages.map((img, idx) => (
-                          <img
-                            key={idx}
-                            src={img}
-                            alt={idx}
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                              marginRight: "8px",
-                              cursor: "pointer",
-                            }}
-                            onClick={() =>
-                              openImageViewer(img, review?.reviewImages)
-                            }
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {isOpen && (
-                  <Lightbox
-                    mainSrc={images[photoIndex]}
-                    nextSrc={images[(photoIndex + 1) % images.length]}
-                    prevSrc={
-                      images[(photoIndex + images.length - 1) % images.length]
-                    }
-                    onCloseRequest={() => setIsOpen(false)}
-                    onMovePrevRequest={() =>
-                      setPhotoIndex(
-                        (photoIndex + images.length - 1) % images.length
-                      )
-                    }
-                    onMoveNextRequest={() =>
-                      setPhotoIndex((photoIndex + 1) % images.length)
-                    }
-                  />
+              {/* Badges Overlay */}
+              <div className="gallery-badges-overlay">
+                {hasDiscount && (
+                  <span className="gallery-discount-badge">
+                    {discountPercent}% OFF
+                  </span>
                 )}
+                <span className="gallery-sanctified-badge">
+                  <MdVerified /> Consecrated
+                </span>
               </div>
-              {reviews.length === 0 && (
-                <div className="noReviews">No Reviews</div>
+
+              {/* Fullscreen Expand Icon */}
+              <button
+                className="gallery-expand-btn"
+                title="View Fullscreen"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openLightbox(allImages, activeImageIndex);
+                }}
+              >
+                <FaExpand />
+              </button>
+
+              {/* Previous / Next Arrow Controls */}
+              {allImages.length > 1 && (
+                <>
+                  <button
+                    className="gallery-arrow-btn left-arrow"
+                    onClick={handlePrevImage}
+                    aria-label="Previous Image"
+                  >
+                    <FaChevronLeft />
+                  </button>
+                  <button
+                    className="gallery-arrow-btn right-arrow"
+                    onClick={handleNextImage}
+                    aria-label="Next Image"
+                  >
+                    <FaChevronRight />
+                  </button>
+                </>
               )}
             </div>
-          )}
-        </div>
-      </div>
 
-      <div className="related-products">
-        <h2 className="related-title">You may also like</h2>
-        <div className="related-products-list">
-          {relatedProducts?.slice(0, 4)?.map((product) => {
-            const encryptedId = encryptId(product.id);
-            return (
-              <Link
-                to={`/productdetails/${encryptedId}`}
-                className="related-product-link"
-                key={product.id} // move `key` here for React best practices
+            {/* 📸 Thumbnails Strip (No ugly scrollbars) */}
+            {allImages.length > 1 && (
+              <div className="pdetail-thumbnails-row">
+                {allImages.map((thumb, idx) => (
+                  <div
+                    key={idx}
+                    className={`pdetail-thumb-item ${
+                      idx === activeImageIndex ? "active" : ""
+                    }`}
+                    onClick={() => handleSelectThumbnail(thumb, idx)}
+                  >
+                    <img src={thumb} alt={`View ${idx + 1}`} />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Trust Assurance Bar */}
+            <div className="gallery-assurance-bar">
+              <div className="assurance-item">
+                <FaShieldAlt className="assurance-icon" />
+                <span>100% Authentic</span>
+              </div>
+              <div className="assurance-item">
+                <FaTruck className="assurance-icon" />
+                <span>Express Shipping</span>
+              </div>
+              <div className="assurance-item">
+                <FaUndo className="assurance-icon" />
+                <span>Easy Returns</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 📋 RIGHT: PRODUCT INFO, SPECS & PURCHASE ACTIONS */}
+          <div className="pdetail-info-col">
+            {/* Category / Collection Tag */}
+            <span className="pdetail-category-tag">
+              <FaTag /> Sacred Idols & Divine Artifacts
+            </span>
+
+            {/* Title */}
+            <h1 className="pdetail-product-title">{productData.productName}</h1>
+
+            {/* Ratings & Stock Status Row */}
+            <div className="pdetail-rating-stock-row">
+              <div className="pdetail-rating-stars">
+                {Array.from({ length: 5 }, (_, i) => {
+                  const rating = productData.average_rating || 4.8;
+                  if (i < Math.floor(rating)) {
+                    return <FaStar key={i} className="star-icon filled" />;
+                  } else if (i < rating) {
+                    return (
+                      <FaStarHalfAlt key={i} className="star-icon half" />
+                    );
+                  } else {
+                    return <FaRegStar key={i} className="star-icon" />;
+                  }
+                })}
+                <span className="rating-score">
+                  {productData.average_rating
+                    ? parseFloat(productData.average_rating).toFixed(1)
+                    : "4.8"}
+                </span>
+                <span className="rating-count">
+                  ({reviews.length > 0 ? reviews.length : 14} Reviews)
+                </span>
+              </div>
+
+              <div
+                className={`stock-pill ${
+                  isStockAvailable ? "in-stock" : "out-of-stock"
+                }`}
               >
-                <div className="related-product-card">
-                  <img
-                    src={product.image[0]}
-                    alt={product.productName}
-                    className="related-product-img"
-                  />
-                  <p className="related-product-name">
-                    {product.productName.split(" ").slice(0, 8).join(" ") +
-                      (product.productName.split(" ").length > 8 ? "..." : "")}
-                  </p>
-                  <div className="product-price-box">
-                    <p className="related-product-price">₹{product.price}</p>
-                    <p className="related-product-offerPrice">
-                      ₹{product.offerPrice}
+                <span className="stock-dot" />
+                {isStockAvailable ? "In Stock • Ready to Dispatch" : "Out of Stock"}
+              </div>
+            </div>
+
+            {/* Price Box */}
+            <div className="pdetail-price-card">
+              <div className="price-main-line">
+                <span className="price-offer">
+                  ₹{offerPrice.toLocaleString("en-IN")}
+                </span>
+                {hasDiscount && (
+                  <span className="price-original">
+                    ₹{originalPrice.toLocaleString("en-IN")}
+                  </span>
+                )}
+                {hasDiscount && (
+                  <span className="price-savings-pill">
+                    Save ₹{(originalPrice - offerPrice).toLocaleString("en-IN")} ({discountPercent}% OFF)
+                  </span>
+                )}
+              </div>
+              <p className="price-tax-note">Inclusive of all Vedic rituals and taxes</p>
+            </div>
+
+            {/* Key Specifications Grid */}
+            <div className="pdetail-specs-card">
+              <h3 className="specs-card-title">Sacred Specifications</h3>
+              <div className="specs-grid">
+                {productData.Height && (
+                  <div className="spec-item">
+                    <span className="spec-label">Height:</span>
+                    <span className="spec-val">{productData.Height}</span>
+                  </div>
+                )}
+                {productData.Dimension && (
+                  <div className="spec-item">
+                    <span className="spec-label">Base Dimension:</span>
+                    <span className="spec-val">{productData.Dimension}</span>
+                  </div>
+                )}
+                {productData.Weight && (
+                  <div className="spec-item">
+                    <span className="spec-label">Weight:</span>
+                    <span className="spec-val">{productData.Weight}</span>
+                  </div>
+                )}
+                {productData.ProductCode && (
+                  <div className="spec-item">
+                    <span className="spec-label">Product Code:</span>
+                    <span className="spec-val code-val">
+                      {productData.ProductCode}
+                    </span>
+                  </div>
+                )}
+                <div className="spec-item">
+                  <span className="spec-label">Energization:</span>
+                  <span className="spec-val highlight-val">
+                    Prana Pratishtha Blessed
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quantity Selector & CTAs */}
+            <div className="pdetail-purchase-section">
+              <div className="quantity-and-total-row">
+                <div className="pdetail-qty-stepper">
+                  <button
+                    onClick={handleDecrement}
+                    disabled={quantity <= 1}
+                    className="qty-btn"
+                  >
+                    -
+                  </button>
+                  <span className="qty-value">{quantity}</span>
+                  <button
+                    onClick={handleIncrement}
+                    disabled={!isStockAvailable}
+                    className="qty-btn"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div className="subtotal-display">
+                  <span className="subtotal-label">Subtotal:</span>
+                  <span className="subtotal-amount">
+                    ₹{totalSubtotal.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pdetail-action-btns-row">
+                <button
+                  className="pdetail-addcart-btn"
+                  onClick={handleAddToCart}
+                  disabled={addingToCart || !isStockAvailable}
+                >
+                  {addingToCart ? (
+                    <>
+                      <TailSpin height="18" width="18" color="#ea580c" />
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <FaShoppingCart /> Add to Cart
+                    </>
+                  )}
+                </button>
+
+                <button
+                  className="pdetail-buynow-btn"
+                  onClick={handleBuyNow}
+                  disabled={!isStockAvailable}
+                >
+                  <FaBolt /> Buy Now
+                </button>
+              </div>
+            </div>
+
+            {/* Sacred Guarantee Box */}
+            <div className="pdetail-guarantee-box">
+              <MdOutlineSecurity className="guarantee-icon" />
+              <div>
+                <h4>PrabhuPooja Devotional Promise</h4>
+                <p>
+                  Every idol and sacred item is cleansed with sacred Gangajal and
+                  sanctified with authentic Vedic mantras prior to dispatch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 📑 TABS: DESCRIPTION, HIGHLIGHTS, BENEFITS, REVIEWS */}
+        <div className="pdetail-tabs-section">
+          <div className="pdetail-tabs-header">
+            <button
+              className={`pdetail-tab-btn ${
+                selectedTab === "description" ? "active" : ""
+              }`}
+              onClick={() => setSelectedTab("description")}
+            >
+              Description & Highlights
+            </button>
+            <button
+              className={`pdetail-tab-btn ${
+                selectedTab === "reviews" ? "active" : ""
+              }`}
+              onClick={() => setSelectedTab("reviews")}
+            >
+              Customer Reviews ({reviews.length})
+            </button>
+          </div>
+
+          <div className="pdetail-tab-content">
+            {/* Description Tab */}
+            {selectedTab === "description" && (
+              <div className="tab-description-pane">
+                {/* Main description paragraph */}
+                {productData.description && (
+                  <div className="desc-section-block">
+                    <h3 className="section-block-title">About This Sacred Creation</h3>
+                    <p className="desc-text">{productData.description}</p>
+                  </div>
+                )}
+
+                {/* Highlights Card */}
+                {productData.ProductHighlights && (
+                  <div className="desc-section-block">
+                    <h3 className="section-block-title">Key Highlights</h3>
+                    <div className="bullet-points-grid">
+                      {(Array.isArray(productData.ProductHighlights)
+                        ? productData.ProductHighlights
+                        : productData.ProductHighlights.split("\n")
+                      )
+                        .filter(Boolean)
+                        .map((point, i) => (
+                          <div className="bullet-item" key={i}>
+                            <FaCheck className="bullet-icon" />
+                            <span>{point}</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Sacred Benefits */}
+                {productData.Benefits && (
+                  <div className="desc-section-block">
+                    <h3 className="section-block-title">Spiritual & Vastu Benefits</h3>
+                    <div className="bullet-points-grid">
+                      {(Array.isArray(productData.Benefits)
+                        ? productData.Benefits
+                        : productData.Benefits.split("\n")
+                      )
+                        .filter(Boolean)
+                        .map((point, i) => (
+                          <div className="bullet-item benefit" key={i}>
+                            <FaCheck className="bullet-icon gold" />
+                            <span>{point}</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Usage & Care */}
+                {productData.UsageAndCareInstructions && (
+                  <div className="desc-section-block care-block">
+                    <h3 className="section-block-title">Usage & Sacred Care</h3>
+                    <ul className="care-list">
+                      {(Array.isArray(productData.UsageAndCareInstructions)
+                        ? productData.UsageAndCareInstructions
+                        : productData.UsageAndCareInstructions.split("\n")
+                      )
+                        .filter(Boolean)
+                        .map((point, i) => (
+                          <li key={i}>{point}</li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Reviews Tab */}
+            {selectedTab === "reviews" && (
+              <div className="tab-reviews-pane">
+                <div className="reviews-summary-card">
+                  <div className="summary-left">
+                    <span className="big-rating">
+                      {productData.average_rating
+                        ? parseFloat(productData.average_rating).toFixed(1)
+                        : "4.8"}
+                    </span>
+                    <div className="stars-row">
+                      <FaStar />
+                      <FaStar />
+                      <FaStar />
+                      <FaStar />
+                      <FaStar />
+                    </div>
+                    <span className="total-rev-text">
+                      Based on {reviews.length > 0 ? reviews.length : 14} verified reviews
+                    </span>
+                  </div>
+                  <div className="summary-right">
+                    <p>
+                      All reviews are submitted by authenticated devotees who have
+                      purchased this sacred offering.
                     </p>
                   </div>
-
-                  <button className="product_relatedbtn">View Details</button>
                 </div>
-              </Link>
-            );
-          })}
 
+                {reviews && reviews.length > 0 ? (
+                  <div className="reviews-cards-list">
+                    {reviews.map((rev) => (
+                      <div className="review-card" key={rev.id}>
+                        <div className="review-card-top">
+                          <img
+                            src={
+                              rev.userImage ||
+                              require("../Assets/profile-pic.png")
+                            }
+                            alt="User"
+                            className="review-avatar"
+                          />
+                          <div className="review-user-info">
+                            <h4 className="review-user-name">
+                              {rev.name} {rev.lastname || ""}
+                            </h4>
+                            <span className="review-verified-badge">
+                              <MdVerified /> Verified Devotee
+                            </span>
+                          </div>
+                          <div className="review-stars-box">
+                            {"★".repeat(rev.stars || 5)}
+                          </div>
+                        </div>
+
+                        {rev.reason && (
+                          <h5 className="review-title-line">
+                            "{rev.reason}"
+                          </h5>
+                        )}
+
+                        <p className="review-comment-text">{rev.text}</p>
+
+                        {/* Customer Uploaded Review Images */}
+                        {rev.reviewImages && rev.reviewImages.length > 0 && (
+                          <div className="review-photos-strip">
+                            {rev.reviewImages.map((photo, pIdx) => (
+                              <img
+                                key={pIdx}
+                                src={photo}
+                                alt={`Customer upload ${pIdx + 1}`}
+                                onClick={() =>
+                                  openLightbox(rev.reviewImages, pIdx)
+                                }
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-reviews-box">
+                    <p>🌟 Be the first devotee to share your spiritual experience with this sacred item!</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* 💫 "YOU MAY ALSO LIKE" RELATED PRODUCTS */}
+        {relatedProducts && relatedProducts.length > 0 && (
+          <section className="related-products-section">
+            <div className="related-header">
+              <h2 className="related-section-title">You May Also Like</h2>
+              <p className="related-subtitle">
+                Sacred companions often worshipped alongside this divine item
+              </p>
+            </div>
+
+            <div className="related-products-grid">
+              {relatedProducts.slice(0, 4).map((item) => {
+                const encryptedId = encryptId(item.id);
+                const itemImg = parseAllImages(item.image)[0];
+                const itemOrigPrice = Number(item.price) || 0;
+                const itemOfferPrice = Number(item.offerPrice) || itemOrigPrice;
+                const itemHasDiscount = itemOrigPrice > itemOfferPrice;
+
+                return (
+                  <Link
+                    to={`/productdetails/${encryptedId}`}
+                    className="related-item-card"
+                    key={item.id}
+                  >
+                    <div className="related-item-img-box">
+                      <img
+                        src={itemImg}
+                        alt={item.productName}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=600&q=80";
+                        }}
+                      />
+                      {itemHasDiscount && (
+                        <span className="related-discount-pill">
+                          {Math.round(
+                            ((itemOrigPrice - itemOfferPrice) / itemOrigPrice) *
+                              100
+                          )}
+                          % OFF
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="related-item-info">
+                      <h4 className="related-item-name">{item.productName}</h4>
+                      <div className="related-item-price-row">
+                        <span className="related-offer">
+                          ₹{itemOfferPrice.toLocaleString("en-IN")}
+                        </span>
+                        {itemHasDiscount && (
+                          <span className="related-original">
+                            ₹{itemOrigPrice.toLocaleString("en-IN")}
+                          </span>
+                        )}
+                      </div>
+                      <button className="related-view-btn">View Details</button>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </div>
-    </section>
+
+      {/* 🖼️ Fullscreen Image Lightbox */}
+      {isLightboxOpen && (
+        <Lightbox
+          mainSrc={lightboxImages[lightboxIndex]}
+          nextSrc={
+            lightboxImages[(lightboxIndex + 1) % lightboxImages.length]
+          }
+          prevSrc={
+            lightboxImages[
+              (lightboxIndex + lightboxImages.length - 1) %
+                lightboxImages.length
+            ]
+          }
+          onCloseRequest={() => setIsLightboxOpen(false)}
+          onMovePrevRequest={() =>
+            setLightboxIndex(
+              (lightboxIndex + lightboxImages.length - 1) %
+                lightboxImages.length
+            )
+          }
+          onMoveNextRequest={() =>
+            setLightboxIndex((lightboxIndex + 1) % lightboxImages.length)
+          }
+        />
+      )}
+    </div>
   );
 };
 

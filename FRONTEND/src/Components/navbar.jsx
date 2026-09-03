@@ -125,7 +125,7 @@ function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 25) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -581,121 +581,205 @@ const getServicePath = (service) => {
                 </button>
               </li>
             )}
-            <li>
-              <Link to="/" onClick={handleLinkClick}>
-                Home
-              </Link>
-            </li>
+            {(() => {
+              const currentPath = location.pathname;
+              const isHomeActive = currentPath === "/";
+              const isServicesActive =
+                currentPath.startsWith("/astrology") ||
+                currentPath.startsWith("/muhurat") ||
+                currentPath.startsWith("/yoga");
+              const isOnlinePoojaActive =
+                currentPath.startsWith("/onlinepooja") ||
+                (onlinePoojaName &&
+                  onlinePoojaName.some((p) =>
+                    currentPath.includes(formatURL(p.name))
+                  ));
+              const isStoreActive =
+                currentPath.startsWith("/e-commerce") ||
+                currentPath.startsWith("/productdetails") ||
+                currentPath.startsWith("/buynowform");
+              const isBlogActive =
+                currentPath.startsWith("/blog") ||
+                currentPath.startsWith("/blogs");
+              const isBrandInfoActive = [
+                "/ourteam",
+                "/about",
+                "/enquiryform",
+                "/testimonial",
+                "/faq",
+                "/disclaimer",
+              ].includes(currentPath);
 
-            <li className={`dropdown ${isDropdownOpen ? "active" : ""}`}>
-              <Link to="/onlinepooja" onClick={handleDropdownToggle}>
-                Services
-              </Link>
-              <i
-                className="fa-solid fa-chevron-down"
-                onClick={handleDropdownToggle}
-              ></i>
-
-              <ul className={`sub-menu ${isDropdownOpen ? "active" : ""}`}>
-                {(services && services.length > 0
-                  ? services.map((s, idx) => ({
-                      id: s.id || idx + 1,
-                      name: s.name,
-                      path: getServicePath(s),
-                    }))
-                  : defaultServices
-                ).map((service, index) => (
-                  <li key={service.id || index}>
-                    <Link to={service.path} onClick={handleLinkClick}>
-                      <span>{service.name}</span>
+              return (
+                <>
+                  <li>
+                    <Link
+                      to="/"
+                      onClick={handleLinkClick}
+                      className={isHomeActive ? "active" : ""}
+                    >
+                      Home
                     </Link>
                   </li>
-                ))}
-              </ul>
-            </li>
 
-            <li className={`dropdown ${isSecondDropdownOpen ? "active" : ""}`}>
-              <Link to="/onlinepooja" onClick={handleSecondDropdownToggle}>
-                Online Pooja
-              </Link>
-              <i
-                className="fa-solid fa-chevron-down"
-                onClick={handleSecondDropdownToggle}
-              ></i>
-              <ul
-                className={`sub-menu ${isSecondDropdownOpen ? "active" : ""}`}
-              >
-                {onlinePoojaName &&
-                  onlinePoojaName?.map((pooja) => {
-                    const encryptedId = encryptId(pooja.id);
-                    return (
-                      <li key={pooja.id}>
-                        <Link
-                          to={`/${formatURL(pooja.name)}/${encryptedId}`}
-                          onClick={handleLinkClick}
-                        >
-                          <span>{pooja.name}</span>
+                  <li
+                    className={`dropdown ${
+                      isDropdownOpen ? "active" : ""
+                    } ${isServicesActive ? "nav-active" : ""}`}
+                  >
+                    <Link
+                      to="/onlinepooja"
+                      onClick={handleDropdownToggle}
+                      className={isServicesActive ? "active" : ""}
+                    >
+                      Services
+                    </Link>
+                    <i
+                      className="fa-solid fa-chevron-down"
+                      onClick={handleDropdownToggle}
+                    ></i>
+
+                    <ul
+                      className={`sub-menu ${isDropdownOpen ? "active" : ""}`}
+                    >
+                      {(services && services.length > 0
+                        ? services.map((s, idx) => ({
+                            id: s.id || idx + 1,
+                            name: s.name,
+                            path: getServicePath(s),
+                          }))
+                        : defaultServices
+                      ).map((service, index) => (
+                        <li key={service.id || index}>
+                          <Link to={service.path} onClick={handleLinkClick}>
+                            <span>{service.name}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+
+                  <li
+                    className={`dropdown ${
+                      isSecondDropdownOpen ? "active" : ""
+                    } ${isOnlinePoojaActive ? "nav-active" : ""}`}
+                  >
+                    <Link
+                      to="/onlinepooja"
+                      onClick={handleSecondDropdownToggle}
+                      className={isOnlinePoojaActive ? "active" : ""}
+                    >
+                      Online Pooja
+                    </Link>
+                    <i
+                      className="fa-solid fa-chevron-down"
+                      onClick={handleSecondDropdownToggle}
+                    ></i>
+                    <ul
+                      className={`sub-menu ${
+                        isSecondDropdownOpen ? "active" : ""
+                      }`}
+                    >
+                      {onlinePoojaName &&
+                        onlinePoojaName?.map((pooja) => {
+                          const encryptedId = encryptId(pooja.id);
+                          return (
+                            <li key={pooja.id}>
+                              <Link
+                                to={`/${formatURL(pooja.name)}/${encryptedId}`}
+                                onClick={handleLinkClick}
+                              >
+                                <span>{pooja.name}</span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                    </ul>
+                  </li>
+
+                  <li>
+                    <Link
+                      to="/e-commerce"
+                      onClick={handleLinkClick}
+                      className={`nav-store-link ${
+                        isStoreActive ? "active" : ""
+                      }`}
+                    >
+                      Pooja Store
+                    </Link>
+                  </li>
+
+                  <li>
+                    <Link
+                      to="/blogs"
+                      onClick={handleLinkClick}
+                      className={isBlogActive ? "active" : ""}
+                    >
+                      Blog
+                    </Link>
+                  </li>
+
+                  <li
+                    className={`dropdown ${
+                      isFourthDropdownOpen ? "active" : ""
+                    } ${isBrandInfoActive ? "nav-active" : ""}`}
+                  >
+                    <Link
+                      to="/ourteam"
+                      onClick={handleFourthDropdownToggle}
+                      className={isBrandInfoActive ? "active" : ""}
+                    >
+                      Brand Info
+                    </Link>
+                    <i
+                      className="fa-solid fa-chevron-down"
+                      onClick={handleFourthDropdownToggle}
+                    ></i>
+                    <ul
+                      className={`sub-menu ${
+                        isFourthDropdownOpen ? "active" : ""
+                      }`}
+                    >
+                      <li>
+                        <Link to="/ourteam" onClick={handleLinkClick}>
+                          <span>Our Team</span>
                         </Link>
                       </li>
-                    );
-                  })}
-              </ul>
-            </li>
-
-            <li>
-              <Link to="/blogs" onClick={handleLinkClick}>
-                Blog
-              </Link>
-            </li>
-
-            <li className={`dropdown ${isFourthDropdownOpen ? "active" : ""}`}>
-              <Link to="/ourteam" onClick={handleFourthDropdownToggle}>
-                Brand Info
-              </Link>
-              <i
-                className="fa-solid fa-chevron-down"
-                onClick={handleFourthDropdownToggle}
-              ></i>
-              <ul
-                className={`sub-menu ${isFourthDropdownOpen ? "active" : ""}`}
-              >
-                <li>
-                  <Link to="/ourteam" onClick={handleLinkClick}>
-                    <span>Our Team</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/about" onClick={handleLinkClick}>
-                    <span>About Us</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/enquiryform" onClick={handleLinkClick}>
-                    <span>Contact Us</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/testimonial" onClick={handleLinkClick}>
-                    <span>Testimonial</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/faq" onClick={handleLinkClick}>
-                    <span>FAQ</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/disclaimer" onClick={handleLinkClick}>
-                    <span>Disclaimer</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" onClick={handleLinkClick}>
-                    <span>Events</span>
-                  </Link>
-                </li>
-              </ul>
-            </li>
+                      <li>
+                        <Link to="/about" onClick={handleLinkClick}>
+                          <span>About Us</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/enquiryform" onClick={handleLinkClick}>
+                          <span>Contact Us</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/testimonial" onClick={handleLinkClick}>
+                          <span>Testimonial</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/faq" onClick={handleLinkClick}>
+                          <span>FAQ</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/disclaimer" onClick={handleLinkClick}>
+                          <span>Disclaimer</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/" onClick={handleLinkClick}>
+                          <span>Events</span>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                </>
+              );
+            })()}
           </ul>
         </div>
 

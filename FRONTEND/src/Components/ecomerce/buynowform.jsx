@@ -47,10 +47,17 @@ function BuyNowForm() {
         cancelButtonText: "Cancel",
       });
     } else {
-      const productIdToSend = Number(decryptId(productId));
-      const image = productData.image;
+      const rawImg = productData.image;
+      let safeImage = rawImg;
+      if (Array.isArray(rawImg)) {
+        safeImage = rawImg[0];
+      } else if (typeof rawImg === "string" && rawImg.startsWith("[")) {
+        try {
+          const parsed = JSON.parse(rawImg);
+          safeImage = parsed[0] || rawImg;
+        } catch (e) {}
+      }
 
-      // console.log(productData, "productData");
       navigate("/checkout", {
         state: {
           productId: productIdToSend,
@@ -58,8 +65,8 @@ function BuyNowForm() {
           totalPrice: totalPrice,
           user: user1,
           booking: "normal",
-          images: image,
-          marchentId:productData.merchantId
+          images: safeImage,
+          marchentId: productData.merchantId,
         },
       });
     }

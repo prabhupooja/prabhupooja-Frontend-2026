@@ -98,21 +98,28 @@ const Temple = () => {
       <div className="temple-gallery">
         <div className="container">
           <div className="row">
-            {temple?.map((temple) => (
               <div className="col-sm-4" key={temple.id}>
-                <article className="temple-gallery-item">
+                <article className="temple-gallery-item" style={{ position: "relative" }}>
+                  <span className="temple_card_tag_badge">
+                    {temple.tag || "Divine Temple"}
+                  </span>
                   <img
                     src={temple.image}
                     alt={temple.name}
                     height={245}
                     className="temple-image"
                     onClick={() => handleViewClick(temple.id)}
+                    style={{ cursor: "pointer" }}
                   />
 
                   <div className="temple-info">
-                    <h3 className="temple-title">{temple.name}</h3>
-                    <p className="temple-description">{temple.location || temple.description || "Holy Shrine"}</p>
-                    <div className="temple-price">₹ {temple.price}</div>
+                    <h3 className="temple-title" onClick={() => handleViewClick(temple.id)} style={{ cursor: "pointer" }}>
+                      {temple.name}
+                    </h3>
+                    <p className="temple-description">
+                      📍 {temple.location || temple.description || "Holy Shrine"}
+                    </p>
+                    <div className="temple-price">₹ {temple.price || 501}</div>
                     <div className="temple-actions">
                       <button
                         className="temple-action-link1"

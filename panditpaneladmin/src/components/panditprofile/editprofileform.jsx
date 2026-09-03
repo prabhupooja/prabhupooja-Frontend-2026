@@ -3,9 +3,16 @@ import "./editprofile.css";
 import useAuthStore from "../Store/AuthStore/AuthStore";
 import Swal from "sweetalert2";
 import { TailSpin } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
+import { IoChatbox } from "react-icons/io5";
+import { FaPhoneAlt, FaVideo, FaPrayingHands } from "react-icons/fa";
+import api from "../Axios/api";
 
 function EditProfileForm() {
-  const { pandit, updatePandit } = useAuthStore();
+  const { pandit, updatePandit, panditGet } = useAuthStore();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("Pandittoken");
+
   const [formData, setFormData] = useState({
     name: "",
     lastname: "",
@@ -13,49 +20,85 @@ function EditProfileForm() {
     mobile: "",
     city: "",
     state: "",
-    country: "",
+    country: "India",
     gotra: "",
     qualification: "",
     language: "",
     temple: "",
     skills: "",
-    price: "",
+    price: 501,
+    chat_price: 15,
+    voice_price: 20,
+    video_price: 25,
     experience: "",
     gender: "Male",
     profileImage: null,
   });
+
   const [profilePreview, setProfilePreview] = useState(null);
-  // const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [resolvedId, setResolvedId] = useState(null);
 
   useEffect(() => {
-    if (pandit) {
-      setFormData({
-        name: pandit?.name || "",
-        lastname: pandit?.lastname || "",
-        email: pandit?.email || "",
-        mobile: pandit?.mobile || "",
-        city: pandit?.city || "",
-        state: pandit?.state || "",
-        country: pandit?.country || "",
-        gotra: pandit?.gotra || "",
-        qualification: pandit?.qualification || "",
-        language: pandit?.language || "",
-        temple: pandit?.temple || "",
-        skills: pandit?.skills || "",
-        price: pandit?.price || "",
-        experience: pandit?.experience || "",
-        gender: pandit?.gender || "Male",
-        profileImage: pandit?.profileImage || null,
-      });
-
-      if (pandit?.profileImage) {
-        setProfilePreview(pandit.profileImage);
-      }
-
-      setLoading(false);
+    if (!token) {
+      navigate("/");
+      return;
     }
-  }, [pandit]);
+
+    const loadProfileData = async () => {
+      try {
+        setLoading(true);
+        let pData = pandit;
+        if (!pData) {
+          const res = await panditGet();
+          pData = res?.data || res;
+        }
+
+        if (!pData) {
+          const res = await api.get("/users/getPanditByToken", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          pData = res?.data?.data || res?.data;
+        }
+
+        if (pData) {
+          setResolvedId(pData.id);
+          setFormData({
+            name: pData.name || "",
+            lastname: pData.lastname || "",
+            email: pData.email || "",
+            mobile: pData.mobile || "",
+            city: pData.city || "",
+            state: pData.state || "",
+            country: pData.country || "India",
+            gotra: pData.gotra || "",
+            qualification: pData.qualification || "",
+            language: pData.language || "",
+            temple: pData.temple || "",
+            skills: pData.skills || "",
+            price: pData.price || 501,
+            chat_price: pData.chat_price || pData.chatPrice || 15,
+            voice_price: pData.voice_price || pData.voicePrice || 20,
+            video_price: pData.video_price || pData.videoPrice || 25,
+            experience: pData.experience || "",
+            gender: pData.gender || "Male",
+            profileImage: pData.profileImage || null,
+          });
+
+          if (pData.profileImage) {
+            setProfilePreview(pData.profileImage);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfileData();
+  }, [token]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -63,11 +106,8 @@ function EditProfileForm() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
     if (file) {
       setFormData({ ...formData, profileImage: file });
-      console.log(file, "dfdfddf");
-      setProfilePreview(file);
       const reader = new FileReader();
       reader.onload = () => {
         setProfilePreview(reader.result);
@@ -76,262 +116,244 @@ function EditProfileForm() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.name) newErrors.name = "First Name is required";
-    if (!formData.lastname) newErrors.lastname = "Last Name is required";
-    if (!formData.mobile || formData.mobile.length !== 10)
-      newErrors.mobile = "Phone Number must be 10 digits";
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Valid email is required";
-    if (!formData.gotra) newErrors.gotra = "Gotra is required";
-    if (!formData.country) newErrors.country = "Country is required";
-    if (!formData.state) newErrors.state = "State is required";
-    if (!formData.city) newErrors.city = "City is required";
-    if (!formData.qualification)
-      newErrors.qualification = "Qualification is required";
-    if (!formData.language) newErrors.language = "Language is required";
-    if (!formData.experience) newErrors.experience = "Experience is required";
-    if (!formData.temple) newErrors.temple = "Temple name is required";
-    if (!formData.skills) newErrors.skills = "Skills are required";
-    if (!formData.price) newErrors.price = "Price is required";
-
-    // setErrors(newErrors);
-    // return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.name?.trim()) {
+      Swal.fire("Validation Error", "First Name is required", "error");
+      return;
+    }
+
+    setSaving(true);
     try {
-      if (!validateForm()) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Please fill in all required fields correctly!",
-        });
-        return;
-      }
-
-      const updatedProfile = { ...formData };
-
+      const targetId = resolvedId || pandit?.id || localStorage.getItem("pandit_id") || 1;
+      let payload;
       if (formData.profileImage instanceof File) {
-        const imageData = new FormData();
-        imageData.append("profileImage", formData.profileImage);
-
-        // Upload logic here (API request to upload image)
+        payload = new FormData();
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== null && formData[key] !== undefined) {
+            payload.append(key, formData[key]);
+          }
+        });
+      } else {
+        payload = { ...formData };
       }
 
-      console.log("Updated Profile:", updatedProfile);
+      await updatePandit(targetId, payload);
+      await panditGet();
 
-      updatePandit(pandit?.id, updatedProfile);
       Swal.fire({
         icon: "success",
-        title: "Profile Updated!",
-        text: "Your profile details have been successfully updated.",
+        title: "Profile & Rates Updated!",
+        text: "Your consultation talk-time rates and profile details have been saved successfully.",
+        confirmButtonColor: "#ff7a00",
+      }).then(() => {
+        navigate("/panditprofile");
       });
     } catch (error) {
+      console.error("Profile update failed:", error);
       Swal.fire({
         icon: "error",
         title: "Update Failed!",
-        text: "Something went wrong while updating your profile.",
+        text: error?.response?.data?.message || "Something went wrong while saving rates.",
       });
+    } finally {
+      setSaving(false);
     }
   };
 
   if (loading) {
     return (
-      <>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "5vh",
-            marginTop: "50px",
-          }}
-        >
-          <TailSpin height="50" width="50" color="orange" />
-        </div>
-        <p className="loading_text">Loading...</p>
-      </>
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "50vh", marginLeft: "270px" }}>
+        <TailSpin height="50" width="50" color="#ff7a00" />
+        <p className="loading_text" style={{ marginTop: "15px", color: "#64748b", fontWeight: "600" }}>Loading profile details...</p>
+      </div>
     );
   }
 
   return (
     <div className="edit-profile-form">
       <div className="edit-profile-box">
-        <h2>Edit Profile</h2>
+        <h2>Edit Profile & Set Talk-Time Rates</h2>
         <form onSubmit={handleSubmit}>
+          {/* Personal Info */}
           <div className="editpanditcontent">
             <label>
-              Name:
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-              />
+              First Name *
+              <input type="text" name="name" value={formData.name} onChange={handleChange} required />
             </label>
             <label>
-              Last Name:
-              <input
-                type="text"
-                name="lastname"
-                value={formData.lastname}
-                onChange={handleChange}
-              />
+              Last Name
+              <input type="text" name="lastname" value={formData.lastname} onChange={handleChange} />
             </label>
             <label>
-              Number:
-              <input
-                type="text"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                disabled
-              />
+              Mobile Number *
+              <input type="text" name="mobile" value={formData.mobile} onChange={handleChange} disabled />
             </label>
+          </div>
+
+          {/* 💰 Custom Per-Minute Rates Section */}
+          <div className="pricing_section_box">
+            <h4 style={{ margin: "0 0 6px 0", color: "#c2410c", fontSize: "1.05rem", fontWeight: "800" }}>
+              💰 Set Your Custom Consultation Charges (Per Minute Rates)
+            </h4>
+            <p className="pricing_subtitle">Aap yahan apni live chat, call aur video consultation ke alag-alag charges set kar sakte hain.</p>
+            
+            <div className="pricing_grid">
+              <div className="price_card">
+                <label>
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px", color: "#1d4ed8", fontWeight: "700", fontSize: "0.84rem" }}>
+                    <IoChatbox /> Chat Rate (₹/min) *
+                  </span>
+                  <input
+                    type="number"
+                    name="chat_price"
+                    value={formData.chat_price}
+                    onChange={handleChange}
+                    placeholder="15"
+                    min="1"
+                    required
+                  />
+                  <span className="price_hint">Charge per min for chat</span>
+                </label>
+              </div>
+
+              <div className="price_card">
+                <label>
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px", color: "#047857", fontWeight: "700", fontSize: "0.84rem" }}>
+                    <FaPhoneAlt /> Voice Call (₹/min) *
+                  </span>
+                  <input
+                    type="number"
+                    name="voice_price"
+                    value={formData.voice_price}
+                    onChange={handleChange}
+                    placeholder="20"
+                    min="1"
+                    required
+                  />
+                  <span className="price_hint">Charge per min for call</span>
+                </label>
+              </div>
+
+              <div className="price_card">
+                <label>
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px", color: "#c2410c", fontWeight: "700", fontSize: "0.84rem" }}>
+                    <FaVideo /> Video Call (₹/min) *
+                  </span>
+                  <input
+                    type="number"
+                    name="video_price"
+                    value={formData.video_price}
+                    onChange={handleChange}
+                    placeholder="25"
+                    min="1"
+                    required
+                  />
+                  <span className="price_hint">Charge per min for video</span>
+                </label>
+              </div>
+
+              <div className="price_card">
+                <label>
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px", color: "#701a75", fontWeight: "700", fontSize: "0.84rem" }}>
+                    <FaPrayingHands /> Puja Fee (₹)
+                  </span>
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    placeholder="501"
+                    min="51"
+                  />
+                  <span className="price_hint">Starting puja dakshina</span>
+                </label>
+              </div>
+            </div>
           </div>
 
           <div className="editpanditcontent">
             <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled
-              />
+              Email *
+              <input type="email" name="email" value={formData.email} onChange={handleChange} disabled />
             </label>
             <label>
-              Gender:
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-              >
+              Gender
+              <select name="gender" value={formData.gender} onChange={handleChange}>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
             </label>
-          </div>
-
-          <div className="editpanditcontent">
             <label>
-              Experience:
-              <input
-                type="text"
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Qualification:
-              <input
-                type="text"
-                name="qualification"
-                value={formData.qualification}
-                onChange={handleChange}
-              />
+              Experience (Years)
+              <input type="text" name="experience" value={formData.experience} onChange={handleChange} placeholder="e.g. 8" />
             </label>
           </div>
 
           <div className="editpanditcontent">
             <label>
-              Price:
-              <input
-                type="text"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-              />
+              Qualification
+              <input type="text" name="qualification" value={formData.qualification} onChange={handleChange} placeholder="e.g. Acharya in Jyotish" />
             </label>
             <label>
-              Language:
-              <input
-                type="text"
-                name="language"
-                value={formData.language}
-                onChange={handleChange}
-              />
+              Languages Spoken
+              <input type="text" name="language" value={formData.language} onChange={handleChange} placeholder="e.g. Hindi, Sanskrit" />
+            </label>
+            <label>
+              Gotra
+              <input type="text" name="gotra" value={formData.gotra} onChange={handleChange} placeholder="e.g. Kashyap" />
             </label>
           </div>
 
           <div className="editpanditcontent">
             <label>
-              Gotra:
-              <input
-                type="text"
-                name="gotra"
-                value={formData.gotra}
-                onChange={handleChange}
-              />
+              Temple Association
+              <input type="text" name="temple" value={formData.temple} onChange={handleChange} placeholder="e.g. Mahakaleshwar Temple" />
             </label>
             <label>
-              Skills:
-              <input
-                type="text"
-                name="skills"
-                value={formData.skills}
-                onChange={handleChange}
-              />
+              Skills / Specialization
+              <input type="text" name="skills" value={formData.skills} onChange={handleChange} placeholder="e.g. Rudrabhishek, Kundli" />
+            </label>
+            <label>
+              City
+              <input type="text" name="city" value={formData.city} onChange={handleChange} />
             </label>
           </div>
 
           <div className="editpanditcontent">
             <label>
-              City:
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-              />
+              State
+              <input type="text" name="state" value={formData.state} onChange={handleChange} />
             </label>
             <label>
-              State:
-              <input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-              />
+              Country
+              <input type="text" name="country" value={formData.country} onChange={handleChange} />
             </label>
             <label>
-              Country:
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-              />
-            </label>
-          </div>
-
-          <div className="editpanditcontent">
-            <label>
-              Profile Image:
+              Profile Photo
               <input type="file" accept="image/*" onChange={handleFileChange} />
             </label>
-            {profilePreview && (
+          </div>
+
+          {profilePreview && (
+            <div style={{ marginTop: "10px", marginBottom: "15px" }}>
               <img
                 src={profilePreview}
                 alt="Profile Preview"
                 className="preview-img"
               />
-            )}
-          </div>
+            </div>
+          )}
 
-          <button
-            type="submit"
-            className="editpanditbtn"
-            onClick={handleSubmit}
-          >
-            Save Changes
-          </button>
+          <div className="form_action_buttons">
+            <button type="submit" className="editpanditbtn" disabled={saving}>
+              {saving ? "Saving Changes..." : "Save Profile & Rates"}
+            </button>
+            <button type="button" className="btn_cancel_edit" onClick={() => navigate("/panditprofile")}>
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>

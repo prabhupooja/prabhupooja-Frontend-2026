@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./Events.css";
 import img1 from "../Assets/Sounds/55.jpeg";
+import img2 from "../Assets/pooja-img.jpg";
+import img3 from "../Assets/adhiyogi2.jpg";
 import { useNavigate } from "react-router-dom";
 import api from "../Axios/api";
 
 const fallbackPastEvents = [
   {
-    id: 2,
+    id: 101,
     title: "Bhagwat Katha, Indore",
     speaker: "डॉ. मनोज मोहन शास्त्री जी महाराज",
     date: "अप्रैल 2026",
@@ -17,15 +19,26 @@ const fallbackPastEvents = [
     website: "https://drmanojmohanshastriji.com",
   },
   {
-    id: 1,
+    id: 102,
     title: "शिवपुरी नववर्ष महोत्सव 2026",
     speaker: "सहस्त्र चंडी महायज्ञ",
     date: "मार्च 2026",
     location: "शिवपुरी, मध्य प्रदेश",
     description:
-      "विश्व कल्याण एवं परिवार की शांति-समृद्धि हेतु इस पवित्र सहस्त्र चंडी महायज्ञ में भाग लें। इस महायज्ञ में भाग लेकर आप अपने जीवन को आध्यात्मिक ऊर्जा से आलोकित कर सकते हैं और अपने परिवार के लिए सुख-समृद्धि की कामना कर सकते हैं।",
-    image: "https://shivpurikatha.com/assets/1-CDLcTgCy.jpeg",
+      "विश्व कल्याण एवं परिवार की शांति-समृद्धि हेतु इस पवित्र सहस्त्र चंडी महायज्ञ में भाग लें। इस महायज्ञ में भाग लेकर आप अपने जीवन को आध्यात्मिक ऊर्जा से आलोकित कर सकते हैं।",
+    image: img2,
     website: "https://shivpurikatha.com/",
+  },
+  {
+    id: 2,
+    title: "Shravan Somwar Akhand Mahapuja",
+    speaker: "आचार्य पंडित समूह",
+    date: "14th August 2025",
+    location: "Prabhu Pooja Dham, Haridwar",
+    description:
+      "A grand gathering of devotees witnessed the sacred Somwar Mahapuja with over 10,000 online and offline participants.",
+    image: img3,
+    website: null,
   },
 ];
 
@@ -34,8 +47,9 @@ const Events = () => {
   const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getImageUrl = (image) => {
-    if (!image) return img1;
+  const getImageUrl = (image, index = 0) => {
+    const fallbacks = [img1, img2, img3];
+    if (!image) return fallbacks[index % fallbacks.length];
     if (image.startsWith("http://") || image.startsWith("https://")) return image;
     const backendBase = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
     return `${backendBase}/uploads/${image}`;
@@ -46,7 +60,15 @@ const Events = () => {
       try {
         const response = await api.get("/events/getall?type=past");
         if (response.data.success && response.data.data && response.data.data.length > 0) {
-          setPastEvents(response.data.data);
+          // Merge API data with fallbacks so all past events remain visible
+          const apiData = response.data.data;
+          const merged = [...apiData];
+          fallbackPastEvents.forEach((fb) => {
+            if (!merged.some((m) => String(m.title).toLowerCase().includes(String(fb.title).toLowerCase().slice(0, 8)))) {
+              merged.push(fb);
+            }
+          });
+          setPastEvents(merged);
         } else {
           setPastEvents(fallbackPastEvents);
         }
@@ -64,39 +86,55 @@ const Events = () => {
 
   return (
     <section className="events-section">
-      <h2 className="events-title">✨ Past Events (सम्पन्न हुए कार्यक्रम) ✨</h2>
+      <div className="events-section-header">
+        <span className="events-section-tag">✨ सम्पन्न हुए दिव्य कार्यक्रम ✨</span>
+        <h2 className="events-title">Our Past Spiritual Events</h2>
+        <p className="events-subtitle">
+          Relive the divine blessings from our previous grand spiritual gatherings and anushthans.
+        </p>
+      </div>
 
       <div className="events-container">
-        {displayEvents.slice(0, 4).map((event) => {
-          const eventImage = getImageUrl(event.image);
+        {displayEvents.slice(0, 3).map((event, index) => {
+          const defaultImg = [img1, img2, img3][index % 3];
+          const eventImage = getImageUrl(event.image, index);
           const eventDate = event.date_info || event.date || (event.start_date ? `${event.start_date}` : "");
           const eventLocation = event.location || event.service_type || "भारत";
           const eventSpeaker = event.speaker || event.tag || event.special_pooja || "";
           const linkUrl = event.website || event.redirect_url;
 
           return (
-            <div className="katha-wrapper" key={event.id}>
-              <div className="katha-image">
-                <img src={eventImage} alt={event.title} />
+            <div className="katha-card" key={event.id || index}>
+              <div className="katha-image-wrap">
+                <img
+                  src={eventImage}
+                  alt={event.title}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = defaultImg;
+                  }}
+                />
+                {eventDate && <span className="katha-date-chip">{eventDate}</span>}
               </div>
 
-              <div className="katha-info">
-                <h3>{event.title}</h3>
+              <div className="katha-card-body">
+                <h3 className="katha-card-title">{event.title}</h3>
 
                 {eventSpeaker && (
                   <p className="katha-speaker">
-                    <strong>{eventSpeaker}</strong>
+                    <span>🙏</span> {eventSpeaker}
                   </p>
                 )}
 
-                <div className="katha-meta">
-                  {eventDate && <p>📅 {eventDate}</p>}
-                  {eventLocation && <p>📍 {eventLocation}</p>}
-                </div>
+                {eventLocation && (
+                  <p className="katha-location">
+                    <span>📍</span> {eventLocation}
+                  </p>
+                )}
 
-                <p className="katha-text">
-                  {event.description?.length > 150
-                    ? event.description.substring(0, 150) + "..."
+                <p className="katha-desc">
+                  {event.description?.length > 120
+                    ? event.description.substring(0, 120) + "..."
                     : event.description}
                 </p>
 
@@ -112,7 +150,7 @@ const Events = () => {
                     }
                   }}
                 >
-                  View Details
+                  View Details →
                 </button>
               </div>
             </div>

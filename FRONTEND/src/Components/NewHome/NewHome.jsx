@@ -22,6 +22,8 @@ import childbirthimg from "../../Components/Assets/27.png";
 import marraigeimg from "../../Components/Assets/30.png";
 import loanimg from "../../Components/Assets/32.png";
 import jobimg from "../../Components/Assets/34.png";
+import ganeshBanner1 from "../Assets/ganesh_chaturthi_banner.jpg";
+import ganeshBanner2 from "../Assets/eco_friendly_ganesh_murti_banner.jpg";
 
 import {useNavigate } from "react-router-dom";
 
@@ -31,6 +33,21 @@ import useUserCardStore from "../../Store/userCardStore/userCardStore";
 import noProductImg from "../Assets/no_product.png";
 import Bhagwatkatha from "../UpCommingEvents/NewEvents";
 import Events from "../UpCommingEvents/Events";
+
+const defaultBanners = [
+  {
+    id: "default-ganesh-1",
+    image: ganeshBanner1,
+    title: "Happy Ganesh Chaturthi",
+    link: "/onlinepooja",
+  },
+  {
+    id: "default-ganesh-2",
+    image: ganeshBanner2,
+    title: "Eco-Friendly Ganesh Murti",
+    link: "/e-commerce",
+  },
+];
 
 
 const faqs = [
@@ -174,7 +191,7 @@ const NewHome = () => {
     getAllCouponBanner,
   } = useHomeStore();
 
-  const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState(defaultBanners);
 
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -194,21 +211,32 @@ const NewHome = () => {
     }
   }, [isLoggin]);
 
-  // Duplicate useEffect removed — one call is sufficient
+  useEffect(() => {
+    if (isLoggin) {
+      const fetchUser = async () => {
+        try {
+          await userGet();
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+      };
+
+      fetchUser();
+    }
+  }, [isLoggin]);
 
   useEffect(() => {
     const fetchCoupons = async () => {
       setLoading(true);
       try {
         const response = await getAllCouponBanner();
-        if (response?.data?.success) {
-          setCoupons(response?.data?.data || []);
+        if (response?.data?.success && Array.isArray(response?.data?.data) && response.data.data.length > 0) {
+          setCoupons([...defaultBanners, ...response.data.data]);
         } else {
-          setCoupons([]);
+          setCoupons(defaultBanners);
         }
       } catch (err) {
-        console.warn("Could not load coupons:", err?.message || err);
-        setCoupons([]);
+        setCoupons(defaultBanners);
       } finally {
         setLoading(false);
       }
@@ -257,20 +285,11 @@ const NewHome = () => {
   }, []);
 
   useEffect(() => {
-    const fetchHomeData = async () => {
-      try {
-        await Promise.allSettled([
-          getOnlinePuja(),
-          getBlogs(),
-          getProducts(),
-          getServices(),
-          gettinyblog(),
-        ]);
-      } catch (err) {
-        console.warn("Error fetching home data:", err);
-      }
-    };
-    fetchHomeData();
+    getOnlinePuja();
+    getBlogs();
+    getProducts();
+    getServices();
+    gettinyblog();
   }, []);
 
   const handleProblemPoojaClick = (problem) => {
@@ -379,46 +398,41 @@ const NewHome = () => {
         );
       } catch {
         Swal.fire("Error", "Something went wrong", "error");
+        setAddCartloading(null);
       } finally {
         setAddCartloading(null);
       }
-  };
-
-  const handleBannerClick = (redirectUrl) => {
-    if (!redirectUrl) return;
-    if (redirectUrl.startsWith("http://") || redirectUrl.startsWith("https://")) {
-      window.open(redirectUrl, "_blank", "noopener,noreferrer");
-    } else {
-      navigate(redirectUrl.startsWith("/") ? redirectUrl : `/${redirectUrl}`);
-    }
   };
 
   return (
     <>
       <div className="hero-section">
         <Swiper
-          navigation
-          autoplay={{ delay: 4000 }}
-          loop
-          modules={[Navigation, Autoplay]}
+          navigation={true}
+          pagination={{ clickable: true }}
+          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          loop={true}
+          modules={[Navigation, Autoplay, Pagination]}
           className="hero-swiper"
         >
           {coupons?.map((slide, index) => {
-            const redirectUrl = slide.redirect_url || slide.redirectUrl;
+            const imgUrl = slide?.image || slide;
             return (
-              <SwiperSlide key={slide.id || index}>
+              <SwiperSlide key={slide?.id || index}>
                 <div
                   className="hero-slide"
-                  onClick={() => handleBannerClick(redirectUrl)}
+                  onClick={() => {
+                    if (slide?.link) navigate(slide.link);
+                  }}
                   style={{
-                    backgroundImage: `url(${
-                      slide.image ||
-                      "https://prabhupooja.s3.ap-south-1.amazonaws.com/products/1753531587333-banner%201.png"
-                    })`,
-                    cursor: redirectUrl ? "pointer" : "default",
+                    cursor: slide?.link ? "pointer" : "default",
                   }}
                 >
-                  <></>
+                  <img
+                    src={imgUrl}
+                    alt={slide?.title || `Banner ${index + 1}`}
+                    className="hero-banner-img"
+                  />
                 </div>
               </SwiperSlide>
             );
@@ -445,13 +459,9 @@ const NewHome = () => {
         </p>
 
         <div className="fp-grid">
-          {products?.slice(0, 8).map((product) => {
-            const discountPct = product.price && product.offerPrice && product.price > product.offerPrice
-              ? Math.round(((product.price - product.offerPrice) / product.price) * 100)
-              : 0;
-            return (
+          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => (
             <div key={product.id} className="fp-card">
-              {discountPct > 0 && <span className="fp-discount">{discountPct}% OFF</span>}
+              <span className="fp-discount">{`15%`}</span>
               <div
                 className="fp-img"
                 onClick={() =>
@@ -459,7 +469,11 @@ const NewHome = () => {
                 }
               >
                 <img
-                  src={product?.image?.[0] || product?.image || noProductImg}
+                  src={
+                    Array.isArray(product.image)
+                      ? product.image[0]
+                      : product.image || noProductImg
+                  }
                   alt={product.productName}
                 />
               </div>
@@ -470,10 +484,11 @@ const NewHome = () => {
                   : product.productName}
               </h3>
               <div className="fp-rating">
-                {/* ratings hidden */}
+                {/* {"★".repeat(product.rating)}{" "} */}
+                {/* <span>({product.reviewCount} Review)</span> */}
               </div>
               <div className="fp-price">
-                ₹{product.offerPrice} {product.price > product.offerPrice && <del>₹{product.price}</del>}
+                ₹{product.offerPrice} <del>₹{product.price}</del>
               </div>
               <div className="fp-footer">
                 <div className="fp-quantity">
@@ -492,8 +507,7 @@ const NewHome = () => {
                 </button>
               </div>
             </div>
-            );
-          })}
+          ))}
         </div>
       </div>
       <section className="fps-section">
@@ -627,14 +641,14 @@ const NewHome = () => {
               </button>
             </div>
             <div className="banner-links">
-              <div className="link-row" onClick={() => navigate("/onlinepooja")} style={{cursor:"pointer"}}>
-                <span>Online Pooja</span> <span className="arrow">→</span>
+              <div className="link-row">
+                <span>Church</span> <span className="arrow">→</span>
               </div>
-              <div className="link-row" onClick={() => navigate("/astrology")} style={{cursor:"pointer"}}>
-                <span>Astrology</span> <span className="arrow">→</span>
+              <div className="link-row">
+                <span>Buddha</span> <span className="arrow">→</span>
               </div>
-              <div className="link-row" onClick={() => navigate("/prasaddelivery")} style={{cursor:"pointer"}}>
-                <span>Prasad Delivery</span> <span className="arrow">→</span>
+              <div className="link-row">
+                <span>Mandir</span> <span className="arrow">→</span>
               </div>
             </div>
           </div>
@@ -735,24 +749,24 @@ const NewHome = () => {
         <div className="experience-grid">
           {[
             {
-              title: "Original Products",
+              title: "Original Product",
               description:
-                "All spiritual products are authentic. We offer a money-back guarantee if any product is not genuine.",
+                "We provide money back guarantee if the product is not original",
             },
             {
               title: "Free Shipping",
               description:
-                "Enjoy free delivery on prasad & pooja samagri orders across India. No hidden charges.",
+                "We provide money back guarantee if the product is not original",
             },
             {
               title: "100% Secure Payment",
               description:
-                "Your payments are protected with bank-grade encryption. Pay via UPI, card, or net banking safely.",
+                "We provide money back guarantee if the product is not original",
             },
             {
-              title: "Verified Pandits",
+              title: "Original Product",
               description:
-                "All our pandits are verified, experienced, and trained in Vedic rituals for authentic pooja ceremonies.",
+                "We provide money back guarantee if the product is not original",
             },
           ].map((item, index) => (
             <div className="experience-card" key={index}>
@@ -781,21 +795,25 @@ const NewHome = () => {
         </div>
 
         <div className="product-grid">
-          {products?.slice(0, 8).map((product, index) => {
-            const bsDiscount = product.price && product.offerPrice && product.price > product.offerPrice
-              ? Math.round(((product.price - product.offerPrice) / product.price) * 100)
-              : 0;
-            return (
+          {(Array.isArray(products) ? products : []).slice(0, 8).map((product, index) => (
             <div className="newHomeproduct-card" key={index}>
-              {bsDiscount > 0 && <span className="product-discount">{bsDiscount}% OFF</span>}
+              <span className="product-discount">{product.discount || "10%"}</span>
               <div className="product-image">
                 <img
-                  src={product?.image?.[0] || product?.image || noProductImg}
+                  src={
+                    Array.isArray(product.image)
+                      ? product.image[0]
+                      : product.image || noProductImg
+                  }
                   alt={product.productName}
                   onClick={() =>
                     navigate(`/productdetails/${encryptId(product.id)}`)
                   }
                 />
+                {/* <div className="product-actions">
+                <AiOutlineHeart />
+                <AiOutlineEye />
+              </div> */}
               </div>
               <div className="product-info">
                 <span className="product-category">{product.style}</span>
@@ -804,9 +822,15 @@ const NewHome = () => {
                     ? product.productName.slice(0, 40) + "..."
                     : product.productName}
                 </h4>
+                {/* <div className="rating">
+                  ★★★★★ {product.rating}{" "}
+                  <span className="rating-text">
+                    ({product.reviews} Review)
+                  </span>
+                </div> */}
                 <div className="price">
-                  <strong>₹{product.offerPrice || product.price}</strong>
-                  {product.price > product.offerPrice && <del>₹{product.price}</del>}
+                  <strong>₹{product.price}</strong>
+                  <del>₹{product.price}</del>
                 </div>
                 <div className="add-to-cart">
                   <button onClick={() => handleDecrement(product.id)}>-</button>
@@ -828,8 +852,7 @@ const NewHome = () => {
                 </div>
               </div>
             </div>
-            );
-          })}
+          ))}
         </div>
         <div className="viewAllButton">
           <button onClick={() => navigate("/e-commerce")}>
@@ -842,22 +865,27 @@ const NewHome = () => {
         <div className="spirituality-overlay">
           <div className="spirituality-content">
             <p className="spirituality-subheading">
-              🕉️ Bring Divine Energy Into Your Home
+              Embrace Spirituality with{" "}
+              <span className="spirituality-highlight">
+                Embrace Spirituality with
+              </span>
             </p>
             <h1 className="spirituality-heading">
-              Sacred Spiritual
+              Explore Our Collection
               <br />
-              Collection
+              Wear For Limited Time.
             </h1>
-            <p className="spirituality-desc">
-              Discover our collection of authentic idols, pooja samagri,
-              and devotional essentials — handpicked for your spiritual journey.
-            </p>
+            <div className="spirituality-countdown">
+              <div className="spirituality-timer-box">{timeLeft.days}</div>
+              <div className="spirituality-timer-box">{timeLeft.hours}</div>
+              <div className="spirituality-timer-box">{timeLeft.minutes}</div>
+              <div className="spirituality-timer-box">{timeLeft.seconds}</div>
+            </div>
             <button
               className="shop-button"
               onClick={() => navigate("/e-commerce")}
             >
-              Explore Collection
+              Shop Now
             </button>
           </div>
         </div>

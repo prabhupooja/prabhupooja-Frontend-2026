@@ -77,7 +77,7 @@ const NewEvents = () => {
                   <div className="event-content">
                     <span className="event-tag">{evt.tag || "Latest Event"}</span>
 
-                    <h1>{evt.title} <br /></h1>
+                    <h1>{evt.title}</h1>
 
                     <p>{evt.description}</p>
 
@@ -144,6 +144,10 @@ const NewEvents = () => {
                     <img
                       src={getImageUrl(evt.image)}
                       alt={evt.title}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = eventImg;
+                      }}
                     />
                   </div>
                 </div>
@@ -156,9 +160,7 @@ const NewEvents = () => {
             <div className="event-content" style={{ zIndex: 1 }}>
               <span className="event-tag">🕉 सावन महोत्सव 2026</span>
 
-              <h1>
-                महा रुद्राभिषेक <br />
-              </h1>
+              <h1>महा रुद्राभिषेक</h1>
 
               <p>
                 भगवान शिव की दिव्य कृपा प्राप्त करें और सावन के पावन महीने में घर
@@ -225,6 +227,7 @@ const NewEvents = () => {
       {showPopup && (
         <EventForm 
           setShowPopup={setShowPopup} 
+          eventTitle={selectedEvent?.title || ""}
           prefilledService={selectedEvent?.title || ""}
           prefilledDate={selectedEvent?.start_date || ""}
           user={user}

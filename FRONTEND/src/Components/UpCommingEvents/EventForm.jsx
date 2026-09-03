@@ -1,121 +1,144 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import useRudraAbhishekStore from "../../Store/RudraAbhishek/rudraAbhishekStore";
+import api from "../Axios/api";
 
-const EventForm = ({ setShowPopup, prefilledService = "", prefilledDate = "", user = null }) => {
+const EventForm = ({ 
+  setShowPopup, 
+  onClose,
+  prefilledService = "", 
+  eventTitle = "",
+  eventId = null,
+  prefilledDate = "", 
+  user = null 
+}) => {
   const [loading, setLoading] = useState(false);
-  const { addRudraAbhishek } = useRudraAbhishekStore();
+
+  const handleClose = () => {
+    if (setShowPopup) setShowPopup(false);
+    if (onClose) onClose();
+  };
 
   const [formData, setFormData] = useState({
     fullName: user?.name || user?.user_name || "",
     mobile: user?.mobile || user?.phone || "",
     email: user?.email || "",
-    service: prefilledService || "",
+    service: prefilledService || eventTitle || "गणेश चतुर्थी विशेष पूजा",
     poojaDate: prefilledDate || "",
     message: "",
   });
 
-  // Handle Input Change
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  // Handle Submit
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (loading) return;
 
-  if (loading) return;
+    // Mobile Validation (10 Digits)
+    const cleanMobile = formData.mobile.replace(/\D/g, "");
+    if (cleanMobile.length < 10) {
+      Swal.fire({
+        icon: "warning",
+        title: "अमान्य मोबाइल नंबर",
+        text: "कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।",
+        confirmButtonColor: "#d84315"
+      });
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const payload = {
-      fullName: formData.fullName,
-      mobile: formData.mobile,
-      email: formData.email,
-      service: formData.service,
-      poojaDate: formData.poojaDate,
-      message: formData.message,
-    };
+    try {
+      const payload = {
+        fullName: formData.fullName.trim(),
+        mobile: cleanMobile,
+        email: formData.email.trim() || null,
+        service: formData.service,
+        poojaDate: formData.poojaDate || null,
+        message: formData.message.trim() || null,
+        event_id: eventId || null,
+        event_title: eventTitle || formData.service,
+        user_id: user?.id || null
+      };
 
-    console.log("Payload:", payload);
+      const response = await api.post("/events/register", payload);
 
-    const response = await addRudraAbhishek(payload);
+      if (response.data.success) {
+        Swal.fire({
+          icon: "success",
+          title: "पंजीकरण सफल!",
+          text: "आपका पंजीकरण सफलतापूर्वक दर्ज कर लिया गया है। हमारी टीम जल्द ही आपसे संपर्क करेगी।",
+          confirmButtonText: "जय श्री गणेश",
+          confirmButtonColor: "#d84315"
+        });
 
-    console.log("API Response:", response);
+        // Reset Form
+        setFormData({
+          fullName: "",
+          mobile: "",
+          email: "",
+          service: "",
+          poojaDate: "",
+          message: "",
+        });
 
-    Swal.fire({
-      icon: "success",
-      title: "रजिस्ट्रेशन सफल!",
-      text: "हमारी टीम जल्द ही आपसे संपर्क करेगी।",
-      confirmButtonText: "ठीक है",
-    });
-
-    // Reset Form
-    setFormData({
-      fullName: "",
-      mobile: "",
-      email: "",
-      service: "",
-      poojaDate: "",
-      message: "",
-    });
-
-    setShowPopup(false);
-
-  } catch (error) {
-    Swal.fire({
-      icon: "error",
-      title: "कुछ गलत हो गया!",
-      text:
-        error?.response?.data?.message ||
-        "कृपया दोबारा प्रयास करें।",
-    });
-    
-  } finally {
-    setLoading(false);
-  }
-};
+        handleClose();
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "पंजीकरण विफल",
+        text: error?.response?.data?.message || "कृपया अपनी जानकारी जांचें और पुनः प्रयास करें।",
+        confirmButtonColor: "#d84315"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="sawan-popup-overlay">
       <div className="sawan-popup-box">
-        <button
-          className="sawan-close-popup"
-          onClick={() => setShowPopup(false)}
-        >
+        <button className="sawan-close-popup" onClick={handleClose}>
           ✕
         </button>
 
-        <h2>सावन पूजा रजिस्ट्रेशन</h2>
+        <h2>
+          {eventTitle || prefilledService 
+            ? `${eventTitle || prefilledService} रजिस्ट्रेशन` 
+            : "विशेष पूजा एवं अनुष्ठान रजिस्ट्रेशन"}
+        </h2>
 
         <form className="sawan-popup-form" onSubmit={handleSubmit}>
           {/* Row 1 */}
           <div className="sawan-form-row">
             <div className="sawan-input-group">
-              <label>पूरा नाम</label>
+              <label>पूरा नाम <span style={{ color: "red" }}>*</span></label>
               <input
                 type="text"
                 name="fullName"
                 placeholder="अपना पूरा नाम दर्ज करें"
                 value={formData.fullName}
                 onChange={handleChange}
+                required
               />
             </div>
 
             <div className="sawan-input-group">
-              <label>मोबाइल नंबर</label>
+              <label>मोबाइल नंबर <span style={{ color: "red" }}>*</span></label>
               <input
                 type="tel"
                 name="mobile"
-                placeholder="मोबाइल नंबर दर्ज करें"
+                maxLength="10"
+                placeholder="10 अंकों का मोबाइल नंबर"
                 value={formData.mobile}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -127,24 +150,31 @@ const handleSubmit = async (e) => {
               <input
                 type="email"
                 name="email"
-                placeholder="ईमेल आईडी दर्ज करें"
+                placeholder="ईमेल आईडी दर्ज करें (वैकल्पिक)"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
 
             <div className="sawan-input-group">
-              <label>सेवा चुनें</label>
+              <label>सेवा / पूजा का नाम <span style={{ color: "red" }}>*</span></label>
               <select
                 name="service"
                 value={formData.service}
                 onChange={handleChange}
+                required
               >
-                <option value="">सेवा चुनें</option>
+                {(eventTitle || prefilledService) && (
+                  <option value={eventTitle || prefilledService}>
+                    {eventTitle || prefilledService} (विशेष उत्सव)
+                  </option>
+                )}
+                <option value="गणेश चतुर्थी विशेष पूजा">गणेश चतुर्थी विशेष पूजा</option>
                 <option value="रुद्राभिषेक">रुद्राभिषेक</option>
-                {/* <option value="महामृत्युंजय जाप">महामृत्युंजय जाप</option> */}
+                <option value="महामृत्युंजय जाप">महामृत्युंजय जाप</option>
                 <option value="ज्योतिर्लिंग अभिषेक">ज्योतिर्लिंग अभिषेक</option>
-                <option value="ज्योतिर्लिंग दर्शन">ज्योतिर्लिंग दर्शन</option>
+                <option value="नवग्रह शांति पूजा">नवग्रह शांति पूजा</option>
+                <option value="अन्य विशेष अनुष्ठान">अन्य विशेष अनुष्ठान</option>
               </select>
             </div>
           </div>
@@ -167,7 +197,7 @@ const handleSubmit = async (e) => {
             <label>मनोकामना / विशेष जानकारी</label>
             <textarea
               name="message"
-              placeholder="अपनी मनोकामना या विशेष जानकारी लिखें"
+              placeholder="अपनी मनोकामना, गोत्र या विशेष जानकारी लिखें"
               rows="4"
               value={formData.message}
               onChange={handleChange}
@@ -176,7 +206,6 @@ const handleSubmit = async (e) => {
 
           <p className="sawan-popup-note">
             नोट: रजिस्ट्रेशन के बाद हमारी टीम 24 घंटे के भीतर आपसे संपर्क करेगी।
-            कृपया सभी जानकारी सही एवं पूर्ण रूप से भरें।
           </p>
 
           <button
@@ -184,14 +213,7 @@ const handleSubmit = async (e) => {
             className={`sawan-submit-btn ${loading ? "sawan-btn-loading" : ""}`}
             disabled={loading}
           >
-            {loading ? (
-              <span className="sawan-loader-wrap">
-                <span className="sawan-loader"></span>
-                कृपया प्रतीक्षा करें...
-              </span>
-            ) : (
-              "रजिस्टर करें"
-            )}
+            {loading ? "कृपया प्रतीक्षा करें..." : "रजिस्टर करें"}
           </button>
         </form>
       </div>

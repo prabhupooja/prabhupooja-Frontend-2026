@@ -5,6 +5,13 @@ import useHomeStore from "../../Store/dataStore/homeStore";
 import moment from "moment";
 import CryptoJS from "crypto-js";
 import NewLoader from "../NewLoader/NewLoader";
+import {
+  FaCalendarAlt,
+  FaUserEdit,
+  FaArrowRight,
+  FaPrayingHands,
+  FaBookOpen,
+} from "react-icons/fa";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 function Blog() {
@@ -27,14 +34,15 @@ function Blog() {
 
   const encryptId = (blogId) => {
     const encrypted = CryptoJS.AES.encrypt(
-      blogId.toString(),
+      (blogId || "").toString(),
       "prabhupooja2024"
     ).toString();
     return encodeURIComponent(encrypted);
   };
 
-  const totalPages = Math.ceil(tinybloglist.length / blogsPerPage);
-  const paginatedBlogs = tinybloglist.slice(
+  const blogsList = Array.isArray(tinybloglist) ? tinybloglist : [];
+  const totalPages = Math.max(1, Math.ceil(blogsList.length / blogsPerPage));
+  const paginatedBlogs = blogsList.slice(
     (currentPage - 1) * blogsPerPage,
     currentPage * blogsPerPage
   );
@@ -42,6 +50,7 @@ function Blog() {
   const changePage = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
+    window.scrollTo({ top: 400, behavior: "smooth" });
   };
 
   const renderPageNumbers = () => {
@@ -57,7 +66,7 @@ function Blog() {
         pages.push(
           <button
             key={i}
-            className={`page-btn ${i === currentPage ? "active" : ""}`}
+            className={`modern-page-btn ${i === currentPage ? "active" : ""}`}
             onClick={() => changePage(i)}
           >
             {i}
@@ -81,139 +90,179 @@ function Blog() {
 
   if (isLoading) {
     return (
-      <>
-        <div>
-          <NewLoader />
-        </div>
-      </>
+      <div>
+        <NewLoader />
+      </div>
     );
   }
 
   return (
-    <>
-      <div className="sub_header_blog">
+    <div className="blog-page-wrapper">
+      {/* 🌟 Modern Hero Banner */}
+      <div className="modern-blog-hero">
         <div className="container">
-          <div className="subheader_inner_blog">
-            <div className="subheader_text_blog">
-              <h1>Spiritual - Blogs</h1>
+          <div className="blog-hero-content">
+            <span className="blog-hero-badge">
+              <FaPrayingHands /> Vedic Wisdom & Spiritual Insights
+            </span>
+            <h1 className="blog-hero-title">Spiritual & Vedic Blogs</h1>
+            <p className="blog-hero-subtitle">
+              Explore sacred rituals, astrology guidance, festivals, and Sanatan
+              Dharma wisdom curated by experienced Vedic pandits and scholars.
+            </p>
+            <div className="blog-hero-breadcrumbs">
+              <Link to="/">Home</Link>
+              <span className="crumb-sep">/</span>
+              <span className="current">Spiritual Blogs</span>
             </div>
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <Link className="btn-link" to="/">
-                    Home
-                  </Link>
-                </li>
-                <li className="breadcrumb-item active">Blogs</li>
-              </ol>
-            </nav>
           </div>
         </div>
       </div>
 
-      <div className="blog-container">
-        <div className="blog-layout">
-          {paginatedBlogs && paginatedBlogs?.length > 0 ? (
-            paginatedBlogs?.map((post) => {
-              let firstImage = post.image;
-              const encryptedId = encryptId(post.id);
+      {/* 📖 Blog Catalog Section */}
+      <div className="blog-catalog-container">
+        <div className="container">
+          {/* Header row with count and filter */}
+          <div className="blog-catalog-header">
+            <div className="catalog-count-wrap">
+              <FaBookOpen className="catalog-icon" />
+              <span>
+                Showing <strong>{blogsList.length}</strong> Sacred Articles
+              </span>
+            </div>
 
-              return (
-                <div className="post-card" key={post.id}>
-                  <Link
-                    to={`/blog/${post.title.replace(
-                      /\s+/g,
-                      "-"
-                    )}/${encryptedId}`}
+            <div className="catalog-perpage-wrap">
+              <label>Articles Per Page:</label>
+              <select
+                value={blogsPerPage}
+                onChange={(e) => {
+                  setBlogsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="perpage-select"
+              >
+                {[6, 9, 12, 18, 24].map((num) => (
+                  <option key={num} value={num}>
+                    {num} Articles
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* 🎴 Modern Blog Cards Grid */}
+          <div className="modern-blog-grid">
+            {paginatedBlogs && paginatedBlogs.length > 0 ? (
+              paginatedBlogs.map((post) => {
+                const firstImage =
+                  post?.image ||
+                  "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=600&q=80";
+                const encryptedId = encryptId(post?.id || "");
+                const safeTitle = post?.title || "Untitled Sacred Blog";
+                const safeSlug = (post?.title || "blog").replace(/\s+/g, "-");
+                const safeExcerpt = post?.pera
+                  ? post.pera
+                      .replace(/<img[^>]*>/g, "")
+                      .replace(/<\/?[^>]+(>|$)/g, "")
+                      .split(" ")
+                      .slice(0, 22)
+                      .join(" ") + "..."
+                  : "Discover Vedic knowledge, rituals, and divine spiritual insights...";
+
+                return (
+                  <article
+                    className="modern-blog-card"
+                    key={post?.id || Math.random()}
                   >
-                    <div
-                      className="post-image"
-                      style={{
-                        backgroundImage: `url(${
-                          firstImage || "default-image-url.jpg"
-                        })`,
-                      }}
-                    ></div>
-                  </Link>
-                  <div className="post-content">
-                    <h2 className="post-title">
-                      {post.title || "Untitled Blog"}
-                    </h2>
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          post.pera
-                            .replace(/<img[^>]*>/g, "")
-                            .replace(/<\/?[^>]+(>|$)/g, "")
-                            .split(" ")
-                            .slice(0, 25)
-                            .join(" ") + " ...",
-                      }}
-                    ></div>
-
-                    <div className="author_name_time">
-                      <p>By: Prabhu Pooja</p>
-                      <p className="blog_time">
-                        {moment(post.timestamp).fromNow()}
-                      </p>
-                    </div>
-
                     <Link
-                      to={`/blog/${post.title.replace(
-                        /\s+/g,
-                        "-"
-                      )}/${encryptedId}`}
-                      className="read-more1"
+                      to={`/blog/${safeSlug}/${encryptedId}`}
+                      className="blog-card-img-wrap"
                     >
-                      <span>Read More</span>
+                      <img
+                        src={firstImage}
+                        alt={safeTitle}
+                        className="blog-card-img"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=600&q=80";
+                        }}
+                      />
+                      <span className="blog-card-tag">Vedic Wisdom</span>
                     </Link>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="post-card">No Blog Found</div>
+
+                    <div className="blog-card-body">
+                      <div className="blog-card-meta-row">
+                        <span className="meta-item">
+                          <FaUserEdit className="meta-icon" /> Prabhu Pooja
+                        </span>
+                        <span className="meta-item">
+                          <FaCalendarAlt className="meta-icon" />{" "}
+                          {moment(post?.timestamp).format("MMM DD, YYYY")}
+                        </span>
+                      </div>
+
+                      <h3 className="blog-card-title">
+                        <Link
+                          to={`/blog/${safeSlug}/${encryptedId}`}
+                          title={safeTitle}
+                        >
+                          {safeTitle}
+                        </Link>
+                      </h3>
+
+                      <p className="blog-card-excerpt">{safeExcerpt}</p>
+
+                      <div className="blog-card-footer">
+                        <Link
+                          to={`/blog/${safeSlug}/${encryptedId}`}
+                          className="modern-read-more-btn"
+                        >
+                          <span>Read Full Article</span>
+                          <FaArrowRight className="btn-arrow" />
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })
+            ) : (
+              <div className="no-blogs-found-card">
+                <FaBookOpen className="no-blog-icon" />
+                <h3>No Sacred Blogs Available</h3>
+                <p>New articles will be published shortly. Stay tuned!</p>
+              </div>
+            )}
+          </div>
+
+          {/* 📄 Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="modern-pagination-row">
+              <button
+                onClick={() => changePage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-nav-btn prev"
+                aria-label="Previous Page"
+              >
+                <MdKeyboardArrowLeft />
+              </button>
+
+              <div className="page-numbers-wrap">{renderPageNumbers()}</div>
+
+              <button
+                onClick={() => changePage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-nav-btn next"
+                aria-label="Next Page"
+              >
+                <MdKeyboardArrowRight />
+              </button>
+            </div>
           )}
         </div>
-        <div className="pagination-controls">
-          <div className="dropdown-container">
-            Show Results:
-            <select
-              value={blogsPerPage}
-              onChange={(e) => {
-                setBlogsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="pagination_res"
-            >
-              {[10, 15, 20, 25, 30, 35, 40, 45, 50].map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="page-buttons">
-            <button
-              onClick={() => changePage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="page-btn-left"
-            >
-              <MdKeyboardArrowLeft />
-            </button>
-            {renderPageNumbers()}
-            <button
-              onClick={() => changePage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="page-btn-right"
-            >
-              <MdKeyboardArrowRight />
-            </button>
-          </div>
-        </div>
       </div>
-    </>
+    </div>
   );
 }
 

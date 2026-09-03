@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./chatrequest.css";
 import { IoCloseSharp } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa6";
+import { IoChatbox } from "react-icons/io5";
 import useAuthStore from "../Store/AuthStore/AuthStore";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../Axios/api";
@@ -9,166 +10,204 @@ import { TailSpin } from "react-loader-spinner";
 import Swal from "sweetalert2";
 
 function Chatrequest() {
-  const { pandit } = useAuthStore();
+  const { pandit, panditGet } = useAuthStore();
   const location = useLocation();
-  const { type } = location.state || "";
+  const { type } = location.state || { type: "chat" };
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const [activeRequest, setActiveRequest] = useState(null);
-
-  // const handleChatNavigate = () => {
-  //   navigate("/panditchat");
-  // };
-
   useEffect(() => {
-    const fetchRequests = async () => {
+    let interval;
+    const initAndFetch = async () => {
       try {
-        const response = await api.get(
-          `/request/showforpandit/${pandit.id}/${type}`
-        );
-        setRequests(response.data.data);
+        let pId = pandit?.id;
+        if (!pId) {
+          const res = await panditGet();
+          pId = res?.data?.id || res?.id || localStorage.getItem("pandit_id") || 1;
+        }
+
+        const fetchRequests = async (targetId) => {
+          try {
+            const response = await api.get(`/request/showforpandit/${targetId || pId}/${type || "chat"}`);
+            setRequests(response?.data?.data || []);
+          } catch (err) {
+            console.warn("Failed to load chat requests:", err?.message || err);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        await fetchRequests(pId);
+        interval = setInterval(() => fetchRequests(pId), 8000);
       } catch (err) {
-        console.log("Failed to load requests");
-      } finally {
+        console.error("Error in Chatrequest init:", err);
         setLoading(false);
       }
     };
 
-    fetchRequests();
-    const interval = setInterval(fetchRequests, 10000);
+    initAndFetch();
 
-    return () => clearInterval(interval);
-  }, [pandit?.id]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [pandit?.id, type]);
 
   const handleUpdateStatus = async (
     requestId,
     status,
     requestType,
     userId,
-    user_name,
+    userName,
     uuid
   ) => {
-    setActiveRequest(requestId);
     try {
       const response = await api.put(`/request/${requestId}`, { status });
-      if (response.status === 200) {
+      if (response.status === 200 || response.data?.success) {
         setRequests((prevRequests) => {
-          const updatedRequests = Array.isArray(prevRequests)
-            ? prevRequests
-            : [];
+          const updatedRequests = Array.isArray(prevRequests) ? prevRequests : [];
           return updatedRequests.map((request) =>
-            request.id === requestId ? { ...request, status } : request
+            request.request_id === requestId || request.id === requestId ? { ...request, status } : request
           );
         });
 
-        Swal.fire("Success", "Request status updated successfully");
-
         if (status === "accepted") {
-          if (requestType === "chat") {
-            navigate("/panditchat", {
-              state: {
-                requestId: requestId,
-                userId: userId,
-                uuid: uuid,
-                user_name: user_name,
-              },
-            });
-          }
+          Swal.fire({
+            icon: "success",
+            title: "Chat Request Accepted!",
+            text: "Connecting to live consultation...",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+          navigate("/panditchat", {
+            state: {
+              requestId: requestId,
+              userId: userId,
+              uuid: uuid,
+              user_name: userName,
+              astroId: pandit?.id,
+            },
+          });
+        } else {
+          Swal.fire("Declined", "Request marked as declined", "info");
         }
       } else {
-        Swal.fire(
-          "Error",
-          response.data.message || "Failed to update request status"
-        );
+        Swal.fire("Error", response.data.message || "Failed to update request status", "error");
       }
     } catch (err) {
-      Swal.fire("Error", "Failed to update request status");
+      Swal.fire("Error", "Failed to update request status", "error");
       console.error("Failed to update request status:", err);
     }
   };
 
   if (loading) {
     return (
-      <>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "5vh",
-            marginTop: "50px",
-          }}
-        >
-          <TailSpin height="50" width="50" color="orange" />
-        </div>
-        <p className="loading_text">Loading...</p>
-      </>
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "50vh", marginLeft: "270px" }}>
+        <TailSpin height="50" width="50" color="#ff7a00" />
+        <p className="loading_text" style={{ marginTop: "15px", color: "#64748b", fontWeight: "600" }}>Loading chat requests...</p>
+      </div>
     );
   }
 
-  console.log(requests, "requests");
   return (
-    <>
-      <div className="userlist-container">
-        <h1>User Chat Requests</h1>
-        <div className="table-container">
-          <table className="user-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Gender</th>
-                <th>Date of Birth</th>
-                <th>Date & Time</th>
-                <th>Place of Birth</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requests.map((user, index) => (
-                <tr key={index}>
-                  <td>{user.user_name}</td>
-                  <td>{user.status}</td>
-                  <td>{user.gender}</td>
-                  <td>{user.DOB}</td>
-                  <td>{user.TOB}</td>
-                  <td>{user.birth_place}</td>
-                  <td className="action-buttons">
+    <div className="userlist-container" style={{ marginLeft: "270px", padding: "25px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+          <IoChatbox style={{ color: "#ff7a00" }} /> Devotee Chat Requests
+        </h1>
+        <span style={{ background: "#eff6ff", color: "#1d4ed8", padding: "6px 14px", borderRadius: "20px", fontSize: "0.82rem", fontWeight: "700" }}>
+          Total Requests: {requests.length}
+        </span>
+      </div>
+
+      <div className="table-container" style={{ background: "white", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)", overflowX: "auto" }}>
+        <table className="user-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "#f8fafc", textAlign: "left" }}>
+              <th style={{ padding: "14px 16px", color: "#475569" }}>Name</th>
+              <th style={{ padding: "14px 16px", color: "#475569" }}>Status</th>
+              <th style={{ padding: "14px 16px", color: "#475569" }}>Gender</th>
+              <th style={{ padding: "14px 16px", color: "#475569" }}>Date of Birth</th>
+              <th style={{ padding: "14px 16px", color: "#475569" }}>Time & Place</th>
+              <th style={{ padding: "14px 16px", color: "#475569" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {requests.length > 0 ? (
+              requests.map((user, index) => (
+                <tr key={user.request_id || user.id || index} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                  <td style={{ padding: "14px 16px", fontWeight: "700", color: "#0f172a" }}>{user.user_name || user.name || "Yajman"}</td>
+                  <td style={{ padding: "14px 16px" }}>
+                    <span className={`status-pill status-${(user.status || "pending").toLowerCase()}`}>
+                      {user.status || "pending"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "14px 16px" }}>{user.gender || "—"}</td>
+                  <td style={{ padding: "14px 16px" }}>{user.DOB || "Live Request"}</td>
+                  <td style={{ padding: "14px 16px" }}>
+                    {user.TOB || ""} {user.birth_place ? `• ${user.birth_place}` : ""}
+                  </td>
+                  <td style={{ padding: "14px 16px" }} className="action-buttons">
                     <button
-                     className={`accept-btn ${activeRequest === user.request_id ? "active" : ""}`}
+                      className="accept-btn"
+                      style={{
+                        background: "#10b981",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 14px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        marginRight: "8px",
+                        fontWeight: "700",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
                       onClick={() =>
                         handleUpdateStatus(
-                          user.request_id,
+                          user.request_id || user.id,
                           "accepted",
-                          user.request_type,
+                          "chat",
                           user.user_id,
-                          user.user_name,
-                          user.user_uuid
+                          user.user_name || user.name,
+                          user.uuid
                         )
                       }
                       disabled={user.status !== "pending"}
                     >
-                      <FaCheck />
+                      <FaCheck /> Accept Chat
                     </button>
                     <button
-                    className={`decline-btn ${activeRequest === user.request_id ? "active" : ""}`}
-                      onClick={() =>
-                        handleUpdateStatus(user.request_id, "declined")
-                      }
+                      className="decline-btn"
+                      style={{
+                        background: "#ef4444",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                      }}
+                      onClick={() => handleUpdateStatus(user.request_id || user.id, "declined")}
                       disabled={user.status !== "pending"}
                     >
                       <IoCloseSharp />
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center", padding: "40px", color: "#94a3b8", fontSize: "0.95rem" }}>
+                  No pending chat requests at the moment.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -298,8 +298,14 @@ const Astrology = () => {
   };
 
   const handleChat = (astrologer) => {
+    const chatRate = astrologer.chat_price || astrologer.chatPrice || astrologer.price || 15;
     navigate("/astrologyform", {
-      state: { astrologerID: astrologer.id, uuid: astrologer.uuid },
+      state: {
+        astrologerID: astrologer.id,
+        uuid: astrologer.uuid,
+        price: chatRate,
+        type: "chat",
+      },
     });
   };
 
@@ -630,11 +636,17 @@ const Astrology = () => {
                               </div>
                             </div>
 
-                            {/* Price Tag */}
-                            <div className="astro_price_row">
-                              <span className="astro_price_label">Rate:</span>
-                              <span className="astro_price_val">₹{service.price || 10}</span>
-                              <span className="astro_price_unit">/min</span>
+                            {/* Custom Talk-Time Rates Badges */}
+                            <div className="astro_price_row" style={{ display: "flex", gap: "6px", flexWrap: "wrap", margin: "8px 0" }}>
+                              <span style={{ background: "#eff6ff", color: "#1d4ed8", padding: "2px 6px", borderRadius: "4px", fontSize: "0.74rem", fontWeight: "700" }}>
+                                💬 ₹{service.chat_price || service.chatPrice || service.price || 15}/m
+                              </span>
+                              <span style={{ background: "#ecfdf5", color: "#047857", padding: "2px 6px", borderRadius: "4px", fontSize: "0.74rem", fontWeight: "700" }}>
+                                📞 ₹{service.voice_price || service.voicePrice || 20}/m
+                              </span>
+                              <span style={{ background: "#fff7ed", color: "#c2410c", padding: "2px 6px", borderRadius: "4px", fontSize: "0.74rem", fontWeight: "700" }}>
+                                📹 ₹{service.video_price || service.videoPrice || 25}/m
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -648,7 +660,7 @@ const Astrology = () => {
                               handleVoiceCall(
                                 service.id,
                                 service.mobile,
-                                service.price
+                                service.voice_price || service.voicePrice || service.price || 20
                               )
                             }
                           >
@@ -669,7 +681,10 @@ const Astrology = () => {
                             type="button"
                             className="astro_action_btn btn_video"
                             onClick={() =>
-                              handleVideoCall(service.id, service.price)
+                              handleVideoCall(
+                                service.id,
+                                service.video_price || service.videoPrice || service.price || 25
+                              )
                             }
                           >
                             <i className="fa-solid fa-video"></i>

@@ -8,6 +8,7 @@ const PanditProfile = lazy(() => import("../components/panditprofile/panditprofi
 const Chatrequest = lazy(() => import("../components/chatrequest/chatrequest"));
 const Callrequest = lazy(() => import("../components/callrequest/callrequest"));
 const Videocallrequest = lazy(() => import("../components/videocallrequest/videocallrequest"));
+const PanditVideoCall = lazy(() => import("../components/videocallrequest/PanditVideoCall"));
 const EditProfileForm = lazy(() => import("../components/panditprofile/editprofileform"));
 const Home = lazy(() => import("../components/home/home"));
 const Panditchat = lazy(() => import("../components/panditchat/Panditchat"));
@@ -30,15 +31,18 @@ function Mainhome() {
       <Suspense fallback={<AdminLoader />}>
         <Routes>
           <Route path="/home" element={<Home />} />
-          <Route path="/assignedbookings" element={<AssignedBookings />} />
-          <Route path="/bookings" element={<AssignedBookings />} />
-          <Route path="/userlistrequest" element={<Userlistrequest />} />
-          <Route path="/panditprofile" element={<PanditProfile />} />
           <Route path="/chatrequest" element={<Chatrequest />} />
           <Route path="/callrequest" element={<Callrequest />} />
           <Route path="/videocallrequest" element={<Videocallrequest />} />
-          <Route path="/editprofileform" element={<EditProfileForm />} />
           <Route path="/panditchat" element={<Panditchat />} />
+          <Route path="/panditvideocall" element={<PanditVideoCall />} />
+          <Route path="/assignedbookings" element={<AssignedBookings />} />
+          <Route path="/assigned-pujas" element={<AssignedBookings />} />
+          <Route path="/bookings" element={<AssignedBookings />} />
+          <Route path="/userlistrequest" element={<Userlistrequest />} />
+          <Route path="/panditprofile" element={<PanditProfile />} />
+          <Route path="/profile" element={<PanditProfile />} />
+          <Route path="/editprofileform" element={<EditProfileForm />} />
           <Route path="/chathistoryusers" element={<Chathistoryusers />} />
           <Route path="/chathistory" element={<Chathistory />} />
         </Routes>

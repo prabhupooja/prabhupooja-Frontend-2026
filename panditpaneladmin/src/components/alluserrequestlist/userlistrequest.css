@@ -1,109 +1,149 @@
-.dashboard-container {
-  display: flex;
-  gap: 20px;
-  margin-left: 300px;
-  /* margin-top: 20px; */
-  padding: 20px;
+.all-request-page {
+  margin-left: 270px;
+  padding: 25px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.request_container {
-  margin-top: -120px;
-}
-
-.request_container h1 {
-  text-align: center;
-  font-size: 25px;
-  font-weight: 700;
-  color: #313b5e;
-  text-transform: uppercase;
-}
-
-.category-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-around;
-  margin-bottom: 20px;
-  cursor: pointer;
-}
-
-.category-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  width: 220px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
-
-.request_icon {
-  color: #cd5702;
-  font-size: 30px;
-}
-
-.category-card p {
-  font-size: 16px;
-  font-weight: 600;
-  color: #313b5e;
-}
-
-.category-card:hover {
-  transform: translateY(-5px);
-}
-
-.recent-chats-container {
-  width: 100%;
-  max-width: 600px;
-  /* margin: auto; */
-  margin-left: 320px;
-  margin-bottom: 20px;
-  padding: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.recent-chats-title {
-  text-align: center;
+.request-page-title {
   font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
   margin-bottom: 20px;
-  color: #333;
 }
 
-.chat-item {
+.request-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.req-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.req-card:hover {
+  transform: translateY(-4px);
+  border-color: #ff7a00;
+  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.15);
+}
+
+.req-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.req-card-icon.chat {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.req-card-icon.call {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.req-card-icon.video {
+  background: #fff3e6;
+  color: #ff7a00;
+}
+
+.req-card-icon.history {
+  background: #f5f3ff;
+  color: #8b5cf6;
+}
+
+.req-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* User Comments Section */
+.user-reviews-box {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.user-reviews-box h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-item {
   display: flex;
   align-items: flex-start;
-  padding: 15px;
-  border-bottom: 1px solid #ddd;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
 }
 
-.user-image {
-  width: 70px;
-  height: 45px;
+.review-avatar {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  margin-right: 15px;
+  object-fit: cover;
 }
 
-.comment-content {
+.review-content {
   flex: 1;
-  margin-top: -20px;
 }
 
-.chat-name {
-  font-size: 1rem;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #222;
+.review-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
 }
 
-.chat-message {
-  font-size: 0.9rem;
-  color: #555;
-  margin: 5px 0;
+.review-text {
+  font-size: 0.88rem;
+  color: #475569;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
 }
 
-.rating-container {
+.review-stars {
   display: flex;
   gap: 3px;
+}
+
+@media screen and (max-width: 900px) {
+  .all-request-page {
+    margin-left: 0;
+  }
+  .request-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

@@ -236,7 +236,16 @@ const AstrologyForm = () => {
       <button
         type="submit"
         className="chatform-button"
-        onClick={() => handleSubmit(panditData.id, panditData.price)}
+        onClick={() =>
+          handleSubmit(
+            panditData?.id,
+            panditData?.chat_price ||
+              panditData?.chatPrice ||
+              panditData?.price ||
+              location.state?.price ||
+              15
+          )
+        }
       >
         Start Chat
       </button>
