@@ -58,6 +58,8 @@ function BuyNowForm() {
         } catch (e) {}
       }
 
+      const productIdToSend = productData?._id || (productId ? decryptId(productId) : "");
+
       navigate("/checkout", {
         state: {
           productId: productIdToSend,
@@ -66,7 +68,7 @@ function BuyNowForm() {
           user: user1,
           booking: "normal",
           images: safeImage,
-          marchentId: productData.merchantId,
+          marchentId: productData?.merchantId,
         },
       });
     }
