@@ -18,6 +18,8 @@ dist/
 .env.production
 */.env
 */src/.env
+!.env.example
+!*/.env.example
 
 # testing & logs
 coverage/
