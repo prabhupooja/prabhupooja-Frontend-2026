@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Signup.css";
 import { IoClose } from "react-icons/io5";
+import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 import Swal from "sweetalert2";
 
@@ -16,160 +17,253 @@ const Signup = ({ closeSingClose, onOpenLogin }) => {
   const [mobile, setMobile] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        closeSingClose?.();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [closeSingClose]);
+
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL || "http://localhost:3002"}/auth/google`;
+    const backendUrl =
+      process.env.REACT_APP_BACKEND_URL ||
+      process.env.REACT_APP_BASE_URL ||
+      "http://localhost:3002";
+    const currentPath = window.location.pathname;
+    window.location.href = `${backendUrl}/auth/google?state=${encodeURIComponent(
+      currentPath
+    )}`;
   };
 
   const validateMobile = (number) => {
-    return number.length === 10 && /^\d+$/.test(number);
+    return /^[6-9]\d{9}$/.test(number.trim());
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
-    if (!name || !lastname || !email || !mobile) {
-      return Swal.fire({
-        title: "Missing Info",
-        text: "Please fill in all required fields.",
-        icon: "warning",
-      });
+    const cleanName = name.trim();
+    const cleanLastname = lastname.trim();
+    const cleanEmail = email.trim();
+    const cleanMobile = mobile.trim();
+
+    if (!cleanName || !cleanLastname || !cleanEmail || !cleanMobile) {
+      setErrorMessage("Please fill in all required fields.");
+      return;
     }
 
-    if (!validateMobile(mobile)) {
-      return Swal.fire({
-        title: "Invalid Mobile Number",
-        text: "Mobile number must be exactly 10 digits.",
-        icon: "warning",
-      });
+    if (!validateMobile(cleanMobile)) {
+      setErrorMessage("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
     }
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("lastname", lastname);
-    formData.append("mobile", mobile);
-    formData.append("email", email);
-    formData.append("role", "0"); 
+    formData.append("name", cleanName);
+    formData.append("lastname", cleanLastname);
+    formData.append("mobile", cleanMobile);
+    formData.append("email", cleanEmail);
+    formData.append("role", "0");
 
     try {
       setFormLoading(true);
       const response = await register(formData);
 
-      if (response.data.success) {
+      if (response?.data?.success || response?.status === 200 || response?.status === 201) {
         Swal.fire({
-          title: "Success!",
-          text: "Registration successful!",
+          title: "Registration Successful!",
+          text: "Your account has been created. Please log in to continue.",
           icon: "success",
-          confirmButtonText: "OK",
+          confirmButtonColor: "#cd5702",
+          confirmButtonText: "Go to Login",
+        }).then(() => {
+          onOpenLogin();
         });
-        onOpenLogin();
       }
     } catch (error) {
       const message =
         error?.response?.data?.message ||
+        (error?.message === "Network Error"
+          ? "Cannot connect to server. Please check your internet or server status."
+          : error?.message) ||
         "Registration failed. Please try again later.";
       setErrorMessage(message);
-
-      Swal.fire({
-        title: "Error",
-        text: message,
-        icon: "error",
-        confirmButtonText: "OK",
-      });
     } finally {
       setFormLoading(false);
     }
   };
 
   return (
-    <div className="signup-overlay">
-      <div className="signup-container">
-        <button className="closeBtn" onClick={closeSingClose}>
+    <div
+      className="signup-modal-overlay"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) closeSingClose?.();
+      }}
+    >
+      <div className="signup-modal-card">
+        <button
+          className="signup-close-btn"
+          onClick={closeSingClose}
+          aria-label="Close modal"
+        >
           <IoClose />
         </button>
 
-        <div className="signup-form-container">
-          <img
-            src={require("../Assets/logo-Prabhupooja.png")}
-            alt="Logo"
-            className="signup-logo"
-          />
-          <p className="Loginsubtitle">Sign up into your account</p>
-
-          <form className="signup-form" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="First Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email Id"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Mobile No."
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              required
-            />
-
-            <button type="submit" disabled={formLoading}>
-              {formLoading ? "Please Wait..." : "Sign up"}
-            </button>
-          </form>
-
-          <div style={{ marginTop: "20px", textAlign: "center" }}>
-            <span>Already have an account? </span>
-            <button
-              style={{
-                color: "#3f51b5",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-              }}
-              onClick={onOpenLogin}
-            >
-              Login now
-            </button>
+        <div className="signup-modal-layout">
+          {/* Left Hero Banner */}
+          <div className="signup-modal-left">
+            <div className="signup-left-overlay">
+              <div className="signup-left-content">
+                <span className="signup-brand-tag">प्रभु पूजा • Sign Up</span>
+                <h2>Join Our Spiritual Community</h2>
+                <p>
+                  Book verified Pandits, order sacred Temple Prasadams, and access personalized Astrology services.
+                </p>
+                <div className="signup-features-list">
+                  <div className="signup-feature-pill">
+                    <FaCheckCircle className="pill-icon" /> Fast & Simple Registration
+                  </div>
+                  <div className="signup-feature-pill">
+                    <FaCheckCircle className="pill-icon" /> Verified Authentic Services
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="divider">OR</div>
+          {/* Right Form */}
+          <div className="signup-modal-right">
+            <div className="signup-form-wrapper">
+              <div className="signup-header-section">
+                <img
+                  src={require("../Assets/logo-Prabhupooja.png")}
+                  alt="PrabhuPooja Logo"
+                  className="signup-brand-logo"
+                />
+                <h3 className="signup-heading">Create an Account</h3>
+                <p className="signup-subheading">
+                  Sign up with your basic details to get started
+                </p>
+              </div>
 
-          <div>
-            {googleLoading ? (
-              <button className="googleLoginbtn" disabled>
-                <img
-                  src="https://developers.google.com/identity/images/g-logo.png"
-                  alt="Google logo"
-                />
-                Please Wait...
-              </button>
-            ) : (
-              <button className="googleLoginbtn" onClick={handleGoogleLogin}>
-                <img
-                  src="https://developers.google.com/identity/images/g-logo.png"
-                  alt="Google logo"
-                />
-                Continue with Google
-              </button>
-            )}
+              {errorMessage && (
+                <div className="signup-alert-error">
+                  <FaExclamationCircle className="alert-icon" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              <form className="signup-form-grid" onSubmit={handleSubmit}>
+                <div className="signup-input-field">
+                  <label htmlFor="first-name">First Name *</label>
+                  <input
+                    id="first-name"
+                    type="text"
+                    placeholder="Enter first name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="signup-input-field">
+                  <label htmlFor="last-name">Last Name *</label>
+                  <input
+                    id="last-name"
+                    type="text"
+                    placeholder="Enter last name"
+                    value={lastname}
+                    onChange={(e) => setLastname(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="signup-input-field field-full-width">
+                  <label htmlFor="signup-email">Email Address *</label>
+                  <input
+                    id="signup-email"
+                    type="email"
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="signup-input-field field-full-width">
+                  <label htmlFor="signup-mobile">Mobile Number *</label>
+                  <input
+                    id="signup-mobile"
+                    type="tel"
+                    maxLength="10"
+                    placeholder="10-digit mobile number"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="signup-primary-btn"
+                  disabled={formLoading}
+                >
+                  {formLoading ? (
+                    <span className="btn-loading-state">
+                      <span className="btn-spinner"></span> Creating Account...
+                    </span>
+                  ) : (
+                    "Create Account"
+                  )}
+                </button>
+              </form>
+
+              <div className="signup-switch-action">
+                <span>Already have an account? </span>
+                <button
+                  type="button"
+                  className="switch-link-btn"
+                  onClick={onOpenLogin}
+                >
+                  Login now
+                </button>
+              </div>
+
+              <div className="signup-divider">
+                <span>OR</span>
+              </div>
+
+              <div className="signup-social-section">
+                <button
+                  type="button"
+                  className="signup-google-btn"
+                  onClick={handleGoogleLogin}
+                  disabled={googleLoading}
+                >
+                  <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    alt="Google Logo"
+                    className="google-icon"
+                  />
+                  <span>
+                    {googleLoading ? "Connecting..." : "Continue with Google"}
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className="signup-illustration"></div>
       </div>
     </div>
   );

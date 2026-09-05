@@ -30,11 +30,17 @@ const useAuthStore = create((set) => ({
       const response = await api.post("/users/login", payload);
       return response;
     } catch (error) {
+      const errorMsg =
+        error?.response?.data?.message ||
+        (error?.message === "Network Error"
+          ? "Unable to connect to server. Please check your internet connection or server status."
+          : error?.message) ||
+        "Login failed. Please try again.";
       set({
-        error: error.response?.data?.message || "Login failed",
+        error: errorMsg,
         isLoggin: false,
       });
-      return error;
+      throw error;
     } finally {
       set({ isLoading: false });
     }

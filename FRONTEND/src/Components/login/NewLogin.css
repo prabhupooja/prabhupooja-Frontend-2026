@@ -1,252 +1,561 @@
-/* Overlay background */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
+/* ==========================================================================
+   PrabhuPooja Modern Responsive Login Modal
+   ========================================================================== */
+
+/* Full Screen Overlay */
+.login-modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Modal Card */
+.login-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin: auto;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
   }
-  
-  /* Main popup container */
-  .popupContainer {
-    width: 90%;
-    max-width: 1000px;
-    background-color: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
-  
-  /* Close button */
-  .closeBtn {
-    position: absolute;
-    top: 4px;
-    right: 10px;
-    font-size: 24px;
-    background: none;
-    border: none;
-    color: #555;
-    cursor: pointer;
+}
+
+/* Close Button */
+.login-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #4b5563;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.login-close-btn:hover {
+  background: #f3f4f6;
+  color: #111827;
+  transform: rotate(90deg);
+}
+
+/* Modal Two-Column Layout */
+.login-modal-layout {
+  display: flex;
+  width: 100%;
+  min-height: 520px;
+}
+
+/* Left Hero Illustration / Branding */
+.login-modal-left {
+  flex: 1.1;
+  position: relative;
+  background: #5c1808 url("../Assets/login_illustrationsImg.png") center center / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.login-left-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(92, 24, 8, 0.3) 0%,
+    rgba(67, 16, 5, 0.85) 60%,
+    rgba(40, 10, 3, 0.95) 100%
+  );
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+.login-brand-tag {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fbd38d;
+  margin-bottom: 12px;
+}
+
+.login-left-content h2 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 10px 0;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.login-left-content p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #fed7aa;
+  margin: 0 0 20px 0;
+  opacity: 0.95;
+}
+
+.login-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feature-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #fffaf0;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(4px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: fit-content;
+}
+
+.pill-icon {
+  color: #68d391;
+  font-size: 13px;
+}
+
+/* Right Login Form */
+.login-modal-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 32px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.login-form-wrapper {
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Header Section */
+.login-header-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-brand-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.login-heading {
+  font-size: 21px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+}
+
+.login-subheading {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Alert Boxes */
+.login-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.login-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.login-alert-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.alert-icon {
+  font-size: 15px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+/* Form Styles */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.login-input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.input-field-container input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #111827;
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-field-container input:focus {
+  background: #ffffff;
+  border-color: #cd5702;
+  box-shadow: 0 0 0 3px rgba(205, 87, 2, 0.12);
+}
+
+.input-field-container input.input-has-error {
+  border-color: #ef4444;
+  background: #fff5f5;
+}
+
+.field-error-text {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+/* Primary Button */
+.login-primary-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #cd5702 0%, #b84500 100%);
+  color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(205, 87, 2, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-primary-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b84500 0%, #9a3500 100%);
+  box-shadow: 0 6px 16px rgba(205, 87, 2, 0.35);
+  transform: translateY(-1px);
+}
+
+.login-primary-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-loading-state {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  /* Flex layout */
-  .loginPopupContent {
-    display: flex;
-    height: "auto";
-  }
-  
-  .loginPopupContent input:focus{
-    outline: none;
+}
+
+/* OTP Screen Styles */
+.otp-sent-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #9a3412;
+}
+
+.edit-number-btn {
+  background: none;
+  border: none;
+  color: #cd5702;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.edit-number-btn:hover {
+  background: #fed7aa;
+}
+
+.login-otp-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.login-otp-box {
+  width: 44px;
+  height: 48px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  background: #f9fafb;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.login-otp-box:focus {
+  background: #ffffff;
+  border-color: #cd5702;
+  box-shadow: 0 0 0 3px rgba(205, 87, 2, 0.15);
+}
+
+.login-otp-box.filled {
+  border-color: #cd5702;
+  background: #fffaf0;
+}
+
+.login-resend-wrapper {
+  text-align: center;
+  font-size: 13px;
+  margin: 4px 0 8px 0;
+}
+
+.timer-text {
+  color: #6b7280;
+}
+
+.resend-action-btn {
+  background: none;
+  border: none;
+  color: #4b5563;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.resend-action-btn strong {
+  color: #cd5702;
+  text-decoration: underline;
+}
+
+.resend-action-btn:hover strong {
+  color: #9a3412;
+}
+
+/* Switch to Signup */
+.login-switch-action {
+  text-align: center;
+  font-size: 13.5px;
+  color: #4b5563;
+  margin-top: 14px;
+}
+
+.switch-link-btn {
+  background: none;
+  border: none;
+  color: #cd5702;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.switch-link-btn:hover {
+  text-decoration: underline;
+}
+
+/* Divider */
+.login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 16px 0;
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.login-divider span {
+  padding: 0 10px;
+}
+
+/* Google Login Button */
+.login-social-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #ffffff;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.login-google-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.login-google-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablets and below (≤ 850px) */
+@media (max-width: 850px) {
+  .login-modal-card {
+    max-width: 440px;
+    border-radius: 16px;
   }
 
-  /* Left image area */
-  .popupLeft {
-    flex: 2;
-    background:url("../Assets/login_illustrationsImg.png");
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    background-repeat: round;
-
-  }
-  
-  .popupIllustration {
-    max-width: 80%;
-    height: auto;
-  }
-  
-  /* Right form area */
-  .popupRight {
-    flex: 1;
-    padding: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .popupCard {
-    width: 100%;
-    max-width: 350px;
-  }
-  
-  .logo {
-    font-size: 28px;
-    font-weight: 600;
-    color: #5c2d91;
-    text-align: center;
-  }
-  
-  .Loginsubtitle {
-    text-align: center;
-    color: #555;
-  }
-  
-  .inputGroup {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .inputGroup label {
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .inputGroup input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
+  .login-modal-left {
+    display: none;
   }
 
-  
-  .loginButton {
-    width: 100%;
-    background-color: #cd5702;
-    color: #fff;
+  .login-modal-right {
+    padding: 32px 24px;
+  }
+}
+
+/* Mobile Screens (≤ 480px) */
+@media (max-width: 480px) {
+  .login-modal-overlay {
     padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    margin-top: 10px;
-    cursor: pointer;
-  }
-  
-  .divider {
-    text-align: center;
-    margin: 20px 0;
-    color: #aaa;
-  }
-  
-  .signupButton {
-    width: 100%;
-    background: none;
-    border: 2px solid #cd5702;
-    color: #cd5702;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  
-.googleLoginbtn{
-    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-    padding: 5px 5px;
-    background-color: #ffffff;
-    color: #444;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-  }
-  
-  .googleLoginbtn img {
-    width: 25px;
-    height: 25px;
-  }
-  .googleLoginbtn:hover {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
   }
 
-  .signupButtonCointainer{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  /* OTP container and input styles */
-.otpFields {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    width: 100%;
+  .login-modal-card {
+    border-radius: 14px;
   }
 
-  .otpInput {
-    width: 40px;
+  .login-modal-right {
+    padding: 28px 18px;
+  }
+
+  .login-heading {
+    font-size: 19px;
+  }
+
+  .login-brand-logo {
     height: 40px;
-    font-size: 18px;
-    text-align: center;
-    margin: 0 5px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    transition: border-color 0.3s ease;
-  }
-  
-  .otpInput:focus {
-    outline: none;
-    border-color: #cd5702;
   }
 
-  .otpInput.normal {
-    border-color: #ccc;
+  .login-otp-box {
+    width: 38px;
+    height: 44px;
+    font-size: 16px;
   }
-  
-  .otpFields input {
-    transition: border-color 0.3s;
-  }
-  
-  .otpInput:invalid {
-    border-color: red;
-  }
-  
-  .otpInput:valid {
-    border-color: green;
-  }
-
-  .login-error-message{
-    font-size: 12px;
-    margin-top: -10px;
-    margin-bottom:0;
-    color: red;
-  }
-
-
-  .resend-otp {
-    margin-top: 1rem;
-    text-align: center;
-    font-size: 14px;
-    color: #555;
-    cursor: pointer;
-  }
-  
-  .resend-otp span {
-    transition: color 0.3s;
-  }
-
-  
-  .resend-otp strong {
-    color: #007bff;
-    text-decoration: underline;
-  }
-
-  @media (max-width: 700px) {
-    .popupLeft {
-      display: none;
-    }
-    .signup-illustration{
-      display: none !important;
-    }
-    .signup-form{
-      display: block;
-    }
-    .signup-form button{
-      width: 100%;
-    }
-  }
-  
-  
+}

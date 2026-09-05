@@ -22,8 +22,8 @@ import childbirthimg from "../../Components/Assets/27.png";
 import marraigeimg from "../../Components/Assets/30.png";
 import loanimg from "../../Components/Assets/32.png";
 import jobimg from "../../Components/Assets/34.png";
-import ganeshBanner1 from "../Assets/ganesh_chaturthi_banner.jpg";
-import ganeshBanner2 from "../Assets/eco_friendly_ganesh_murti_banner.jpg";
+import ganeshBannerHindi from "../Assets/ganesh_banner_hindi.jpg";
+import ganeshBannerEnglish from "../Assets/ganesh_banner_english.png";
 
 import {useNavigate } from "react-router-dom";
 
@@ -36,15 +36,15 @@ import Events from "../UpCommingEvents/Events";
 
 const defaultBanners = [
   {
-    id: "default-ganesh-1",
-    image: ganeshBanner1,
-    title: "Happy Ganesh Chaturthi",
-    link: "/onlinepooja",
+    id: "hardcoded-ganesh-hindi",
+    image: ganeshBannerHindi,
+    title: "प्रकृति के संग गणेश मूर्ति - Eco-Friendly Ganesh Murti",
+    link: "/e-commerce",
   },
   {
-    id: "default-ganesh-2",
-    image: ganeshBanner2,
-    title: "Eco-Friendly Ganesh Murti",
+    id: "hardcoded-ganesh-english",
+    image: ganeshBannerEnglish,
+    title: "Eco-Friendly Ganesh Murti - Made with Devotion",
     link: "/e-commerce",
   },
 ];
@@ -230,8 +230,26 @@ const NewHome = () => {
       setLoading(true);
       try {
         const response = await getAllCouponBanner();
-        if (response?.data?.success && Array.isArray(response?.data?.data) && response.data.data.length > 0) {
-          setCoupons([...defaultBanners, ...response.data.data]);
+        if (
+          response?.data?.success &&
+          Array.isArray(response?.data?.data) &&
+          response.data.data.length > 0
+        ) {
+          const apiBanners = response.data.data.filter((b) => {
+            if (!b) return false;
+            const img = b?.image || b?.bannerImage || b;
+            return (
+              img &&
+              img !== ganeshBanner2 &&
+              b.id !== "default-ganesh-eco" &&
+              b.id !== "default-ganesh-1"
+            );
+          });
+          setCoupons(
+            apiBanners.length > 0
+              ? [...defaultBanners, ...apiBanners]
+              : defaultBanners
+          );
         } else {
           setCoupons(defaultBanners);
         }
@@ -410,33 +428,93 @@ const NewHome = () => {
         <Swiper
           navigation={true}
           pagination={{ clickable: true }}
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          autoplay={{ delay: 4500, disableOnInteraction: false }}
           loop={true}
           modules={[Navigation, Autoplay, Pagination]}
           className="hero-swiper"
         >
-          {coupons?.map((slide, index) => {
-            const imgUrl = slide?.image || slide;
-            return (
-              <SwiperSlide key={slide?.id || index}>
-                <div
-                  className="hero-slide"
-                  onClick={() => {
-                    if (slide?.link) navigate(slide.link);
-                  }}
-                  style={{
-                    cursor: slide?.link ? "pointer" : "default",
-                  }}
-                >
-                  <img
-                    src={imgUrl}
-                    alt={slide?.title || `Banner ${index + 1}`}
-                    className="hero-banner-img"
-                  />
-                </div>
-              </SwiperSlide>
-            );
-          })}
+          {/* 🌟 1. Primary Hardcoded Hindi Ganesh Banner */}
+          <SwiperSlide key="hardcoded-ganesh-hindi">
+            <div
+              className="hero-slide"
+              onClick={() => navigate("/e-commerce")}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src={ganeshBannerHindi}
+                alt="प्रकृति के संग गणेश मूर्ति - Eco-Friendly Ganesh Murti"
+                className="hero-banner-img"
+              />
+            </div>
+          </SwiperSlide>
+
+          {/* 🌟 2. Hardcoded English Eco-Friendly Ganesh Banner */}
+          <SwiperSlide key="hardcoded-ganesh-english">
+            <div
+              className="hero-slide"
+              onClick={() => navigate("/e-commerce")}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src={ganeshBannerEnglish}
+                alt="Eco-Friendly Ganesh Murti - Crafted with Nature"
+                className="hero-banner-img"
+              />
+            </div>
+          </SwiperSlide>
+
+          {/* 🌐 3. Dynamic Banners from Admin API (if any) */}
+          {coupons
+            ?.filter((slide) => {
+              const img =
+                slide?.image || slide?.bannerImage || slide?.banner || slide;
+              return (
+                img &&
+                img !== ganeshBannerHindi &&
+                img !== ganeshBannerEnglish &&
+                slide?.id !== "hardcoded-ganesh-hindi" &&
+                slide?.id !== "hardcoded-ganesh-english" &&
+                slide?.id !== "default-ganesh-eco"
+              );
+            })
+            ?.map((slide, index) => {
+              const rawImg =
+                slide?.image || slide?.bannerImage || slide?.banner || slide;
+              const imgUrl =
+                typeof rawImg === "string" &&
+                !rawImg.startsWith("http") &&
+                !rawImg.startsWith("data:") &&
+                !rawImg.startsWith("/")
+                  ? `${process.env.REACT_APP_BASE_URL || "http://localhost:3002"}/${rawImg}`
+                  : rawImg;
+
+              return (
+                <SwiperSlide key={slide?.id || `api-banner-${index}`}>
+                  <div
+                    className="hero-slide"
+                    onClick={() => {
+                      if (slide?.link) {
+                        navigate(slide.link);
+                      } else if (slide?.product_id) {
+                        navigate(`/product/${slide.product_id}`);
+                      }
+                    }}
+                    style={{
+                      cursor:
+                        slide?.link || slide?.product_id
+                          ? "pointer"
+                          : "default",
+                    }}
+                  >
+                    <img
+                      src={imgUrl}
+                      alt={slide?.title || slide?.name || `Banner ${index + 3}`}
+                      className="hero-banner-img"
+                    />
+                  </div>
+                </SwiperSlide>
+              );
+            })}
         </Swiper>
       </div>
       <Bhagwatkatha/>

@@ -1,297 +1,403 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./NewLogin.css";
 import { IoClose } from "react-icons/io5";
+import { FaEdit, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 
 const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [inputError, setInputError] = useState("");
   const { login, isLoading, setIsLoading, userOTP } = useAuthStore();
-  const [message, setMessage] = useState("");
   const [resendTimer, setResendTimer] = useState(30);
 
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [validOtp, setValidOtp] = useState([  
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const otpInputRefs = useRef([]);
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onCloseLogin?.();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onCloseLogin]);
+
+  // Resend OTP countdown timer
+  useEffect(() => {
+    let timerInterval = null;
+    if (otpSent && resendTimer > 0) {
+      timerInterval = setInterval(() => {
+        setResendTimer((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+    }
+    return () => {
+      if (timerInterval) clearInterval(timerInterval);
+    };
+  }, [otpSent, resendTimer]);
 
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
+    const backendUrl =
+      process.env.REACT_APP_BACKEND_URL ||
+      process.env.REACT_APP_BASE_URL ||
+      "http://localhost:3002";
     const currentPath = window.location.pathname;
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL || "http://localhost:3002"}/auth/google?state=${encodeURIComponent(currentPath)}`;
+    window.location.href = `${backendUrl}/auth/google?state=${encodeURIComponent(
+      currentPath
+    )}`;
   };
 
   const handleOtpChange = (e, index) => {
     const value = e.target.value;
+    // Allow single numeric digit
+    if (value && !/^\d+$/.test(value)) return;
 
-    // Prevent non-numeric input
-    if (/[^0-9]/.test(value)) return;
+    const digit = value.slice(-1);
+    const newOtp = [...otp];
+    newOtp[index] = digit;
+    setOtp(newOtp);
+    setErrorMessage("");
 
-    setOtp((prevOtp) => {
-      const newOtp = [...prevOtp];
-      newOtp[index] = value;
-      return newOtp;
-    });
-    validateOtp(index, value);
-    if (value && index < otp.length - 1) {
-      const nextInput = document.getElementById(`otp-input-${index + 1}`);
-      if (nextInput) nextInput.focus();
+    if (digit && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && index > 0 && otp[index] === "") {
-      const prevInput = document.getElementById(`otp-input-${index - 1}`);
-      if (prevInput) prevInput.focus();
+  const handleOtpKeyDown = (e, index) => {
+    if (e.key === "Backspace") {
+      if (!otp[index] && index > 0) {
+        otpInputRefs.current[index - 1]?.focus();
+      }
     }
-  };
-
-  const validateOtp = (index, value) => {
-    setValidOtp((prevValidOtp) => {
-      const newValidOtp = [...prevValidOtp];
-      newValidOtp[index] = value !== "";
-      return newValidOtp;
-    });
   };
 
   const handlePaste = (e) => {
-    const pastedData = e.clipboardData.getData("Text");
-    if (pastedData && pastedData.length === otp.length) {
-      setOtp(pastedData.split(""));
-      setValidOtp(pastedData.split("").map((digit) => digit !== ""));
-      setTimeout(() => {
-        const nextInput = document.getElementById(
-          `otp-input-${otp.length - 1}`
-        );
-        if (nextInput) nextInput.focus();
-      }, 0);
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim();
+    if (/^\d{6}$/.test(pastedData)) {
+      const digits = pastedData.split("");
+      setOtp(digits);
+      otpInputRefs.current[5]?.focus();
     }
   };
 
   const validateInput = () => {
-    const mobileRegex = /^\d{10}$/;
+    const cleanInput = input.trim();
+    const mobileRegex = /^[6-9]\d{9}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!mobileRegex.test(input) && !emailRegex.test(input)) {
-      setInputError(
-        "Please enter a valid 10-digit mobile number or email address"
-      );
-    } else {
-      setInputError("");
+    if (!cleanInput) {
+      setInputError("Please enter your Mobile Number or Email.");
+      return false;
     }
+
+    if (!mobileRegex.test(cleanInput) && !emailRegex.test(cleanInput)) {
+      setInputError("Please enter a valid 10-digit mobile number or email.");
+      return false;
+    }
+
+    setInputError("");
+    return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const handleSendOtp = async (e) => {
+    e?.preventDefault?.();
     setErrorMessage("");
-    setResendTimer(30);
+    setSuccessMessage("");
 
-    validateInput();
+    if (!validateInput()) return;
+
+    setIsLoading(true);
 
     try {
-      const response = await login({ input });
-      if (response.status === 200) {
-        setMessage(`OTP Sent to ${input}`);
+      const cleanInput = input.trim();
+      const response = await login({ input: cleanInput });
+
+      if (response?.status === 200 || response?.status === 201 || response?.data?.success) {
+        setSuccessMessage(`OTP sent successfully to ${cleanInput}`);
         setOtpSent(true);
-        setErrorMessage("");
-        const timerInterval = setInterval(() => {
-          setResendTimer((prev) => {
-            if (prev <= 1) {
-              clearInterval(timerInterval);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      } else if (response.status === 404) {
-        setErrorMessage(
-          response?.data?.message || "OTP Sending Error, Please Try Again."
-        );
+        setResendTimer(30);
+        setOtp(["", "", "", "", "", ""]);
+        setTimeout(() => {
+          otpInputRefs.current[0]?.focus();
+        }, 100);
       } else {
-        setErrorMessage("Unexpected error occurred. Please try again.");
+        setErrorMessage(
+          response?.data?.message || "Failed to send OTP. Please try again."
+        );
       }
     } catch (error) {
-      setErrorMessage(
+      console.error("Login request failed:", error);
+      const serverMsg =
         error?.response?.data?.message ||
-          "Login failed. Please try again later."
-      );
+        (error?.message === "Network Error"
+          ? "Cannot connect to server. Please check your internet connection or server status."
+          : error?.message) ||
+        "Login failed. Please try again later.";
+      setErrorMessage(serverMsg);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    setIsLoading(true);
+    e?.preventDefault?.();
+    setErrorMessage("");
+    setSuccessMessage("");
     const otpCode = otp.join("");
 
     if (otpCode.length !== 6) {
-      setErrorMessage("Please enter a 6-digit OTP.");
-      setIsLoading(false);
-
+      setErrorMessage("Please enter the complete 6-digit OTP.");
       return;
     }
+
+    setIsLoading(true);
+
     try {
-      const response = await userOTP({ otp: otpCode });
-      if (response.status === 200) {
-        window.location.reload();
+      const response = await userOTP({ otp: otpCode, input: input.trim() });
+      if (response?.status === 200 || response?.data?.success || response?.data?.auth) {
+        setSuccessMessage("Login verified successfully!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 600);
       }
     } catch (error) {
-      setMessage("");
-      setIsLoading(false);
-
+      console.error("OTP verification failed:", error);
       setErrorMessage(
-        error.response?.data?.message ||
-          "OTP verification failed. Please try again."
+        error?.response?.data?.message ||
+          "Invalid OTP. Please check the code and try again."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="overlay">
-      <div className="popupContainer">
-        <button className="closeBtn" onClick={onCloseLogin}>
+    <div
+      className="login-modal-overlay"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onCloseLogin?.();
+      }}
+    >
+      <div className="login-modal-card">
+        {/* Close Button */}
+        <button
+          className="login-close-btn"
+          onClick={onCloseLogin}
+          aria-label="Close modal"
+        >
           <IoClose />
         </button>
 
-        <div className="loginPopupContent">
-          <div className="popupLeft"></div>
+        <div className="login-modal-layout">
+          {/* Left Decorative Illustration */}
+          <div className="login-modal-left">
+            <div className="login-left-overlay">
+              <div className="login-left-content">
+                <span className="login-brand-tag">प्रभु पूजा • PrabhuPooja</span>
+                <h2>Divine Blessings & Spiritual Journey</h2>
+                <p>
+                  Experience authentic Pujas, Prasad Delivery, Astrological consultations, and sacred Vedic rituals at your doorstep.
+                </p>
+                <div className="login-features-list">
+                  <div className="feature-pill">
+                    <FaCheckCircle className="pill-icon" /> 100% Verified Vedic Pandits
+                  </div>
+                  <div className="feature-pill">
+                    <FaCheckCircle className="pill-icon" /> Pure Temple Prasadam
+                  </div>
+                  <div className="feature-pill">
+                    <FaCheckCircle className="pill-icon" /> Secure & Hassle-free
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <div className="popupRight">
-            <div className="popupCard">
-              <img
-                src={require("../Assets/logo-Prabhupooja.png")}
-                alt="Logo"
-                className="signup-logo"
-              />
-              <p className="Loginsubtitle">Login into your account</p>
-
-              <div className="inputGroup">
-                <input
-                  type="text"
-                  id="input"
-                  autoComplete="off"
-                  placeholder="Enter your Mobile Number or Email"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onBlur={validateInput}
+          {/* Right Login Form */}
+          <div className="login-modal-right">
+            <div className="login-form-wrapper">
+              <div className="login-header-section">
+                <img
+                  src={require("../Assets/logo-Prabhupooja.png")}
+                  alt="PrabhuPooja Logo"
+                  className="login-brand-logo"
                 />
+                <h3 className="login-heading">Welcome to PrabhuPooja</h3>
+                <p className="login-subheading">
+                  {!otpSent
+                    ? "Enter your Mobile Number or Email to continue"
+                    : "Enter the 6-digit verification code"}
+                </p>
               </div>
 
-              {inputError && (
-                <p className="login-error-message">{inputError}</p>
-              )}
+              {/* Alert Messages */}
               {errorMessage && (
-                <p className="login-error-message">{errorMessage}</p>
+                <div className="login-alert login-alert-error">
+                  <FaExclamationCircle className="alert-icon" />
+                  <span>{errorMessage}</span>
+                </div>
               )}
 
-              {message && (
-                <p className="login-error-message" style={{ color: "green" }}>
-                  {message}
-                </p>
+              {successMessage && (
+                <div className="login-alert login-alert-success">
+                  <FaCheckCircle className="alert-icon" />
+                  <span>{successMessage}</span>
+                </div>
               )}
 
               {!otpSent ? (
-                <button
-                  className="loginButton"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Sending OTP..." : "Send OTP"}
-                </button>
+                /* Step 1: Mobile / Email Input */
+                <form onSubmit={handleSendOtp} className="login-form">
+                  <div className="login-input-group">
+                    <label htmlFor="user-input">Mobile Number or Email</label>
+                    <div className="input-field-container">
+                      <input
+                        type="text"
+                        id="user-input"
+                        autoComplete="username"
+                        autoFocus
+                        placeholder="e.g. 9876543210 or name@example.com"
+                        value={input}
+                        onChange={(e) => {
+                          setInput(e.target.value);
+                          if (inputError) setInputError("");
+                        }}
+                        onBlur={validateInput}
+                        className={inputError ? "input-has-error" : ""}
+                      />
+                    </div>
+                    {inputError && (
+                      <span className="field-error-text">{inputError}</span>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="login-primary-btn"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <span className="btn-loading-state">
+                        <span className="btn-spinner"></span> Sending OTP...
+                      </span>
+                    ) : (
+                      "Send OTP"
+                    )}
+                  </button>
+                </form>
               ) : (
-                <div>
-                  <div className="otpFields">
+                /* Step 2: 6-Digit OTP Verification */
+                <form onSubmit={handleVerifyOtp} className="login-form">
+                  <div className="otp-sent-info">
+                    <span>
+                      Code sent to <strong>{input}</strong>
+                    </span>
+                    <button
+                      type="button"
+                      className="edit-number-btn"
+                      onClick={() => {
+                        setOtpSent(false);
+                        setErrorMessage("");
+                        setSuccessMessage("");
+                      }}
+                    >
+                      <FaEdit /> Change
+                    </button>
+                  </div>
+
+                  <div className="login-otp-grid" onPaste={handlePaste}>
                     {otp.map((digit, index) => (
                       <input
-                        id={`otp-input-${index}`}
                         key={index}
+                        ref={(el) => (otpInputRefs.current[index] = el)}
+                        id={`login-otp-${index}`}
                         type="text"
-                        value={digit}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         maxLength="1"
+                        value={digit}
                         onChange={(e) => handleOtpChange(e, index)}
-                        onKeyDown={(e) => handleKeyDown(e, index)}
-                        onPaste={handlePaste}
-                        className={`otpInput ${
-                          validOtp[index]
-                            ? "valid"
-                            : digit === ""
-                            ? "normal"
-                            : "invalid"
-                        }`}
+                        onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                        className={`login-otp-box ${digit ? "filled" : ""}`}
+                        autoComplete="one-time-code"
                       />
                     ))}
                   </div>
-                  <div className="resend-otp">
+
+                  <div className="login-resend-wrapper">
                     {resendTimer > 0 ? (
-                      <span style={{ color: "gray" }}>
-                        OTP sent. Please wait {resendTimer} second
-                        {resendTimer > 1 ? "s" : ""}.
+                      <span className="timer-text">
+                        Resend OTP in <strong>{resendTimer}s</strong>
                       </span>
                     ) : (
-                      <span onClick={handleSubmit}>
-                        Didn’t receive the OTP? <strong>Resend</strong>
-                      </span>
+                      <button
+                        type="button"
+                        className="resend-action-btn"
+                        onClick={handleSendOtp}
+                        disabled={isLoading}
+                      >
+                        Didn’t receive OTP? <strong>Resend</strong>
+                      </button>
                     )}
                   </div>
-                  <button className="loginButton" onClick={handleVerifyOtp}>
-                    {isLoading ? "Verifying OTP..." : " Verify OTP"}
+
+                  <button
+                    type="submit"
+                    className="login-primary-btn"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <span className="btn-loading-state">
+                        <span className="btn-spinner"></span> Verifying...
+                      </span>
+                    ) : (
+                      "Verify & Login"
+                    )}
                   </button>
-                </div>
+                </form>
               )}
 
-              <div style={{ marginTop: "20px", textAlign: "center" }}>
-                <span>
-                  Don't have an account?{" "}
-                  <button
-                    style={{
-                      color: "#3f51b5",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
-                    onClick={onOpenSignup}
-                  >
-                    Signup now
-                  </button>
-                </span>
+              {/* Signup Link */}
+              <div className="login-switch-action">
+                <span>Don't have an account? </span>
+                <button
+                  type="button"
+                  className="switch-link-btn"
+                  onClick={onOpenSignup}
+                >
+                  Sign up now
+                </button>
               </div>
 
-              <div className="divider">OR</div>
+              {/* Divider */}
+              <div className="login-divider">
+                <span>OR</span>
+              </div>
 
-              <div className="signupButtonCointainer">
-                <div>
-                  {googleLoading ? (
-                    <button className="googleLoginbtn" disabled>
-                      <img
-                        src="https://developers.google.com/identity/images/g-logo.png"
-                        alt="Google logo"
-                      />
-                      Please Wait...
-                    </button>
-                  ) : (
-                    <button
-                      className="googleLoginbtn"
-                      onClick={handleGoogleLogin}
-                    >
-                      <img
-                        src="https://developers.google.com/identity/images/g-logo.png"
-                        alt="Google logo"
-                      />
-                      Continue with Google
-                    </button>
-                  )}
-                </div>
+              {/* Google OAuth Login */}
+              <div className="login-social-section">
+                <button
+                  type="button"
+                  className="login-google-btn"
+                  onClick={handleGoogleLogin}
+                  disabled={googleLoading}
+                >
+                  <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    alt="Google Logo"
+                    className="google-icon"
+                  />
+                  <span>
+                    {googleLoading ? "Connecting..." : "Continue with Google"}
+                  </span>
+                </button>
               </div>
             </div>
           </div>
