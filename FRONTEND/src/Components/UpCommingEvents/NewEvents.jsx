@@ -25,10 +25,22 @@ const NewEvents = () => {
   const { user } = useAuthStore();
 
   const getImageUrl = (image) => {
-    if (!image) return eventImg;
-    if (image.startsWith("http://") || image.startsWith("https://")) return image;
-    const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "";
-    return `${backendBase}/uploads/${image}`;
+    if (!image || image === "null" || image === "undefined") return eventImg;
+    const cleanImg = typeof image === "string" ? image.trim() : "";
+    if (!cleanImg || cleanImg === "null" || cleanImg === "undefined") return eventImg;
+    if (
+      cleanImg.startsWith("http://") ||
+      cleanImg.startsWith("https://") ||
+      cleanImg.startsWith("data:") ||
+      cleanImg.startsWith("/static/")
+    ) {
+      return cleanImg;
+    }
+    const backendBase =
+      process.env.REACT_APP_BACKEND_URL ||
+      process.env.REACT_APP_BASE_URL ||
+      "https://api.prabhupooja.com";
+    return `${backendBase}/uploads/${cleanImg}`;
   };
 
   useEffect(() => {
