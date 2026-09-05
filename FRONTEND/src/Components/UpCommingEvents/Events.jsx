@@ -51,7 +51,7 @@ const Events = () => {
     const fallbacks = [img1, img2, img3];
     if (!image) return fallbacks[index % fallbacks.length];
     if (image.startsWith("http://") || image.startsWith("https://")) return image;
-    const backendBase = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+    const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "";
     return `${backendBase}/uploads/${image}`;
   };
 

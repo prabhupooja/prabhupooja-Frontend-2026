@@ -70,7 +70,7 @@ const PastEventDetailPage = () => {
   const getImageUrl = (image) => {
     if (!image) return img1;
     if (image.startsWith("http://") || image.startsWith("https://")) return image;
-    const backendBase = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+    const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "";
     return `${backendBase}/uploads/${image}`;
   };
 

@@ -48,7 +48,7 @@ const Pandit_form = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL || "http://localhost:3002/api/v1"}/pandit/CreatePandit`,
+        `${process.env.REACT_APP_API_URL}/pandit/CreatePandit`,
         formData,
         {
           headers: {

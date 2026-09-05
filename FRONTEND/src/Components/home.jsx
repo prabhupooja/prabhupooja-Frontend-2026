@@ -433,7 +433,7 @@ const Home = () => {
                   !rawImg.startsWith("http") &&
                   !rawImg.startsWith("data:") &&
                   !rawImg.startsWith("/")
-                    ? `${process.env.REACT_APP_BASE_URL || "http://localhost:3002"}/${rawImg}`
+                    ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
                     : rawImg;
 
                 return (
@@ -496,7 +496,7 @@ const Home = () => {
                   !rawImg.startsWith("http") &&
                   !rawImg.startsWith("data:") &&
                   !rawImg.startsWith("/")
-                    ? `${process.env.REACT_APP_BASE_URL || "http://localhost:3002"}/${rawImg}`
+                    ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
                     : rawImg;
 
                 return (

@@ -33,7 +33,7 @@ const Signup = ({ closeSingClose, onOpenLogin }) => {
     const backendUrl =
       process.env.REACT_APP_BACKEND_URL ||
       process.env.REACT_APP_BASE_URL ||
-      "http://localhost:3002";
+      "";
     const currentPath = window.location.pathname;
     window.location.href = `${backendUrl}/auth/google?state=${encodeURIComponent(
       currentPath

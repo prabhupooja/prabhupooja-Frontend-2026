@@ -64,7 +64,7 @@ const Login = ({ onCloseLogin, onOpenOtp, onOpenSignup, setLoginInput }) => {
   };
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL || "http://localhost:3002"}/auth/google`;
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || ""}/auth/google`;
   };
 
   return (
