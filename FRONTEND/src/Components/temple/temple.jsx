@@ -98,47 +98,54 @@ const Temple = () => {
       <div className="temple-gallery">
         <div className="container">
           <div className="row">
-              <div className="col-sm-4" key={temple.id}>
-                <article className="temple-gallery-item" style={{ position: "relative" }}>
-                  <span className="temple_card_tag_badge">
-                    {temple.tag || "Divine Temple"}
-                  </span>
-                  <img
-                    src={temple.image}
-                    alt={temple.name}
-                    height={245}
-                    className="temple-image"
-                    onClick={() => handleViewClick(temple.id)}
-                    style={{ cursor: "pointer" }}
-                  />
+            {Array.isArray(temple) && temple.length > 0 ? (
+              temple.map((item) => (
+                <div className="col-sm-4" key={item.id}>
+                  <article className="temple-gallery-item" style={{ position: "relative" }}>
+                    <span className="temple_card_tag_badge">
+                      {item.tag || "Divine Temple"}
+                    </span>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      height={245}
+                      className="temple-image"
+                      onClick={() => handleViewClick(item.id)}
+                      style={{ cursor: "pointer" }}
+                    />
 
-                  <div className="temple-info">
-                    <h3 className="temple-title" onClick={() => handleViewClick(temple.id)} style={{ cursor: "pointer" }}>
-                      {temple.name}
-                    </h3>
-                    <p className="temple-description">
-                      📍 {temple.location || temple.description || "Holy Shrine"}
-                    </p>
-                    <div className="temple-price">₹ {temple.price || 501}</div>
-                    <div className="temple-actions">
-                      <button
-                        className="temple-action-link1"
-                        onClick={() => handleViewClick(temple.id)}
-                      >
-                        VIEW
-                      </button>
+                    <div className="temple-info">
+                      <h3 className="temple-title" onClick={() => handleViewClick(item.id)} style={{ cursor: "pointer" }}>
+                        {item.name}
+                      </h3>
+                      <p className="temple-description">
+                        📍 {item.location || item.description || "Holy Shrine"}
+                      </p>
+                      <div className="temple-price">₹ {item.price || 501}</div>
+                      <div className="temple-actions">
+                        <button
+                          className="temple-action-link1"
+                          onClick={() => handleViewClick(item.id)}
+                        >
+                          VIEW
+                        </button>
 
-                      <button
-                        className="temple-action-link1"
-                        onClick={() => handleBookClick(temple.id, temple.price)}
-                      >
-                        BOOK
-                      </button>
+                        <button
+                          className="temple-action-link1"
+                          onClick={() => handleBookClick(item.id, item.price)}
+                        >
+                          BOOK
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </article>
+                  </article>
+                </div>
+              ))
+            ) : (
+              <div style={{ textAlign: "center", width: "100%", padding: "50px 0" }}>
+                <p>No temples found at the moment.</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

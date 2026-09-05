@@ -41,10 +41,18 @@ const AstrologyProfile = () => {
   }, []);
 
   const fetchAstrologer = async () => {
-    const response = await astrologerOneGet(decryptId(id));
-    if (response.data.success) {
-      setPanditData(response?.data?.data);
-      await getCommnet(response.data.data.id);
+    try {
+      const response = await astrologerOneGet(decryptId(id));
+      if (response?.data?.success) {
+        const raw = response?.data?.data;
+        const data = Array.isArray(raw) ? raw[0] : raw;
+        setPanditData(data);
+        if (data?.id) {
+          await getCommnet(data.id);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching astrologer profile:", err);
     }
   };
 

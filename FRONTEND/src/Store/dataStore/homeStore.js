@@ -172,6 +172,20 @@ const useHomeStore = create((set, get) => ({
     }
   },
 
+  getTinyBlogById: async (blogId) => {
+    try {
+      const response = await api.get(`/blog/getbyId/${blogId}`);
+      return response;
+    } catch (err) {
+      try {
+        return await api.get(`/blog/get/${blogId}`);
+      } catch (err2) {
+        console.error("Error in getTinyBlogById:", err2?.message || err2);
+        return null;
+      }
+    }
+  },
+
   getRecomendetionBlogs: async (keyword, blogId) => {
     set({ isLoading: true });
     try {

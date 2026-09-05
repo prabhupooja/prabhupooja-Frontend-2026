@@ -157,13 +157,12 @@ function Blogs() {
       const decryptedId = decryptId(id);
       if (!decryptedId) return;
       const response = await getTinyBlogById(decryptedId);
-      if (
-        response?.data?.success &&
-        Array.isArray(response?.data?.data) &&
-        response.data.data.length > 0
-      ) {
-        setBlog(response.data.data[0]);
-        setLikeCount(response.data.data[0]?.like_count || 0);
+      const raw = response?.data?.data ?? response?.data;
+      const item = Array.isArray(raw) ? raw[0] : raw;
+      if (item && (item.id || item.title || item.blog_title || item.name)) {
+        setBlog(item);
+        setLikeCount(item.like_count || item.likes || 0);
+        setBlogError(false);
       } else {
         setBlogError(true);
       }

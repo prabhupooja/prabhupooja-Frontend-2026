@@ -26,8 +26,9 @@ const TempleDetail = () => {
       try {
         setLoading(true);
         const response = await api.get(`/temple/gettemple/${templeId}`);
-        if (response?.data?.data) {
-          const data = response.data.data;
+        const raw = response?.data?.data ?? response?.data;
+        const data = Array.isArray(raw) ? raw[0] : raw;
+        if (data) {
           setTemple(data);
           
           // Parse gallery images to find initial active image
