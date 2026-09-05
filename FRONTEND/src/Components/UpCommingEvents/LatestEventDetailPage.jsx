@@ -5,25 +5,8 @@ import "./PastEvents.css";
 import EventForm from "./EventForm";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 
+// High quality divine fallback image
 import defaultLatestImg from "../Assets/adhiyogi1.jpg";
-
-const fallbackEvent = {
-  id: 1,
-  tag: "Maha Utsav",
-  title: "Grand Maha Shivratri Rudrabhishek & Bhajan Sandhya",
-  description:
-    "Join us for the divine celebration of Maha Shivratri with continuous Rudrabhishek, Vedic chanting, special aarti, and spiritual discourses by revered pandits. Devotees can participate online or in-person for the sacred anushthan to receive the supreme grace of Lord Shiva.",
-  short_description:
-    "Annual divine celebration of Maha Shivratri with 24-hour Akhand Rudrabhishek.",
-  date_info: "18th - 19th September 2026",
-  start_date: "2026-09-18",
-  end_date: "2026-09-19",
-  location: "Kashi Vishwanath Complex, Varanasi & Live Online",
-  special_pooja: "Akhand Rudrabhishek & Maha Aarti",
-  service_type: "Varanasi & Online",
-  image: defaultLatestImg,
-  website: null,
-};
 
 const LatestEventDetailPage = () => {
   const { id } = useParams();
@@ -39,14 +22,14 @@ const LatestEventDetailPage = () => {
     const fetchEvent = async () => {
       try {
         const response = await api.get(`/events/get/${id}`);
-        if (response.data.success && response.data.data) {
+        if (response.data?.success && response.data?.data) {
           setEvent(response.data.data);
         } else {
-          setEvent(fallbackEvent);
+          setEvent(null);
         }
       } catch (error) {
         console.error("Error fetching event detail:", error);
-        setEvent(fallbackEvent);
+        setEvent(null);
       } finally {
         setLoading(false);
       }
@@ -58,7 +41,19 @@ const LatestEventDetailPage = () => {
     return <div style={{ padding: "100px", textAlign: "center" }}>Loading event details...</div>;
   }
 
-  const currentEvent = event || fallbackEvent;
+  if (!event) {
+    return (
+      <div style={{ textAlign: "center", padding: "100px 20px" }}>
+        <h2>Event Not Found (कार्यक्रम नहीं मिला)</h2>
+        <p style={{ color: "#666", margin: "15px 0 25px" }}>The requested event details could not be found.</p>
+        <button className="pe-card-btn" onClick={() => navigate("/latest-events")}>
+          ← Back to Latest Events
+        </button>
+      </div>
+    );
+  }
+
+  const currentEvent = event;
 
   const getImageUrl = (image) => {
     if (!image) return defaultLatestImg;

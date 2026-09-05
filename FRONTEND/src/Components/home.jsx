@@ -88,21 +88,7 @@ const Home = () => {
           Array.isArray(response?.data?.data) &&
           response.data.data.length > 0
         ) {
-          const apiBanners = response.data.data.filter((b) => {
-            if (!b) return false;
-            const img = b?.image || b?.bannerImage || b;
-            return (
-              img &&
-              img !== ganeshBanner2 &&
-              b.id !== "default-ganesh-eco" &&
-              b.id !== "default-ganesh-1"
-            );
-          });
-          setCoupons(
-            apiBanners.length > 0
-              ? [...defaultBanners, ...apiBanners]
-              : defaultBanners
-          );
+          setCoupons(response.data.data);
         } else {
           setCoupons(defaultBanners);
         }
@@ -386,129 +372,83 @@ const Home = () => {
       <div className="carousel-wrapper">
         {isMobile ? (
           <Slider {...mobileSettings}>
-            {/* 🌟 1. Primary Hardcoded Hindi Ganesh Banner */}
-            <div
-              key="hardcoded-ganesh-hindi-mobile"
-              className="carousel-slide"
-              onClick={() => navigate("/e-commerce")}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={ganeshBannerHindi}
-                alt="प्रकृति के संग गणेश मूर्ति - Eco-Friendly Ganesh Murti"
-                className="carousel-image"
-              />
-            </div>
+            {coupons.map((data, index) => {
+              const rawImg = data?.image || data?.bannerImage || data?.banner || data?.imageUrl || data;
+              const imgUrl =
+                typeof rawImg === "string" &&
+                !rawImg.startsWith("http") &&
+                !rawImg.startsWith("data:") &&
+                !rawImg.startsWith("/")
+                  ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
+                  : rawImg;
 
-            {/* 🌟 2. Hardcoded English Ganesh Banner */}
-            <div
-              key="hardcoded-ganesh-english-mobile"
-              className="carousel-slide"
-              onClick={() => navigate("/e-commerce")}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={ganeshBannerEnglish}
-                alt="Eco-Friendly Ganesh Murti - Crafted with Nature"
-                className="carousel-image"
-              />
-            </div>
-
-            {/* 🌐 3. Dynamic Banners from Admin API */}
-            {coupons
-              ?.filter(
-                (d) =>
-                  d &&
-                  (d.image || d.bannerImage || d.banner) &&
-                  d.image !== ganeshBannerHindi &&
-                  d.image !== ganeshBannerEnglish &&
-                  d.id !== "hardcoded-ganesh-hindi" &&
-                  d.id !== "hardcoded-ganesh-english" &&
-                  d.id !== "default-ganesh-eco"
-              )
-              ?.map((data, index) => {
-                const rawImg = data.image || data.bannerImage || data.banner;
-                const imgUrl =
-                  typeof rawImg === "string" &&
-                  !rawImg.startsWith("http") &&
-                  !rawImg.startsWith("data:") &&
-                  !rawImg.startsWith("/")
-                    ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
-                    : rawImg;
-
-                return (
-                  <div key={data.id || index} className="carousel-slide">
-                    <img
-                      src={imgUrl}
-                      alt={data.title || `Slide ${index + 3}`}
-                      className="carousel-image"
-                    />
-                  </div>
-                );
-              })}
+              return (
+                <div
+                  key={data?.id || `mobile-banner-${index}`}
+                  className="carousel-slide"
+                  onClick={() => {
+                    if (data?.link) {
+                      if (data.link.startsWith("http")) {
+                        window.open(data.link, "_blank", "noopener,noreferrer");
+                      } else {
+                        navigate(data.link);
+                      }
+                    } else if (data?.product_id) {
+                      navigate(`/product/${data.product_id}`);
+                    }
+                  }}
+                  style={{
+                    cursor: data?.link || data?.product_id ? "pointer" : "default",
+                  }}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={data?.title || data?.name || `Slide ${index + 1}`}
+                    className="carousel-image"
+                  />
+                </div>
+              );
+            })}
           </Slider>
         ) : (
           <Slider {...settings1}>
-            {/* 🌟 1. Primary Hardcoded Hindi Ganesh Banner */}
-            <div
-              key="hardcoded-ganesh-hindi-desktop"
-              className="carousel-slide"
-              onClick={() => navigate("/e-commerce")}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={ganeshBannerHindi}
-                alt="प्रकृति के संग गणेश मूर्ति - Eco-Friendly Ganesh Murti"
-                className="carousel-image"
-              />
-            </div>
+            {coupons.map((data, index) => {
+              const rawImg = data?.image || data?.bannerImage || data?.banner || data?.imageUrl || data;
+              const imgUrl =
+                typeof rawImg === "string" &&
+                !rawImg.startsWith("http") &&
+                !rawImg.startsWith("data:") &&
+                !rawImg.startsWith("/")
+                  ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
+                  : rawImg;
 
-            {/* 🌟 2. Hardcoded English Ganesh Banner */}
-            <div
-              key="hardcoded-ganesh-english-desktop"
-              className="carousel-slide"
-              onClick={() => navigate("/e-commerce")}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={ganeshBannerEnglish}
-                alt="Eco-Friendly Ganesh Murti - Crafted with Nature"
-                className="carousel-image"
-              />
-            </div>
-
-            {/* 🌐 3. Dynamic Banners from Admin API */}
-            {coupons
-              ?.filter(
-                (d) =>
-                  d &&
-                  (d.image || d.bannerImage || d.banner) &&
-                  d.image !== ganeshBannerHindi &&
-                  d.image !== ganeshBannerEnglish &&
-                  d.id !== "hardcoded-ganesh-hindi" &&
-                  d.id !== "hardcoded-ganesh-english" &&
-                  d.id !== "default-ganesh-eco"
-              )
-              ?.map((data, index) => {
-                const rawImg = data.image || data.bannerImage || data.banner;
-                const imgUrl =
-                  typeof rawImg === "string" &&
-                  !rawImg.startsWith("http") &&
-                  !rawImg.startsWith("data:") &&
-                  !rawImg.startsWith("/")
-                    ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
-                    : rawImg;
-
-                return (
-                  <div key={data.id || index} className="carousel-slide">
-                    <img
-                      src={imgUrl}
-                      alt={data.title || `Slide ${index + 3}`}
-                      className="carousel-image"
-                    />
-                  </div>
-                );
-              })}
+              return (
+                <div
+                  key={data?.id || `desktop-banner-${index}`}
+                  className="carousel-slide"
+                  onClick={() => {
+                    if (data?.link) {
+                      if (data.link.startsWith("http")) {
+                        window.open(data.link, "_blank", "noopener,noreferrer");
+                      } else {
+                        navigate(data.link);
+                      }
+                    } else if (data?.product_id) {
+                      navigate(`/product/${data.product_id}`);
+                    }
+                  }}
+                  style={{
+                    cursor: data?.link || data?.product_id ? "pointer" : "default",
+                  }}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={data?.title || data?.name || `Slide ${index + 1}`}
+                    className="carousel-image"
+                  />
+                </div>
+              );
+            })}
           </Slider>
         )}
       </div>

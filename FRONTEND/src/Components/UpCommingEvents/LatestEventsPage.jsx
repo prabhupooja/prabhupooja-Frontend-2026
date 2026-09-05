@@ -6,26 +6,6 @@ import "./PastEvents.css";
 // High quality divine fallback image
 import defaultLatestImg from "../Assets/adhiyogi1.jpg";
 
-const fallbackLatestEvents = [
-  {
-    id: 1,
-    tag: "Maha Utsav",
-    title: "Grand Maha Shivratri Rudrabhishek & Bhajan Sandhya",
-    description:
-      "Join us for the divine celebration of Maha Shivratri with continuous Rudrabhishek, Vedic chanting, special aarti, and spiritual discourses by revered pandits.",
-    short_description:
-      "Annual divine celebration of Maha Shivratri with 24-hour Akhand Rudrabhishek.",
-    date_info: "18th - 19th September 2026",
-    start_date: "2026-09-18",
-    end_date: "2026-09-19",
-    location: "Kashi Vishwanath Complex, Varanasi & Live Online",
-    special_pooja: "Akhand Rudrabhishek & Maha Aarti",
-    service_type: "Varanasi & Online",
-    image: defaultLatestImg,
-    website: null,
-  },
-];
-
 const LatestEventsPage = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
@@ -43,14 +23,14 @@ const LatestEventsPage = () => {
     const fetchEvents = async () => {
       try {
         const response = await api.get("/events/getall?type=latest");
-        if (response.data.success && response.data.data && response.data.data.length > 0) {
+        if (response.data?.success && Array.isArray(response.data?.data)) {
           setEvents(response.data.data);
         } else {
-          setEvents(fallbackLatestEvents);
+          setEvents([]);
         }
       } catch (error) {
         console.error("Error fetching latest events:", error);
-        setEvents(fallbackLatestEvents);
+        setEvents([]);
       } finally {
         setLoading(false);
       }
@@ -58,7 +38,7 @@ const LatestEventsPage = () => {
     fetchEvents();
   }, []);
 
-  const displayEvents = events.length > 0 ? events : fallbackLatestEvents;
+  const displayEvents = events;
 
   return (
     <div className="pe-page-container">

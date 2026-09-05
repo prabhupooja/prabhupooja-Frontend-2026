@@ -235,22 +235,7 @@ const NewHome = () => {
           Array.isArray(response?.data?.data) &&
           response.data.data.length > 0
         ) {
-          const apiBanners = response.data.data.filter((b) => {
-            if (!b) return false;
-            const img = b?.image || b?.bannerImage || b;
-            return (
-              img &&
-              img !== ganeshBannerEnglish &&
-              img !== ganeshBannerHindi &&
-              b.id !== "default-ganesh-eco" &&
-              b.id !== "default-ganesh-1"
-            );
-          });
-          setCoupons(
-            apiBanners.length > 0
-              ? [...defaultBanners, ...apiBanners]
-              : defaultBanners
-          );
+          setCoupons(response.data.data);
         } else {
           setCoupons(defaultBanners);
         }
@@ -430,92 +415,52 @@ const NewHome = () => {
           navigation={true}
           pagination={{ clickable: true }}
           autoplay={{ delay: 4500, disableOnInteraction: false }}
-          loop={true}
+          loop={coupons.length > 1}
           modules={[Navigation, Autoplay, Pagination]}
           className="hero-swiper"
         >
-          {/* 🌟 1. Primary Hardcoded Hindi Ganesh Banner */}
-          <SwiperSlide key="hardcoded-ganesh-hindi">
-            <div
-              className="hero-slide"
-              onClick={() => navigate("/e-commerce")}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={ganeshBannerHindi}
-                alt="प्रकृति के संग गणेश मूर्ति - Eco-Friendly Ganesh Murti"
-                className="hero-banner-img"
-              />
-            </div>
-          </SwiperSlide>
+          {coupons.map((slide, index) => {
+            const rawImg =
+              slide?.image || slide?.bannerImage || slide?.banner || slide?.imageUrl || slide;
+            const imgUrl =
+              typeof rawImg === "string" &&
+              !rawImg.startsWith("http") &&
+              !rawImg.startsWith("data:") &&
+              !rawImg.startsWith("/")
+                ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
+                : rawImg;
 
-          {/* 🌟 2. Hardcoded English Eco-Friendly Ganesh Banner */}
-          <SwiperSlide key="hardcoded-ganesh-english">
-            <div
-              className="hero-slide"
-              onClick={() => navigate("/e-commerce")}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={ganeshBannerEnglish}
-                alt="Eco-Friendly Ganesh Murti - Crafted with Nature"
-                className="hero-banner-img"
-              />
-            </div>
-          </SwiperSlide>
-
-          {/* 🌐 3. Dynamic Banners from Admin API (if any) */}
-          {coupons
-            ?.filter((slide) => {
-              const img =
-                slide?.image || slide?.bannerImage || slide?.banner || slide;
-              return (
-                img &&
-                img !== ganeshBannerHindi &&
-                img !== ganeshBannerEnglish &&
-                slide?.id !== "hardcoded-ganesh-hindi" &&
-                slide?.id !== "hardcoded-ganesh-english" &&
-                slide?.id !== "default-ganesh-eco"
-              );
-            })
-            ?.map((slide, index) => {
-              const rawImg =
-                slide?.image || slide?.bannerImage || slide?.banner || slide;
-              const imgUrl =
-                typeof rawImg === "string" &&
-                !rawImg.startsWith("http") &&
-                !rawImg.startsWith("data:") &&
-                !rawImg.startsWith("/")
-                  ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
-                  : rawImg;
-
-              return (
-                <SwiperSlide key={slide?.id || `api-banner-${index}`}>
-                  <div
-                    className="hero-slide"
-                    onClick={() => {
-                      if (slide?.link) {
+            return (
+              <SwiperSlide key={slide?.id || `banner-${index}`}>
+                <div
+                  className="hero-slide"
+                  onClick={() => {
+                    if (slide?.link) {
+                      if (slide.link.startsWith("http")) {
+                        window.open(slide.link, "_blank", "noopener,noreferrer");
+                      } else {
                         navigate(slide.link);
-                      } else if (slide?.product_id) {
-                        navigate(`/product/${slide.product_id}`);
                       }
-                    }}
-                    style={{
-                      cursor:
-                        slide?.link || slide?.product_id
-                          ? "pointer"
-                          : "default",
-                    }}
-                  >
-                    <img
-                      src={imgUrl}
-                      alt={slide?.title || slide?.name || `Banner ${index + 3}`}
-                      className="hero-banner-img"
-                    />
-                  </div>
-                </SwiperSlide>
-              );
-            })}
+                    } else if (slide?.product_id) {
+                      navigate(`/product/${slide.product_id}`);
+                    }
+                  }}
+                  style={{
+                    cursor:
+                      slide?.link || slide?.product_id
+                        ? "pointer"
+                        : "default",
+                  }}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={slide?.title || slide?.name || `Banner ${index + 1}`}
+                    className="hero-banner-img"
+                  />
+                </div>
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </div>
       <Bhagwatkatha/>

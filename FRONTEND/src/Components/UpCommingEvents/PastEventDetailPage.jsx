@@ -3,63 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./PastEvents.css";
 import api from "../Axios/api";
 
+// Default fallback images
 import img1 from "../Assets/Sounds/55.jpeg";
 import img2 from "../Assets/pooja-img.jpg";
 import img3 from "../Assets/adhiyogi2.jpg";
-
-const fallbackPastEvents = [
-  {
-    id: 101,
-    title: "Bhagwat Katha, Indore",
-    speaker: "डॉ. मनोज मोहन शास्त्री जी महाराज",
-    date: "अप्रैल 2026",
-    location: "दौलतराम छावछरिया प्रवचन हॉल, खजराना श्रीगणेश मंदिर, इंदौर",
-    description:
-      "परम पूज्य डॉ. मनोज मोहन शास्त्री जी महाराज के श्रीमुख से प्रसारित दिव्य श्रीमद भागवत कथा में श्रद्धालुओं ने बड़ी संख्या में भाग लेकर आध्यात्मिक आनंद प्राप्त किया। इस 7 दिवसीय भागवत कथा में हजारों श्रद्धालुओं ने भाग लिया और आध्यात्मिक ज्ञान प्राप्त किया।",
-    image: img1,
-    gallery: [img1, img2, img3],
-    highlights: [
-      "7 दिवसीय भागवत कथा का भव्य आयोजन",
-      "श्रद्धालुओं की रिकॉर्ड भागीदारी",
-      "प्रसाद वितरण एवं भंडारा",
-      "लाइव स्ट्रीमिंग की सुविधा",
-    ],
-  },
-  {
-    id: 102,
-    title: "शिवपुरी नववर्ष महोत्सव 2026",
-    speaker: "सहस्त्र चंडी महायज्ञ",
-    date: "मार्च 2026",
-    location: "शिवपुरी, मध्य प्रदेश",
-    description:
-      "विश्व कल्याण एवं परिवार की शांति-समृद्धि हेतु इस पवित्र सहस्त्र चंडी महायज्ञ में भाग लेने का अवसर मिला। इस महायज्ञ में भाग लेकर भक्तगण अपने जीवन को आध्यात्मिक ऊर्जा से आलोकित कर सके और परिवार के लिए सुख-समृद्धि की कामना की।",
-    image: img2,
-    gallery: [img2, img1, img3],
-    highlights: [
-      "सहस्त्र कुंडीय यज्ञ का आयोजन",
-      "108 विद्वान पंडितों द्वारा अनुष्ठान",
-      "विशाल कलश यात्रा",
-      "निःशुल्क भंडारा प्रसाद",
-    ],
-  },
-  {
-    id: 2,
-    title: "Shravan Somwar Akhand Mahapuja",
-    speaker: "आचार्य पंडित समूह",
-    date: "14th August 2025",
-    location: "Prabhu Pooja Dham, Haridwar",
-    description:
-      "A grand gathering of devotees witnessed the sacred Somwar Mahapuja with over 10,000 online and offline participants.",
-    image: img3,
-    gallery: [img3, img1, img2],
-    highlights: [
-      "24 घंटे अखंड रुद्राभिषेक",
-      "हजारों भक्तों का समागम",
-      "विशेष महाआरती एवं भस्म आरती",
-      "महाप्रसाद वितरण",
-    ],
-  },
-];
 
 const PastEventDetailPage = () => {
   const { id } = useParams();
@@ -79,15 +26,13 @@ const PastEventDetailPage = () => {
     const fetchEvent = async () => {
       try {
         const response = await api.get(`/events/get/${id}`);
-        if (response.data.success && response.data.data) {
+        if (response.data?.success && response.data?.data) {
           setEvent(response.data.data);
         } else {
-          const fallback = fallbackPastEvents.find((e) => String(e.id) === String(id));
-          setEvent(fallback || fallbackPastEvents[0]);
+          setEvent(null);
         }
       } catch {
-        const fallback = fallbackPastEvents.find((e) => String(e.id) === String(id));
-        setEvent(fallback || fallbackPastEvents[0]);
+        setEvent(null);
       } finally {
         setLoading(false);
       }

@@ -6,42 +6,6 @@ import img3 from "../Assets/adhiyogi2.jpg";
 import { useNavigate } from "react-router-dom";
 import api from "../Axios/api";
 
-const fallbackPastEvents = [
-  {
-    id: 101,
-    title: "Bhagwat Katha, Indore",
-    speaker: "डॉ. मनोज मोहन शास्त्री जी महाराज",
-    date: "अप्रैल 2026",
-    location: "दौलतराम छावछरिया प्रवचन हॉल, खजराना श्रीगणेश मंदिर, इंदौर",
-    description:
-      "परम पूज्य डॉ. मनोज मोहन शास्त्री जी महाराज के श्रीमुख से प्रसारित दिव्य श्रीमद भागवत कथा में श्रद्धालुओं ने बड़ी संख्या में भाग लेकर आध्यात्मिक आनंद प्राप्त किया।",
-    image: img1,
-    website: "https://drmanojmohanshastriji.com",
-  },
-  {
-    id: 102,
-    title: "शिवपुरी नववर्ष महोत्सव 2026",
-    speaker: "सहस्त्र चंडी महायज्ञ",
-    date: "मार्च 2026",
-    location: "शिवपुरी, मध्य प्रदेश",
-    description:
-      "विश्व कल्याण एवं परिवार की शांति-समृद्धि हेतु इस पवित्र सहस्त्र चंडी महायज्ञ में भाग लें। इस महायज्ञ में भाग लेकर आप अपने जीवन को आध्यात्मिक ऊर्जा से आलोकित कर सकते हैं।",
-    image: img2,
-    website: "https://shivpurikatha.com/",
-  },
-  {
-    id: 2,
-    title: "Shravan Somwar Akhand Mahapuja",
-    speaker: "आचार्य पंडित समूह",
-    date: "14th August 2025",
-    location: "Prabhu Pooja Dham, Haridwar",
-    description:
-      "A grand gathering of devotees witnessed the sacred Somwar Mahapuja with over 10,000 online and offline participants.",
-    image: img3,
-    website: null,
-  },
-];
-
 const Events = () => {
   const navigate = useNavigate();
   const [pastEvents, setPastEvents] = useState([]);
@@ -59,22 +23,14 @@ const Events = () => {
     const fetchPastEvents = async () => {
       try {
         const response = await api.get("/events/getall?type=past");
-        if (response.data.success && response.data.data && response.data.data.length > 0) {
-          // Merge API data with fallbacks so all past events remain visible
-          const apiData = response.data.data;
-          const merged = [...apiData];
-          fallbackPastEvents.forEach((fb) => {
-            if (!merged.some((m) => String(m.title).toLowerCase().includes(String(fb.title).toLowerCase().slice(0, 8)))) {
-              merged.push(fb);
-            }
-          });
-          setPastEvents(merged);
+        if (response.data.success && Array.isArray(response.data.data)) {
+          setPastEvents(response.data.data);
         } else {
-          setPastEvents(fallbackPastEvents);
+          setPastEvents([]);
         }
       } catch (error) {
         console.error("Error fetching past events:", error);
-        setPastEvents(fallbackPastEvents);
+        setPastEvents([]);
       } finally {
         setLoading(false);
       }
@@ -82,7 +38,11 @@ const Events = () => {
     fetchPastEvents();
   }, []);
 
-  const displayEvents = pastEvents.length > 0 ? pastEvents : fallbackPastEvents;
+  if (!pastEvents || pastEvents.length === 0) {
+    return null;
+  }
+
+  const displayEvents = pastEvents;
 
   return (
     <section className="events-section">
