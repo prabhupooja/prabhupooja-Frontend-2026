@@ -126,7 +126,7 @@ p {
   width: 100%;
   position: relative;
   overflow: hidden;
-  background: #0d1117;
+  background: transparent;
   padding: 0;
   margin: 0;
 }
@@ -145,7 +145,7 @@ p {
   align-items: center;
   justify-content: center;
   position: relative;
-  background: #0d1117;
+  background: transparent;
   overflow: hidden;
 }
 
@@ -2122,8 +2122,8 @@ p {
 
 @media (max-width: 768px) {
   .hero-section {
-    height: 80vh;
-    min-height: 500px;
+    height: auto;
+    min-height: unset;
   }
   
   .hero-buttons {
