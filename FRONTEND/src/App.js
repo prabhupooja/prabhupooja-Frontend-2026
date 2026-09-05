@@ -7,6 +7,7 @@ import CustomCursor from "./Components/NewHome/CustomCursor";
 import NewLoader from "./Components/NewLoader/NewLoader";
 import useAuthStore from "./Store/UserStore/userAuthStore";
 import NetworkError from "./Components/NetworkError/NetworkError";
+import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary";
 
 // ⚡ Lazy Loaded Pages & Components (Code Splitting for Fast Loading)
 const NewHome = lazy(() => import("./Components/NewHome/NewHome"));
@@ -171,8 +172,9 @@ function App() {
         </a>
 
         <ScrollToTop />
-        <Suspense fallback={<NewLoader />}>
-          <Routes>
+        <ErrorBoundary>
+          <Suspense fallback={<NewLoader />}>
+            <Routes>
             <Route path="/" element={<NewHome />} />
             <Route path="/about" element={<About />} />
             <Route path="/onlinepooja" element={<Onlinepuja />} />
@@ -202,6 +204,14 @@ function App() {
             <Route path="/sidhivinayakpooja/:id" element={<PoojaDetailMasterPage />} />
             <Route
               path="/mahamrityunjayajaap/:id"
+              element={<PoojaDetailMasterPage />}
+            />
+            <Route
+              path="/mahamrityunjayjaap/:id"
+              element={<PoojaDetailMasterPage />}
+            />
+            <Route
+              path="/:poojaSlug/:id"
               element={<PoojaDetailMasterPage />}
             />
             
@@ -341,6 +351,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </ErrorBoundary>
         <Footer />
       </BrowserRouter>
     </div>

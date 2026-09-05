@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 const Login = lazy(() => import('./components/Login/login'));
 const Mainhome = lazy(() => import('./pages/Mainhome'));
@@ -14,13 +15,15 @@ const AdminAppLoader = () => (
 function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<AdminAppLoader />}>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/otp" element={<Otp />} />
-          <Route path="/*" element={<Mainhome />} />
-        </Routes>
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<AdminAppLoader />}>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/otp" element={<Otp />} />
+            <Route path="/*" element={<Mainhome />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

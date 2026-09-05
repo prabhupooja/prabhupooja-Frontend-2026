@@ -63,7 +63,11 @@ const PastEventDetailPage = () => {
       {/* Hero */}
       <section
         className="pe-detail-hero"
-        style={{ backgroundImage: `url(${imageUrl}), linear-gradient(135deg, #431407, #7c2d12)` }}
+        style={{
+          backgroundImage: `url('${imageUrl}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         <div className="pe-detail-hero-overlay" />
         <div className="pe-detail-hero-content">

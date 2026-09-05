@@ -7,6 +7,7 @@ import useAuthStore from "../../Store/UserStore/userAuthStore";
 import useHomeStore from "../../Store/dataStore/homeStore";
 import { TailSpin } from "react-loader-spinner";
 import CryptoJS from "crypto-js";
+import { getSafeImageUrl } from "../../utils/imageHelper";
 
 const EcommerceNew = () => {
   const [filter, setFilter] = useState("");
@@ -208,7 +209,7 @@ const EcommerceNew = () => {
                   <div className="ecom-card" key={product.id}>
                     <Link to={`/productdetails/${encryptedId}`}>
                       <img
-                        src={product.image[0]}
+                        src={getSafeImageUrl(product.image)}
                         alt={product.productName}
                         className="ecom-card-img"
                       />

@@ -70,7 +70,7 @@ const LatestEventDetailPage = () => {
       <section
         className="pe-detail-hero"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url('${imageUrl}'), linear-gradient(135deg, #1e1b18, #3b1e08)`,
+          backgroundImage: `url('${imageUrl}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

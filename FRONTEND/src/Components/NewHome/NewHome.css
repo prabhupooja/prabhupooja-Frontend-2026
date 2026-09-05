@@ -1038,93 +1038,13 @@ p {
 }
 
 .newHomeService .service-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 24px;
-  max-width: 1400px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  max-width: 1300px;
   margin: 0 auto;
-  position: relative;
-}
-
-.newHomeService .service-card {
-  perspective: 1000px;
-  width: 100%;
-  height: 280px;
-  cursor: pointer;
-}
-
-.newHomeService .card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-}
-
-.newHomeService .service-card:hover .card-inner {
-  transform: rotateY(180deg);
-}
-
-.newHomeService .card-front,
-.newHomeService .card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--radius-lg);
-  backface-visibility: hidden;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.newHomeService .card-front {
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  box-shadow: var(--shadow-md);
-  padding: 24px;
-  transition: var(--transition-smooth);
-}
-
-.newHomeService .service-card:hover .card-front {
-  box-shadow: var(--shadow-lg);
-}
-
-.newHomeService .card-front .service-icon-wrapper {
-  background: linear-gradient(135deg, rgba(184, 134, 11, 0.1) 0%, rgba(218, 165, 32, 0.1) 100%);
-  border-radius: 50%;
-  padding: 24px;
-  margin-bottom: 20px;
-  width: 100px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.newHomeService .card-front .service-icon {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-}
-
-.newHomeService .card-front .service-title {
-  font-size: 1.1rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--gray-900);
-  text-align: center;
-}
-
-.newHomeService .card-back {
-  transform: rotateY(180deg);
-  background: var(--gradient-hero);
-}
-
-.newHomeService .service-full-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 /* ============================================
@@ -3029,88 +2949,77 @@ html {
 }
 
 /* ============================= */
-/* Flip Card Structure & Effect */
+/* Service Cards (Clean Elevated Glassmorphism) */
 /* ============================= */
 
 .newHomeService .service-card {
-  perspective: 1000px;
   width: 100%;
-  max-width: 280px;
-  height: 300px;
-  position: relative;
+  max-width: 270px;
+  min-height: 260px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-}
-
-.newHomeService .card-inner {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-}
-
-.newHomeService .service-card:hover .card-inner {
-  transform: rotateY(180deg);
-}
-
-.newHomeService .card-front,
-.newHomeService .card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 16px;
-  backface-visibility: hidden;
   overflow: hidden;
+}
+
+.newHomeService .service-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(245, 158, 11, 0.7);
+  box-shadow: 0 16px 36px rgba(234, 88, 12, 0.35);
+}
+
+.newHomeService .service-card .card-front {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.newHomeService .card-front {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  padding: 20px;
-  z-index: 2;
-}
-
 .newHomeService .card-front .service-icon-wrapper {
-  background: rgba(238, 146, 93, 0.15);
+  background: #ffffff;
   border-radius: 50%;
-  padding: 20px;
-  margin-bottom: 15px;
-  height: 120px;
-  width: 120px;
+  padding: 14px;
+  margin-bottom: 14px;
+  height: 105px;
+  width: 105px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.3s ease;
+}
+
+.newHomeService .service-card:hover .service-icon-wrapper {
+  transform: scale(1.08);
 }
 
 .newHomeService .card-front .service-icon {
-  height: 100px;
+  width: 72px;
+  height: 72px;
   object-fit: contain;
 }
 
 .newHomeService .card-front .service-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #222;
-  margin-top: 8px;
-}
-
-.newHomeService .card-back {
-  transform: rotateY(180deg);
-  background-color: #000;
-  z-index: 1;
-}
-
-.newHomeService .service-full-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border-radius: 16px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff !important;
+  margin-top: 6px;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.3px;
 }
 
 .customerExperience {

@@ -17,6 +17,7 @@ import { HiOutlineCalendarDateRange } from "react-icons/hi2";
 import api from "../Axios/api";
 import useHomeStore from "../../Store/dataStore/homeStore";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
+import { getSafeImageUrl } from "../../utils/imageHelper";
 
 import childbirthimg from "../../Components/Assets/27.png";
 import marraigeimg from "../../Components/Assets/30.png";
@@ -493,11 +494,7 @@ const NewHome = () => {
                 }
               >
                 <img
-                  src={
-                    Array.isArray(product.image)
-                      ? product.image[0]
-                      : product.image || noProductImg
-                  }
+                  src={getSafeImageUrl(product.image, noProductImg)}
                   alt={product.productName}
                 />
               </div>
@@ -730,29 +727,17 @@ const NewHome = () => {
             <div
               className="service-card"
               key={index}
-              onClick={(e) => {
-                e.currentTarget.classList.toggle("move-up");
-                navigate(`/${slugify(service.name)}`);
-              }}
+              onClick={() => navigate(`/${slugify(service.name)}`)}
             >
-              <div className="card-inner">
-                <div className="card-front">
-                  <div className="service-icon-wrapper">
-                    <img
-                      src={service.image}
-                      alt={service.name}
-                      className="service-icon"
-                    />
-                  </div>
-                  <p className="service-title">{service.name}</p>
-                </div>
-                <div className="card-back">
+              <div className="card-front">
+                <div className="service-icon-wrapper">
                   <img
                     src={service.image}
                     alt={service.name}
-                    className="service-full-img"
+                    className="service-icon"
                   />
                 </div>
+                <p className="service-title">{service.name}</p>
               </div>
             </div>
           ))}
@@ -824,11 +809,7 @@ const NewHome = () => {
               <span className="product-discount">{product.discount || "10%"}</span>
               <div className="product-image">
                 <img
-                  src={
-                    Array.isArray(product.image)
-                      ? product.image[0]
-                      : product.image || noProductImg
-                  }
+                  src={getSafeImageUrl(product.image, noProductImg)}
                   alt={product.productName}
                   onClick={() =>
                     navigate(`/productdetails/${encryptId(product.id)}`)

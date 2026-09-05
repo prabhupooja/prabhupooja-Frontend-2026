@@ -18,7 +18,7 @@ import OtpPopup from "./otp/Otp";
 import useHomeStore from "../Store/dataStore/homeStore";
 import CryptoJS from "crypto-js";
 import { FaWallet } from "react-icons/fa";
-import { IoChatbox } from "react-icons/io5";
+import { IoChatbox, IoClose } from "react-icons/io5";
 import { FaShoppingCart } from "react-icons/fa";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { BsCart } from "react-icons/bs";
@@ -102,6 +102,11 @@ function Navbar() {
     } else {
       setIsNotHome(false);
     }
+    // Auto close mobile drawer and all sub-menus on every page navigation
+    setMenuOpen(false);
+    setDropdownOpen(false);
+    setIsSecondDropdownOpen(false);
+    setIsFourthDropdownOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -539,11 +544,18 @@ const getServicePath = (service) => {
 
   return (
     <div
-       className={`header_section 
+      className={`header_section 
         ${isMenuOpen ? "menu-open" : ""} 
         ${scrolled ? "scrolled" : ""} 
         ${isNotHome ? "not-home" : ""}`}
     >
+      {/* Mobile Drawer Overlay Backdrop */}
+      <div
+        className={`menu-overlay ${isMenuOpen ? "active" : ""}`}
+        onClick={toggleMenu}
+        aria-hidden="true"
+      />
+
       <div className="container">
         <div className="logo">
           <Link to="/">
@@ -561,9 +573,10 @@ const getServicePath = (service) => {
         </div>
         <div className={`menu ${isMenuOpen ? "open" : ""}`} ref={menuRef}>
           <div className="head">
-            <div className="logo">
-              <Link to="/">
-                <img src={logo} alt="Logo" />
+            <div className="drawer-brand">
+              <Link to="/" onClick={handleLinkClick}>
+                <img src={mobileLogo} alt="Prabhu Pooja Logo" />
+                <span className="drawer-brand-name">Prabhu Pooja</span>
               </Link>
             </div>
             <button
@@ -571,13 +584,16 @@ const getServicePath = (service) => {
               className="close-menu-btn"
               ref={closeMenuBtnRef}
               onClick={toggleMenu}
-            ></button>
+              aria-label="Close menu"
+            >
+              <IoClose size={22} />
+            </button>
           </div>
           <ul>
             {!isLoggin && (
-              <li>
+              <li className="login-item-mobile">
                 <button className="login-btn-mobile" onClick={openPopup}>
-                  Login
+                  Login / Sign Up
                 </button>
               </li>
             )}
@@ -624,12 +640,12 @@ const getServicePath = (service) => {
 
                   <li
                     className={`dropdown ${
-                      isDropdownOpen ? "active" : ""
-                    } ${isServicesActive ? "nav-active" : ""}`}
+                      isServicesActive ? "nav-active" : ""
+                    } ${isDropdownOpen ? "active" : ""}`}
                   >
                     <Link
                       to="/onlinepooja"
-                      onClick={handleDropdownToggle}
+                      onClick={handleLinkClick}
                       className={isServicesActive ? "active" : ""}
                     >
                       Services
@@ -661,12 +677,12 @@ const getServicePath = (service) => {
 
                   <li
                     className={`dropdown ${
-                      isSecondDropdownOpen ? "active" : ""
-                    } ${isOnlinePoojaActive ? "nav-active" : ""}`}
+                      isOnlinePoojaActive ? "nav-active" : ""
+                    } ${isSecondDropdownOpen ? "active" : ""}`}
                   >
                     <Link
                       to="/onlinepooja"
-                      onClick={handleSecondDropdownToggle}
+                      onClick={handleLinkClick}
                       className={isOnlinePoojaActive ? "active" : ""}
                     >
                       Online Pooja
@@ -721,12 +737,12 @@ const getServicePath = (service) => {
 
                   <li
                     className={`dropdown ${
-                      isFourthDropdownOpen ? "active" : ""
-                    } ${isBrandInfoActive ? "nav-active" : ""}`}
+                      isBrandInfoActive ? "nav-active" : ""
+                    } ${isFourthDropdownOpen ? "active" : ""}`}
                   >
                     <Link
                       to="/ourteam"
-                      onClick={handleFourthDropdownToggle}
+                      onClick={handleLinkClick}
                       className={isBrandInfoActive ? "active" : ""}
                     >
                       Brand Info

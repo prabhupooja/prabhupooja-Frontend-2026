@@ -243,69 +243,89 @@
 /* --- Detail Hero --- */
 .pe-detail-hero {
   position: relative;
-  min-height: 460px;
+  min-height: 480px;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: flex-end;
-  padding-bottom: 60px;
+  padding-bottom: 50px;
 }
 
 .pe-detail-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.3) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.45) 30%,
+    rgba(0, 0, 0, 0.1) 55%,
+    transparent 75%
+  );
+  pointer-events: none;
 }
 
 .pe-detail-hero-content {
   position: relative;
   z-index: 2;
-  color: white;
+  color: #ffffff !important;
   padding: 0 40px;
   max-width: 900px;
 }
 
 .pe-back-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: white;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff !important;
   padding: 8px 20px;
   border-radius: 50px;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.3s;
   margin-bottom: 20px;
   display: inline-block;
+  backdrop-filter: blur(4px);
 }
 
 .pe-back-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.35);
+  color: #ffffff !important;
 }
 
 .pe-detail-tag {
   display: inline-block;
   background: linear-gradient(45deg, #ff6f00, #ff9800);
-  color: white;
+  color: #ffffff !important;
   padding: 6px 18px;
   border-radius: 50px;
   font-size: 13px;
   font-weight: 700;
   margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(255, 111, 0, 0.4);
 }
 
 .pe-detail-hero-content h1 {
-  font-size: 46px;
+  font-size: 44px;
   font-weight: 800;
   margin-bottom: 18px;
-  line-height: 1.15;
+  line-height: 1.2;
+  color: #ffffff !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
 }
 
 .pe-detail-meta {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
-  font-size: 15px;
-  opacity: 0.9;
+  font-size: 15.5px;
+  color: #ffffff !important;
+}
+
+.pe-detail-meta span {
+  color: #ffffff !important;
+  font-weight: 600;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
 }
 
 /* --- Detail Body --- */

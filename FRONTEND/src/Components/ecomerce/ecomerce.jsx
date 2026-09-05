@@ -8,6 +8,7 @@ import useHomeStore from "../../Store/dataStore/homeStore";
 import { TailSpin } from "react-loader-spinner";
 import CryptoJS from "crypto-js";
 import { IoMdClose } from "react-icons/io";
+import { getSafeImageUrl } from "../../utils/imageHelper";
 
 const Ecommerce = () => {
   const [filter, setFilter] = useState("");
@@ -246,7 +247,7 @@ const Ecommerce = () => {
                 <div className="pd-box1" key={product.id}>
                   <div className="pd-img">
                     <Link to={`/productdetails/${incryptedId}`}>
-                      <img src={product.image[0]} alt={product.productName} />
+                      <img src={getSafeImageUrl(product.image)} alt={product.productName} />
                     </Link>
                   </div>
                   <div className="pd-box-content">
