@@ -240,7 +240,8 @@ const NewHome = () => {
             const img = b?.image || b?.bannerImage || b;
             return (
               img &&
-              img !== ganeshBanner2 &&
+              img !== ganeshBannerEnglish &&
+              img !== ganeshBannerHindi &&
               b.id !== "default-ganesh-eco" &&
               b.id !== "default-ganesh-1"
             );
