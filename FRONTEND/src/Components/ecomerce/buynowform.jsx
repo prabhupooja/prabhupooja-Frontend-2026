@@ -22,7 +22,11 @@ function BuyNowForm() {
   const fetchProductData = async () => {
     try {
       const res = await api.get(`/products/get/${decryptId(productId)}`);
-      setProductData(res.data.data[0]);
+      const raw = res.data?.data ?? res.data;
+      const item = Array.isArray(raw) ? raw[0] : raw;
+      if (item) {
+        setProductData(item);
+      }
     } catch (error) {
       console.error("Error fetching product data:", error);
     }

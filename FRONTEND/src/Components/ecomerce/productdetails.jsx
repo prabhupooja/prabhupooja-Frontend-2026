@@ -33,14 +33,20 @@ export const parseAllImages = (imgData) => {
   ];
   if (!imgData) return fallback;
 
+  const normalizeUrl = (img) => {
+    if (!img || typeof img !== "string") return "";
+    const clean = img.trim().replace(/^["'[\]]+|["'[\]]+$/g, "");
+    if (!clean) return "";
+    if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("data:")) {
+      return clean;
+    }
+    const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "";
+    if (clean.startsWith("/")) return `${backendBase}${clean}`;
+    return `${backendBase}/uploads/${clean}`;
+  };
+
   if (Array.isArray(imgData)) {
-    const cleaned = imgData
-      .map((img) =>
-        typeof img === "string"
-          ? img.trim().replace(/^["'[\]]+|["'[\]]+$/g, "")
-          : img
-      )
-      .filter(Boolean);
+    const cleaned = imgData.map(normalizeUrl).filter(Boolean);
     return cleaned.length > 0 ? cleaned : fallback;
   }
 
@@ -50,13 +56,7 @@ export const parseAllImages = (imgData) => {
       try {
         const parsed = JSON.parse(trimmed);
         if (Array.isArray(parsed)) {
-          const cleaned = parsed
-            .map((img) =>
-              typeof img === "string"
-                ? img.trim().replace(/^["'[\]]+|["'[\]]+$/g, "")
-                : img
-            )
-            .filter(Boolean);
+          const cleaned = parsed.map(normalizeUrl).filter(Boolean);
           if (cleaned.length > 0) return cleaned;
         }
       } catch (e) {
@@ -66,11 +66,11 @@ export const parseAllImages = (imgData) => {
     if (trimmed.includes(",")) {
       const parts = trimmed
         .split(",")
-        .map((s) => s.trim().replace(/^["'[\]]+|["'[\]]+$/g, ""))
+        .map(normalizeUrl)
         .filter(Boolean);
       if (parts.length > 0) return parts;
     }
-    const clean = trimmed.replace(/^["'[\]]+|["'[\]]+$/g, "");
+    const clean = normalizeUrl(trimmed);
     return clean ? [clean] : fallback;
   }
 
@@ -130,16 +130,20 @@ const Productdetails = () => {
     try {
       const resolvedId = decryptId(productId);
       const res = await api.get(`/products/get/${resolvedId}`);
-      const item = res.data?.data?.[0];
-      if (item) {
+      const raw = res.data?.data ?? res.data;
+      const item = Array.isArray(raw) ? raw[0] : raw;
+      if (item && (item.id || item.productName)) {
         const parsedImgs = parseAllImages(item.image);
         setProductData({ ...item, image: parsedImgs });
         setAllImages(parsedImgs);
         setMainImage(parsedImgs[0] || "");
         setActiveImageIndex(0);
+      } else {
+        setProductData(null);
       }
     } catch (err) {
       console.error("Error fetching product data:", err);
+      setProductData(null);
     } finally {
       setLoading(false);
     }
@@ -261,17 +265,18 @@ const Productdetails = () => {
   };
 
   // Calculations
-  const originalPrice = Number(productData.price) || 0;
-  const offerPrice = Number(productData.offerPrice) || originalPrice;
+  const originalPrice = Number(productData?.price) || 0;
+  const offerPrice = Number(productData?.offerPrice) || originalPrice;
   const hasDiscount = originalPrice > offerPrice && offerPrice > 0;
   const discountPercent = hasDiscount
     ? Math.round(((originalPrice - offerPrice) / originalPrice) * 100)
     : 0;
   const totalSubtotal = quantity * offerPrice;
-  const isStockAvailable = (productData.noOfItems || 1) > 0;
+  const isStockAvailable = (productData?.noOfItems ?? 1) > 0;
 
   // Add To Cart
   const handleAddToCart = async () => {
+    if (!productData?.id) return;
     setAddingToCart(true);
     try {
       const response = await addToCart({
@@ -302,6 +307,7 @@ const Productdetails = () => {
 
   // Buy Now
   const handleBuyNow = () => {
+    if (!productData?.id) return;
     navigate("/checkout", {
       state: {
         productId: decryptId(productId),
@@ -310,8 +316,8 @@ const Productdetails = () => {
         user: user1 || null,
         booking: "normal",
         images: allImages[0],
-        marchentId: productData.merchantId,
-        productName: productData.productName,
+        marchentId: productData?.merchantId,
+        productName: productData?.productName,
       },
     });
   };
@@ -321,6 +327,31 @@ const Productdetails = () => {
       <div className="product-detail-loader-wrap">
         <TailSpin height="60" width="60" color="#ea580c" />
         <p>Invoking Sacred Product Details...</p>
+      </div>
+    );
+  }
+
+  if (!productData || !productData.productName) {
+    return (
+      <div className="pdetail-page-wrapper" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <h2 style={{ fontSize: "2rem", color: "#1f2937", marginBottom: "12px" }}>Product Not Found</h2>
+          <p style={{ color: "#6b7280", marginBottom: "24px" }}>The spiritual item you are looking for is currently unavailable or has been removed.</p>
+          <button 
+            onClick={() => navigate("/e-commerce")}
+            style={{
+              padding: "12px 28px",
+              background: "linear-gradient(135deg, #ea580c, #c2410c)",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              fontWeight: 600,
+              cursor: "pointer"
+            }}
+          >
+            ← Explore Spiritual Store
+          </button>
+        </div>
       </div>
     );
   }
@@ -447,7 +478,7 @@ const Productdetails = () => {
           <div className="pdetail-info-col">
             {/* Category / Collection Tag */}
             <span className="pdetail-category-tag">
-              <FaTag /> Sacred Idols & Divine Artifacts
+              <FaTag /> {productData.style || productData.theme || productData.category || "Sacred Idols & Divine Artifacts"}
             </span>
 
             {/* Title */}
@@ -512,6 +543,42 @@ const Productdetails = () => {
             <div className="pdetail-specs-card">
               <h3 className="specs-card-title">Sacred Specifications</h3>
               <div className="specs-grid">
+                {productData.material && (
+                  <div className="spec-item">
+                    <span className="spec-label">Material:</span>
+                    <span className="spec-val">{productData.material}</span>
+                  </div>
+                )}
+                {productData.colour && (
+                  <div className="spec-item">
+                    <span className="spec-label">Colour:</span>
+                    <span className="spec-val">{productData.colour}</span>
+                  </div>
+                )}
+                {productData.theme && (
+                  <div className="spec-item">
+                    <span className="spec-label">Theme:</span>
+                    <span className="spec-val">{productData.theme}</span>
+                  </div>
+                )}
+                {productData.style && (
+                  <div className="spec-item">
+                    <span className="spec-label">Style:</span>
+                    <span className="spec-val">{productData.style}</span>
+                  </div>
+                )}
+                {productData.specialFeature && (
+                  <div className="spec-item">
+                    <span className="spec-label">Special Feature:</span>
+                    <span className="spec-val">{productData.specialFeature}</span>
+                  </div>
+                )}
+                {productData.brand && (
+                  <div className="spec-item">
+                    <span className="spec-label">Brand:</span>
+                    <span className="spec-val">{productData.brand}</span>
+                  </div>
+                )}
                 {productData.Height && (
                   <div className="spec-item">
                     <span className="spec-label">Height:</span>
