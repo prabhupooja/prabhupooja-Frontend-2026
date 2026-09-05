@@ -102,11 +102,12 @@
 }
 
 /* --- Cards Grid --- */
-.past-events-grid,
-.pe-grid-container {
+.past-events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 380px));
   gap: 28px;
+  justify-content: center;
+  width: 100%;
 }
 
 .pe-card {
@@ -118,6 +119,8 @@
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px;
 }
 
 .pe-card:hover {
@@ -244,23 +247,34 @@
 .pe-detail-hero {
   position: relative;
   min-height: 480px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: linear-gradient(135deg, #1c0d02 0%, #3e1b05 50%, #1a0a03 100%);
+  overflow: hidden;
   display: flex;
   align-items: flex-end;
   padding-bottom: 50px;
 }
 
+.pe-detail-hero-bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
 .pe-detail-hero-overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.82) 0%,
-    rgba(0, 0, 0, 0.45) 30%,
-    rgba(0, 0, 0, 0.1) 55%,
-    transparent 75%
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.5) 45%,
+    rgba(0, 0, 0, 0.15) 75%,
+    transparent 100%
   );
   pointer-events: none;
 }
@@ -271,6 +285,7 @@
   color: #ffffff !important;
   padding: 0 40px;
   max-width: 900px;
+  width: 100%;
 }
 
 .pe-back-btn {

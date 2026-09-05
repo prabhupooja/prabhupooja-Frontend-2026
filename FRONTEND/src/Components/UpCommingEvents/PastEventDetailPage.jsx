@@ -15,10 +15,22 @@ const PastEventDetailPage = () => {
   const [loading, setLoading] = useState(true);
 
   const getImageUrl = (image) => {
-    if (!image) return img1;
-    if (image.startsWith("http://") || image.startsWith("https://")) return image;
-    const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "";
-    return `${backendBase}/uploads/${image}`;
+    if (!image || image === "null" || image === "undefined") return img1;
+    const cleanImg = typeof image === "string" ? image.trim() : "";
+    if (!cleanImg || cleanImg === "null" || cleanImg === "undefined") return img1;
+    if (
+      cleanImg.startsWith("http://") ||
+      cleanImg.startsWith("https://") ||
+      cleanImg.startsWith("data:") ||
+      cleanImg.startsWith("/static/")
+    ) {
+      return cleanImg;
+    }
+    const backendBase =
+      process.env.REACT_APP_BACKEND_URL ||
+      process.env.REACT_APP_BASE_URL ||
+      "https://api.prabhupooja.com";
+    return `${backendBase}/uploads/${cleanImg}`;
   };
 
   useEffect(() => {
@@ -61,14 +73,16 @@ const PastEventDetailPage = () => {
   return (
     <div className="pe-detail-page">
       {/* Hero */}
-      <section
-        className="pe-detail-hero"
-        style={{
-          backgroundImage: `url('${imageUrl}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+      <section className="pe-detail-hero">
+        <img
+          className="pe-detail-hero-bg-img"
+          src={imageUrl}
+          alt={event.title}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = img1;
+          }}
+        />
         <div className="pe-detail-hero-overlay" />
         <div className="pe-detail-hero-content">
           <button className="pe-back-btn" onClick={() => navigate("/past-events")}>
