@@ -19,22 +19,28 @@ function Chatrequest() {
 
   useEffect(() => {
     let interval;
+    let isMounted = true;
     const initAndFetch = async () => {
       try {
         let pId = pandit?.id;
         if (!pId) {
           const res = await panditGet();
-          pId = res?.data?.id || res?.id || localStorage.getItem("pandit_id") || 1;
+          pId = res?.data?.id || res?.id || localStorage.getItem("pandit_id");
+        }
+
+        if (!pId) {
+          if (isMounted) setLoading(false);
+          return;
         }
 
         const fetchRequests = async (targetId) => {
           try {
             const response = await api.get(`/request/showforpandit/${targetId || pId}/${type || "chat"}`);
-            setRequests(response?.data?.data || []);
+            if (isMounted) setRequests(response?.data?.data || []);
           } catch (err) {
             console.warn("Failed to load chat requests:", err?.message || err);
           } finally {
-            setLoading(false);
+            if (isMounted) setLoading(false);
           }
         };
 
@@ -42,13 +48,14 @@ function Chatrequest() {
         interval = setInterval(() => fetchRequests(pId), 8000);
       } catch (err) {
         console.error("Error in Chatrequest init:", err);
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     initAndFetch();
 
     return () => {
+      isMounted = false;
       if (interval) clearInterval(interval);
     };
   }, [pandit?.id, type]);

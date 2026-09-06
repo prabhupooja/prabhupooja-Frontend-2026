@@ -58,11 +58,36 @@ function Login() {
         throw new Error("Invalid response format");
       }
 
+      if (response.data.success === false) {
+        setErrorMessage(
+          response.data.message ||
+            "Account not found. Please register as a Pandit first."
+        );
+        return;
+      }
+
+      // Check if user is registered as a regular devotee/user instead of pandit
+      if (
+        response.data.role &&
+        response.data.role !== "pandit" &&
+        response.data.role !== "astrologer"
+      ) {
+        setErrorMessage(
+          "This account is registered as a Devotee user, not an Acharya/Pandit. Please register with a Pandit account."
+        );
+        return;
+      }
+
       navigate("/otp", { state: { inputOtp: input } });
     } catch (error) {
       console.error("Login failed:", error);
       if (error.response && error.response.data) {
-        setErrorMessage(error.response.data.message);
+        setErrorMessage(
+          error.response.data.message ||
+            "This email/mobile is not registered. Please register as a Pandit."
+        );
+      } else if (error.message) {
+        setErrorMessage(error.message);
       } else {
         setErrorMessage("Login failed. Please verify your credentials or register.");
       }

@@ -13,7 +13,7 @@ function Otp() {
   const [errorMessage, setErrorMessage] = useState("");
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
-  const { userOTP, isLoading, login, Loading } = useAuthStore();
+  const { userOTP, isLoading, login, Loading, panditGet, logout } = useAuthStore();
   const inputRefs = useRef([]);
   const navigate = useNavigate();
 
@@ -57,13 +57,29 @@ function Otp() {
       return;
     }
     try {
-      await userOTP({ otp: enteredOtp });
+      const res = await userOTP({ otp: enteredOtp });
+      if (res && res.data && res.data.success === false) {
+        setErrorMessage(res.data.message || "Invalid OTP entered.");
+        return;
+      }
+
+      // Verify that this token belongs to an actual registered Pandit
+      const pProfile = await panditGet();
+      if (!pProfile && !localStorage.getItem("panditUser")) {
+        logout();
+        setErrorMessage(
+          "This account is not registered as an Acharya/Pandit. Please register as a Pandit first."
+        );
+        return;
+      }
+
       navigate("/home");
     } catch (error) {
       console.error("OTP verification failed:", error);
       setErrorMessage(
         error.response?.data?.message ||
-          "Invalid OTP. Please check and enter again."
+          error.message ||
+          "Invalid OTP or account not recognized as Pandit."
       );
     }
   };

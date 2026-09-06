@@ -34,8 +34,14 @@ function Mainhome() {
       navigate("/");
       return;
     }
-    panditGet();
-  }, []); // Run once on mount
+    panditGet().then((res) => {
+      if (!res && !localStorage.getItem("panditUser")) {
+        localStorage.removeItem("Pandittoken");
+        localStorage.removeItem("pandit_id");
+        navigate("/");
+      }
+    });
+  }, [navigate]); // Run once on mount
 
   const token = localStorage.getItem("Pandittoken");
   if (!token || token === "undefined" || token === "null") {
