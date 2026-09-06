@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { pandit, panditGet } = useAuthStore();
+  const { pandit } = useAuthStore();
   const token = localStorage.getItem("Pandittoken");
 
   const [stats, setStats] = useState({
@@ -37,14 +37,13 @@ const Home = () => {
   const panditId = pandit?.id || panditData?.id || localStorage.getItem("pandit_id") || 1;
 
   useEffect(() => {
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
       navigate("/");
-    } else {
-      panditGet();
     }
-  }, [token]);
+  }, [token, navigate]);
 
   const fetchDashboardStats = async () => {
+    if (!panditId) return;
     try {
       setLoading(true);
       const res = await api.get(`/pandit/dashboard-stats/${panditId}`);
@@ -54,16 +53,15 @@ const Home = () => {
         setStats(res.data.data);
       }
     } catch (err) {
-      console.error("Dashboard stats fetch error:", err);
-      // Fallback
+      // Fallback stats
       try {
         const [pujaRes, chatRes] = await Promise.allSettled([
           api.get(`/pandit/assignedBookings/${panditId}`),
           api.get(`/request/showforpandit/${panditId}/chat`),
         ]);
 
-        const poojas = pujaRes.status === "fulfilled" && pujaRes.value.data?.data ? pujaRes.value.data.data : [];
-        const chats = chatRes.status === "fulfilled" && chatRes.value.data?.data ? chatRes.value.data.data : [];
+        const poojas = pujaRes.status === "fulfilled" && pujaRes.value?.data?.data ? pujaRes.value.data.data : [];
+        const chats = chatRes.status === "fulfilled" && chatRes.value?.data?.data ? chatRes.value.data.data : [];
 
         setStats((prev) => ({
           ...prev,

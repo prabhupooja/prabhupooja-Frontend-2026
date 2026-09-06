@@ -32,7 +32,9 @@ function Panditchat() {
   const currentEarnings = currentMinutes * ratePerMinute;
 
   useEffect(() => {
-    panditGet();
+    if (!pandit) {
+      panditGet();
+    }
     startTimeRef.current = Date.now();
 
     // Start Live Talk-Time Timer

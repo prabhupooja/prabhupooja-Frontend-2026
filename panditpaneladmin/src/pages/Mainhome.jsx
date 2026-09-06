@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Navbar from "../components/sidenavbar/sidenavbar";
 import useAuthStore from "../components/Store/AuthStore/AuthStore";
 import VerificationPending from "../components/VerificationPending/VerificationPending";
@@ -19,37 +19,48 @@ const Chathistory = lazy(() => import("../components/chathistory/chathistory"));
 const AssignedBookings = lazy(() => import("../components/AssignedBookings/AssignedBookings"));
 
 const AdminLoader = () => (
-  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
-    <div style={{ width: "36px", height: "36px", border: "3px solid #f3f3f3", borderTop: "3px solid #ff7a00", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
+    <div style={{ width: "40px", height: "40px", border: "4px solid #f3f3f3", borderTop: "4px solid #ff7a00", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
   </div>
 );
 
 function Mainhome() {
+  const navigate = useNavigate();
   const { pandit, panditGet, loading1 } = useAuthStore();
 
   useEffect(() => {
-    if (!pandit) {
-      panditGet();
+    const token = localStorage.getItem("Pandittoken");
+    if (!token || token === "undefined" || token === "null") {
+      navigate("/");
+      return;
     }
-  }, [pandit, panditGet]);
+    panditGet();
+  }, []); // Run once on mount
 
-  // Check verification
-  // If pandit has verified === 0 or status === "pending" or unverified
-  const isVerified =
-    pandit &&
-    (pandit.verified === 1 ||
-      pandit.verified === "1" ||
-      pandit.verified === true ||
-      pandit.status === "approved" ||
-      pandit.status === "verified" ||
-      pandit.is_verified === 1);
+  const token = localStorage.getItem("Pandittoken");
+  if (!token || token === "undefined" || token === "null") {
+    navigate("/");
+    return null;
+  }
 
+  // Only block with AdminLoader if initial pandit profile is actively loading and not yet available
   if (loading1 && !pandit) {
     return <AdminLoader />;
   }
 
-  // If pandit data exists and account is not verified by admin
-  if (pandit && !isVerified) {
+  // Verification check:
+  // If pandit is explicitly unverified/pending
+  const isPendingVerification =
+    pandit &&
+    (pandit.verified === 0 ||
+      pandit.verified === "0" ||
+      pandit.verified === false ||
+      pandit.status === "pending" ||
+      pandit.status === "rejected" ||
+      pandit.is_verified === 0 ||
+      pandit.is_verified === "0");
+
+  if (isPendingVerification) {
     return <VerificationPending />;
   }
 
@@ -60,6 +71,7 @@ function Mainhome() {
       </div>
       <Suspense fallback={<AdminLoader />}>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/chatrequest" element={<Chatrequest />} />
           <Route path="/callrequest" element={<Callrequest />} />
@@ -82,4 +94,5 @@ function Mainhome() {
 }
 
 export default Mainhome;
+
 

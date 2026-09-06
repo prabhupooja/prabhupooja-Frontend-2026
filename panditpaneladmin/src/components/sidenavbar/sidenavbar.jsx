@@ -20,7 +20,7 @@ import Swal from "sweetalert2";
 const Sidenavbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { pandit, logout, panditGet } = useAuthStore();
+  const { pandit, logout } = useAuthStore();
   const { connectPandit, disconnectPandit } = useSokectStore();
 
   const panditData = JSON.parse(localStorage.getItem("panditUser") || "{}");
@@ -29,10 +29,6 @@ const Sidenavbar = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [toggleLoading, setToggleLoading] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    panditGet();
-  }, []);
 
   // Close mobile drawer on navigation
   useEffect(() => {
@@ -47,23 +43,27 @@ const Sidenavbar = () => {
     return () => {
       disconnectPandit();
     };
-  }, [panditId, connectPandit, disconnectPandit]);
+  }, [panditId]);
 
   // Initial status fetch
   useEffect(() => {
+    let isMounted = true;
     const fetchStatus = async () => {
       try {
         const res = await api.get(`/pandit/status/${panditId}`);
-        if (res.data?.success && res.data?.is_online !== undefined) {
+        if (isMounted && res.data?.success && res.data?.is_online !== undefined) {
           setIsOnline(Boolean(res.data.is_online));
         }
       } catch (err) {
-        console.warn("Status fetch warning:", err?.message || err);
+        // Fallback or ignore non-critical route warning
       }
     };
     if (panditId) {
       fetchStatus();
     }
+    return () => {
+      isMounted = false;
+    };
   }, [panditId]);
 
   // Toggle handler

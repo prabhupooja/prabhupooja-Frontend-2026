@@ -21,9 +21,9 @@ function PanditProfile() {
   }, []);
 
   const userFetch = async () => {
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
       navigate("/");
-    } else {
+    } else if (!pandit) {
       await panditGet();
     }
   };

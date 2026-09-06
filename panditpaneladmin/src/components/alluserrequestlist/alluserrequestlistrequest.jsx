@@ -9,17 +9,15 @@ import { FaStar } from "react-icons/fa";
 import useAuthStore from "../Store/AuthStore/AuthStore";
 
 function Userlistrequest() {
-  const { pandit, getCommnet, comments, panditGet } = useAuthStore();
+  const { pandit, getCommnet, comments } = useAuthStore();
   const navigate = useNavigate();
   const token = localStorage.getItem("Pandittoken");
 
   useEffect(() => {
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
       navigate("/");
-    } else {
-      panditGet();
     }
-  }, [token]);
+  }, [token, navigate]);
 
   useEffect(() => {
     if (pandit?.id) {
