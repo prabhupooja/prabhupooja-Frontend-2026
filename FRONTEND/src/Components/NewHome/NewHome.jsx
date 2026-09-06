@@ -35,11 +35,29 @@ import noProductImg from "../Assets/no_product.png";
 import Bhagwatkatha from "../UpCommingEvents/NewEvents";
 import Events from "../UpCommingEvents/Events";
 
+const calculateProductDiscount = (product) => {
+  if (!product) return null;
+  const original = Number(product.price || product.mrp || 0);
+  const current = Number(product.offerPrice || product.discount_price || product.selling_price || original);
+  
+  if (original > 0 && current > 0 && original > current) {
+    const pct = Math.round(((original - current) / original) * 100);
+    if (pct > 0 && pct < 100) return `${pct}% OFF`;
+  }
+  
+  if (product.discount) {
+    const rawNum = parseInt(String(product.discount).replace(/\D/g, ""), 10);
+    if (rawNum > 0 && rawNum < 100) return `${rawNum}% OFF`;
+  }
+  
+  return null;
+};
+
 const defaultBanners = [
   {
     id: "hardcoded-ganesh-hindi",
     image: ganeshBannerHindi,
-    title: "प्रकृति के संग गणेश मूर्ति - Eco-Friendly Ganesh Murti",
+    title: "Ganesh Chaturthi Special - Flat 20% OFF",
     link: "/e-commerce",
   },
   {
@@ -484,61 +502,64 @@ const NewHome = () => {
         </p>
 
         <div className="fp-grid">
-          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => (
-            <div key={product.id} className="fp-card">
-              <span className="fp-discount">{product.discount || `15% OFF`}</span>
-              <div
-                className="fp-img"
-                onClick={() =>
-                  navigate(`/productdetails/${encryptId(product.id)}`)
-                }
-              >
-                <img
-                  src={getSafeImageUrl(product.image, noProductImg)}
-                  alt={product.productName}
-                />
-              </div>
-              <div className="fp-card-content">
-                <p className="fp-category">{product.style || "Sacred Pooja Item"}</p>
-                <h3 
-                  className="fp-title"
+          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
+            const discountLabel = calculateProductDiscount(product);
+            return (
+              <div key={product.id} className="fp-card">
+                {discountLabel && <span className="fp-discount">{discountLabel}</span>}
+                <div
+                  className="fp-img"
                   onClick={() =>
                     navigate(`/productdetails/${encryptId(product.id)}`)
                   }
                 >
-                  {product.productName.length > 50
-                    ? product.productName.slice(0, 50) + "..."
-                    : product.productName}
-                </h3>
-                <div className="fp-price-row">
-                  <span className="fp-price">₹{product.offerPrice || product.price}</span>
-                  {product.price && product.offerPrice && product.offerPrice !== product.price && (
-                    <del className="fp-old-price">₹{product.price}</del>
-                  )}
+                  <img
+                    src={getSafeImageUrl(product.image, noProductImg)}
+                    alt={product.productName}
+                  />
                 </div>
-                <div className="fp-footer">
-                  <div className="fp-quantity">
-                    <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
-                    <span>{quantities[product.id] || 1}</span>
-                    <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
-                  </div>
-                  <button
-                    className="fp-cart-btn"
-                    onClick={() => handleAddToCart(product)}
-                    disabled={addCartloading === product.id}
+                <div className="fp-card-content">
+                  <p className="fp-category">{product.style || "Sacred Pooja Item"}</p>
+                  <h3 
+                    className="fp-title"
+                    onClick={() =>
+                      navigate(`/productdetails/${encryptId(product.id)}`)
+                    }
                   >
-                    {addCartloading === product.id ? (
-                      "Adding..."
-                    ) : (
-                      <>
-                        <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
-                      </>
+                    {product.productName.length > 50
+                      ? product.productName.slice(0, 50) + "..."
+                      : product.productName}
+                  </h3>
+                  <div className="fp-price-row">
+                    <span className="fp-price">₹{product.offerPrice || product.price}</span>
+                    {product.price && product.offerPrice && Number(product.offerPrice) !== Number(product.price) && (
+                      <del className="fp-old-price">₹{product.price}</del>
                     )}
-                  </button>
+                  </div>
+                  <div className="fp-footer">
+                    <div className="fp-quantity">
+                      <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
+                      <span>{quantities[product.id] || 1}</span>
+                      <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
+                    </div>
+                    <button
+                      className="fp-cart-btn"
+                      onClick={() => handleAddToCart(product)}
+                      disabled={addCartloading === product.id}
+                    >
+                      {addCartloading === product.id ? (
+                        "Adding..."
+                      ) : (
+                        <>
+                          <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -776,61 +797,64 @@ const NewHome = () => {
         </div>
 
         <div className="fp-grid">
-          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => (
-            <div className="fp-card" key={product.id}>
-              <span className="fp-discount">{product.discount || "10% OFF"}</span>
-              <div 
-                className="fp-img"
-                onClick={() =>
-                  navigate(`/productdetails/${encryptId(product.id)}`)
-                }
-              >
-                <img
-                  src={getSafeImageUrl(product.image, noProductImg)}
-                  alt={product.productName}
-                />
-              </div>
-              <div className="fp-card-content">
-                <span className="fp-category">{product.style || "Pooja Decor"}</span>
-                <h3 
-                  className="fp-title"
+          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
+            const discountLabel = calculateProductDiscount(product);
+            return (
+              <div className="fp-card" key={product.id}>
+                {discountLabel && <span className="fp-discount">{discountLabel}</span>}
+                <div 
+                  className="fp-img"
                   onClick={() =>
                     navigate(`/productdetails/${encryptId(product.id)}`)
                   }
                 >
-                  {product.productName.length > 50
-                    ? product.productName.slice(0, 50) + "..."
-                    : product.productName}
-                </h3>
-                <div className="fp-price-row">
-                  <span className="fp-price">₹{product.offerPrice || product.price}</span>
-                  {product.price && product.offerPrice && product.offerPrice !== product.price && (
-                    <del className="fp-old-price">₹{product.price}</del>
-                  )}
+                  <img
+                    src={getSafeImageUrl(product.image, noProductImg)}
+                    alt={product.productName}
+                  />
                 </div>
-                <div className="fp-footer">
-                  <div className="fp-quantity">
-                    <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
-                    <span>{quantities[product.id] || 1}</span>
-                    <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
-                  </div>
-                  <button
-                    className="fp-cart-btn"
-                    onClick={() => handleAddToCart(product)}
-                    disabled={addCartloading === product.id}
+                <div className="fp-card-content">
+                  <span className="fp-category">{product.style || "Pooja Decor"}</span>
+                  <h3 
+                    className="fp-title"
+                    onClick={() =>
+                      navigate(`/productdetails/${encryptId(product.id)}`)
+                    }
                   >
-                    {addCartloading === product.id ? (
-                      "Adding..."
-                    ) : (
-                      <>
-                        <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
-                      </>
+                    {product.productName.length > 50
+                      ? product.productName.slice(0, 50) + "..."
+                      : product.productName}
+                  </h3>
+                  <div className="fp-price-row">
+                    <span className="fp-price">₹{product.offerPrice || product.price}</span>
+                    {product.price && product.offerPrice && Number(product.offerPrice) !== Number(product.price) && (
+                      <del className="fp-old-price">₹{product.price}</del>
                     )}
-                  </button>
+                  </div>
+                  <div className="fp-footer">
+                    <div className="fp-quantity">
+                      <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
+                      <span>{quantities[product.id] || 1}</span>
+                      <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
+                    </div>
+                    <button
+                      className="fp-cart-btn"
+                      onClick={() => handleAddToCart(product)}
+                      disabled={addCartloading === product.id}
+                    >
+                      {addCartloading === product.id ? (
+                        "Adding..."
+                      ) : (
+                        <>
+                          <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <div className="viewAllButton">
           <button onClick={() => navigate("/e-commerce")}>
