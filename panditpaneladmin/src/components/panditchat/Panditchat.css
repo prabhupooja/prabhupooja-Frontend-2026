@@ -323,12 +323,20 @@
   box-shadow: none;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 768px) {
   .pandit_chat_page {
     margin-left: 0;
-    padding: 10px;
+    margin-top: 65px;
+    height: calc(100vh - 75px);
+    padding: 10px 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .astrotalk_chat_header {
     flex-wrap: wrap;
+    padding: 12px 14px;
+  }
+  .chat_bubble {
+    max-width: 85%;
   }
 }

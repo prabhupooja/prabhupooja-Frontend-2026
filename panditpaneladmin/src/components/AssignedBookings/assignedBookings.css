@@ -12,7 +12,8 @@
 @media (max-width: 768px) {
   .assigned-bookings-container {
     margin-left: 0;
-    padding: 15px;
+    margin-top: 65px;
+    padding: 16px 12px;
   }
 }
 
@@ -298,3 +299,55 @@
   color: #334155;
   margin-bottom: 6px;
 }
+
+@media (max-width: 768px) {
+  .assigned-bookings-container {
+    margin-left: 0;
+    padding: 14px 10px;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .assigned-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .refresh-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .assigned-card {
+    padding: 16px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .card-actions-col {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .action-buttons-group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

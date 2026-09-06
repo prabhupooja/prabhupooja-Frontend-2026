@@ -103,17 +103,29 @@ const Checkout = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let finalVal = value;
+    if (name === "mobile" || name === "number" || name === "phone") {
+      finalVal = value.replace(/\D/g, "").slice(0, 10);
+    } else if (name === "postalCode") {
+      finalVal = value.replace(/\D/g, "").slice(0, 6);
+    }
     setFormValues((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: finalVal,
     }));
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
+    let finalVal = value;
+    if (name === "mobile" || name === "number" || name === "phone") {
+      finalVal = value.replace(/\D/g, "").slice(0, 10);
+    } else if (name === "postalCode") {
+      finalVal = value.replace(/\D/g, "").slice(0, 6);
+    }
     setEditFormValues((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: finalVal,
     }));
   };
 
@@ -419,8 +431,8 @@ const Checkout = () => {
     if (!email) newErrors.email = "Email is required.";
     if (!mobile) newErrors.mobile = "Mobile number is required.";
 
-    const mobileRegex = /^[0-9]{10}$/;
-    if (mobile && !mobileRegex.test(mobile)) {
+    const cleanMobile = (mobile || "").replace(/\D/g, "");
+    if (!cleanMobile || !/^[6-9]\d{9}$/.test(cleanMobile)) {
       newErrors.mobile = "Enter a valid 10-digit mobile number.";
     }
 
@@ -710,7 +722,8 @@ const Checkout = () => {
                                     <input
                                       type="tel"
                                       name="mobile"
-                                      placeholder="Mobile"
+                                      placeholder="Mobile (10 Digits)"
+                                      maxLength={10}
                                       value={editFromValues.number}
                                       onChange={handleEditChange}
                                       className="deliveryadd-input"
@@ -1057,7 +1070,8 @@ const Checkout = () => {
                   <input
                     type="tel"
                     name="mobile"
-                    placeholder="Mobile"
+                    placeholder="Mobile (10 Digits)"
+                    maxLength={10}
                     value={formValues.mobile}
                     onChange={handleChange}
                     className="deliveryadd-input"

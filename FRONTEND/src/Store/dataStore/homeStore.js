@@ -59,12 +59,22 @@ const useHomeStore = create((set, get) => ({
 
     set({ isLoading: true });
     try {
-      const response = await api.get("/blog/get");
-      if (response.data.success) {
-        set({ blogs: response.data.blogs, error: null });
+      try {
+        const response = await api.get("/blog/get");
+        if (response.data?.success && (response.data.blogs || response.data.data)) {
+          const list = response.data.blogs || response.data.data;
+          set({ blogs: list, error: null });
+          markFresh("blogs");
+          return response;
+        }
+      } catch (_) {}
+
+      const tinyRes = await api.get("/tinyblog/getall");
+      if (tinyRes.data?.success && Array.isArray(tinyRes.data.data)) {
+        set({ blogs: tinyRes.data.data, tinybloglist: tinyRes.data.data, error: null });
         markFresh("blogs");
-      } else {
-        set({ error: response.data.message || "Failed to fetch blog." });
+        markFresh("tinyblog");
+        return tinyRes;
       }
     } catch (err) {
       set({ error: err.message || "An error occurred." });

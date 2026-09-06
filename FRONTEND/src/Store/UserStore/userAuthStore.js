@@ -137,10 +137,15 @@ const useAuthStore = create((set) => ({
 
   updateUserData: async (userId, payload) => {
     try {
-      // console.log(userId, payload);
-      set({ isLoading: true });
       const token = localStorage.getItem("token");
-      const response = await api.put(`/users/update/${userId}`, payload, {
+      const currentUserId = useAuthStore.getState().user1?.id;
+      const targetUserId = (typeof userId === "object" && userId !== null) ? currentUserId : (userId || currentUserId);
+      const dataPayload = (typeof userId === "object" && userId !== null) ? userId : payload;
+
+      if (!targetUserId) throw new Error("User ID is missing");
+
+      set({ isLoading: true });
+      const response = await api.put(`/users/update/${targetUserId}`, dataPayload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -148,6 +153,7 @@ const useAuthStore = create((set) => ({
       return response;
     } catch (error) {
       console.error("Error updating user:", error);
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -155,26 +161,27 @@ const useAuthStore = create((set) => ({
 
   userUploadProfile: async (userId, payload) => {
     try {
-      if (!userId) throw new Error("User ID is missing");
-
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No authentication token found");
-      const response = await api.put(`users/updateimage/${userId}`, payload, {
+      const currentUserId = useAuthStore.getState().user1?.id;
+      const isFormData = userId instanceof FormData;
+      const targetUserId = isFormData ? currentUserId : (userId || currentUserId);
+      const dataPayload = isFormData ? userId : payload;
+
+      if (!targetUserId) throw new Error("User ID is missing");
+
+      const response = await api.put(`/users/updateimage/${targetUserId}`, dataPayload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-
-      // console.log(response.data, "User Image updated successfully")
-
       return response;
     } catch (error) {
       console.error(
         "Error updating user profile:",
         error.response?.data || error.message
       );
-      return { success: false, error: error.response?.data || error.message };
+      throw error;
     }
   },
   deleteUser: async (userId) => {

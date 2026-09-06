@@ -379,8 +379,8 @@ const PanditProfile = () => {
                     </div>
                   )}
                 </div>
-                <Link to="/enquiryform">
-                  <button className="enquire-button">Enquire Now</button>
+                <Link to={`/enquiryform?service=${encodeURIComponent(panditData.name || "Pandit Ji")}&category=pandit&reason=${encodeURIComponent("Pandit / Acharya Booking")}`}>
+                  <button className="enquire-button">Enquire Now / अभी संपर्क करें</button>
                 </Link>
               </div>
             </div>

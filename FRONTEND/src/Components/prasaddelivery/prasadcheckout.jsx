@@ -51,7 +51,14 @@ function Prasadcheckout() {
   }, [user1, navigate, formValues.name]);
 
   const handleChange = (e) => {
-    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    let finalVal = value;
+    if (name === "mobile" || name === "phone" || name === "number") {
+      finalVal = value.replace(/\D/g, "").slice(0, 10);
+    } else if (name === "postalCode") {
+      finalVal = value.replace(/\D/g, "").slice(0, 6);
+    }
+    setFormValues({ ...formValues, [name]: finalVal });
   };
 
   const validate = () => {
@@ -63,10 +70,11 @@ function Prasadcheckout() {
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
       newErrors.email = "Email address is invalid.";
     }
-    if (!formValues.mobile) {
-      newErrors.mobile = "Phone mobile is required.";
-    } else if (formValues.mobile.length !== 10) {
-      newErrors.mobile = "Phone mobile must be 10 digits.";
+    const cleanMob = (formValues.mobile || "").replace(/\D/g, "");
+    if (!cleanMob) {
+      newErrors.mobile = "Mobile number is required.";
+    } else if (!/^[6-9]\d{9}$/.test(cleanMob)) {
+      newErrors.mobile = "Enter a valid 10-digit mobile number.";
     }
     if (!formValues.address) newErrors.address = "Address is required.";
     if (!formValues.country) newErrors.country = "Country is required.";
@@ -306,7 +314,8 @@ function Prasadcheckout() {
                     <input
                       type="tel"
                       name="mobile"
-                      placeholder="Mobile"
+                      placeholder="Mobile (10 Digits)"
+                      maxLength={10}
                       className="form-control"
                       value={formValues.mobile}
                       onChange={handleChange}

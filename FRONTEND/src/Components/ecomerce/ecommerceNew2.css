@@ -530,11 +530,33 @@
 /* Category List inside Section */
 .category-list {
   list-style: none;
-  padding: 0;
+  padding: 0 4px 0 0;
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  max-height: 240px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #fed7aa;
+}
+
+.category-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.category-list::-webkit-scrollbar-track {
+  background: #fff7ed;
+  border-radius: 4px;
+}
+
+.category-list::-webkit-scrollbar-thumb {
+  background: #ea580c;
+  border-radius: 4px;
+}
+
+.category-list::-webkit-scrollbar-thumb:hover {
+  background: #c2410c;
 }
 
 .category-item {

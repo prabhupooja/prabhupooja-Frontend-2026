@@ -29,9 +29,13 @@ const EventForm = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let finalVal = value;
+    if (name === "mobile") {
+      finalVal = value.replace(/\D/g, "").slice(0, 10);
+    }
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: finalVal,
     }));
   };
 
@@ -39,13 +43,13 @@ const EventForm = ({
     e.preventDefault();
     if (loading) return;
 
-    // Mobile Validation (10 Digits)
+    // Mobile Validation (Exactly 10 Digits)
     const cleanMobile = formData.mobile.replace(/\D/g, "");
-    if (cleanMobile.length < 10) {
+    if (!/^[6-9]\d{9}$/.test(cleanMobile)) {
       Swal.fire({
         icon: "warning",
         title: "अमान्य मोबाइल नंबर",
-        text: "कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।",
+        text: "कृपया 10 अंकों का वैध भारतीय मोबाइल नंबर दर्ज करें।",
         confirmButtonColor: "#d84315"
       });
       return;

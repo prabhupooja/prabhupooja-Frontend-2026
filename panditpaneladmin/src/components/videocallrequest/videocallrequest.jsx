@@ -103,7 +103,7 @@ function Videocallrequest() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "50vh", marginLeft: "270px" }}>
+      <div className="userlist-container request-loader-box">
         <TailSpin height="50" width="50" color="#ff7a00" />
         <p className="loading_text" style={{ marginTop: "15px", color: "#64748b", fontWeight: "600" }}>Loading video call requests...</p>
       </div>
@@ -111,7 +111,7 @@ function Videocallrequest() {
   }
 
   return (
-    <div className="userlist-container" style={{ marginLeft: "270px", padding: "25px" }}>
+    <div className="userlist-container">
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
         <h1 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
           <FaVideo style={{ color: "#ff7a00" }} /> Devotee Video Call Requests

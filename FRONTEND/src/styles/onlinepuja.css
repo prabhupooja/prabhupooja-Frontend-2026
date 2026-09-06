@@ -118,114 +118,193 @@
 }
 
 .puja_category .tp-box-pooja {
-  margin-top: 20px;
-  border: 1px solid #dadada;
-  border-radius: 8px;
+  margin-top: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(234, 88, 12, 0.15);
+  border-radius: 16px;
   width: 100%;
-  max-width: 300px;
-  height: 400px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transform: scale(0.95);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  height: 100%;
 }
 
 .puja_category .tp-box-pooja:hover {
-  transform: scale(1);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(234, 88, 12, 0.16);
+  border-color: #f97316;
 }
 
-.puja_category .tp-box-pooja img {
-  height: 200px;
+.puja_category .tp-box-pooja .tp-img-pooja {
+  position: relative;
   width: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease-in-out;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #fff7ed;
 }
 
 .puja_category .tp-box-pooja .tp-img-pooja img {
-  height: 250px;
   width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.puja_category .tp-box-pooja:hover .tp-img-pooja img {
+  transform: scale(1.06);
+}
+
+.pooja-vedic-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  color: #fef08a;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  z-index: 2;
+  border: 1px solid rgba(254, 240, 138, 0.3);
+}
+
+.pooja-discount-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #ea580c, #dc2626);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 9px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+  z-index: 2;
 }
 
 .puja_category .tp-box-pooja .tp-box-content {
-  margin-top: -10px;
-  padding: 15px;
+  padding: 16px 16px 18px;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
   justify-content: space-between;
 }
 
-.puja_category .tp-box-pooja .tp-box-content h2 {
-  color: #212121;
-  font-size: 22px;
-  margin-top: 5px;
+.pooja-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 10px 0;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 46px;
+}
+
+.pooja-card-title a {
+  color: #1e293b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.pooja-card-title a:hover {
+  color: #ea580c;
+}
+
+.pooja-card-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.pooja-feat-chip {
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 11px;
   font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.puja_category
-  .tp-box-pooja
-  .tp-box-content
-  .price-booknow
-  .price-grp
-  .current_price
-  .current_price_pooja {
-  margin-left: -25px;
-  font-size: 12px;
-  color: #555;
-  font-weight: 300;
-  text-decoration: line-through;
-}
-
-.tp-box-pooja:hover img {
-  transform: scale(1.05);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #fed7aa;
 }
 
 .puja_category .tp-box-pooja .tp-box-content .price-booknow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+  margin-top: auto;
 }
 
-.puja_category
-  .tp-box-pooja
-  .tp-box-content
-  .price-booknow
-  .price-grp
-  .current_price {
-  color: #f55216;
-  font-size: 10px;
+.puja_category .tp-box-pooja .tp-box-content .price-grp {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pooja-price-current {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  color: #ea580c;
+  font-weight: 800;
+}
+
+.pooja-currency {
+  font-size: 15px;
+}
+
+.pooja-amount {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.pooja-price-original {
+  font-size: 12px;
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-weight: 500;
 }
 
 .puja_category .tp-box-pooja .tp-box-content .price-booknow .booknow_btn {
-  background-color: #cd5702;
-  color: #fff;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  color: #ffffff;
+  border-radius: 10px;
   text-decoration: none;
+  font-weight: 700;
   cursor: pointer;
-  padding: 8px 20px;
-  font-size: 14px;
+  padding: 8px 16px;
+  font-size: 13px;
   border: none;
   white-space: nowrap;
-  transition: background-color 0.3s ease-in-out;
+  box-shadow: 0 3px 10px rgba(234, 88, 12, 0.28);
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .puja_category .tp-box-pooja .tp-box-content .price-booknow .booknow_btn:hover {
-  background-color: #e44c02;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(234, 88, 12, 0.4);
+  color: #ffffff;
 }
 
 /* Responsive Styles */
 @media (min-width: 1200px) {
   .subheader_inner_pooja {
     padding: 180px 0 150px;
-  }
-}
-
-@media (max-width: 1199px) {
-  .tp-box {
-    max-width: 250px;
   }
 }
 
@@ -242,28 +321,6 @@
     padding: 15px 20px;
     bottom: -25px;
   }
-
-  .puja_title {
-    font-size: 22px;
-  }
-
-  .tp-box-pooja {
-    max-width: 220px;
-    height: 280px;
-  }
-
-  .tp-box-pooja img {
-    height: 180px;
-  }
-
-  .tp-box-content h6 {
-    font-size: 20px;
-  }
-
-  .booknow_btn {
-    font-size: 12px;
-    padding: 4px 12px;
-  }
 }
 
 @media (max-width: 767px) {
@@ -272,35 +329,12 @@
   }
 
   .subheader_inner_pooja h1 {
-    font-size: 40px;
+    font-size: 38px;
   }
 
   .breadcrumb {
     padding: 10px 15px;
     bottom: -20px;
-  }
-
-  .puja_title {
-    font-size: 20px;
-  }
-
-  .tp-box-pooja {
-    max-width: 100%;
-    height: auto;
-    margin: 10px 0;
-  }
-
-  .tp-box-pooja img {
-    height: auto;
-  }
-
-  .tp-box-content h6 {
-    font-size: 18px;
-  }
-
-  .booknow_btn {
-    font-size: 12px;
-    padding: 8px 20px;
   }
 }
 
@@ -328,11 +362,6 @@
   }
   .popup-content {
     padding: 15px;
-    max-width: 320px;
-  }
-  .puja_category .tp-box-pooja {
-    margin-left: 30px;
-    margin-right: 40px;
     max-width: 320px;
   }
 }

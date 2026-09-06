@@ -17,10 +17,10 @@ import Signup from "./login/Signup";
 import OtpPopup from "./otp/Otp";
 import useHomeStore from "../Store/dataStore/homeStore";
 import CryptoJS from "crypto-js";
-import { FaWallet } from "react-icons/fa";
+import { FaWallet, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { IoChatbox, IoClose } from "react-icons/io5";
 import { FaShoppingCart } from "react-icons/fa";
-import { MdOutlineSupportAgent } from "react-icons/md";
+import { MdOutlineSupportAgent, MdLogout } from "react-icons/md";
 import { BsCart } from "react-icons/bs";
 import { IoRestaurantOutline } from "react-icons/io5";
 import { MdTempleHindu } from "react-icons/md";
@@ -30,6 +30,7 @@ import { IoMdNotifications } from "react-icons/io";
 import useNotificationStore from "../Store/notificationStore/notificationStore";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 
+import { FaWhatsapp, FaPhoneVolume } from "react-icons/fa6";
 import moment from "moment";
 
 function Navbar() {
@@ -71,6 +72,7 @@ function Navbar() {
     setIsLoginPopup,
     isOtpPopup,
     setIsOtpPopup,
+    logout,
   } = useAuthStore();
 
   const {
@@ -95,6 +97,16 @@ function Navbar() {
   const { getOnlinePuja, getServices, services } = useHomeStore();
   const [onlinePoojaName, setOnlinePujaName] = useState([]);
   const [notificationModel, setNotificationModel] = useState(false);
+  const [ordersSubmenuOpen, setOrdersSubmenuOpen] = useState(false);
+
+  const handleProfileLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("auth");
+    localStorage.removeItem("user");
+    if (logout) logout();
+    setProfileMenuOpen(false);
+    navigate("/");
+  };
 
   useEffect(() => {
     if (location.pathname !== "/") {
@@ -797,6 +809,48 @@ const getServicePath = (service) => {
               );
             })()}
           </ul>
+
+          {/* Mobile Drawer Devotee Care & Quick Actions */}
+          <div className="mobile-drawer-footer">
+            <div className="drawer-quick-card">
+              <div className="drawer-card-header">
+                <span className="drawer-care-badge">🕉️ Devotee Care</span>
+                <span className="drawer-live-chip">24/7 Helpline</span>
+              </div>
+              <p className="drawer-care-text">
+                Need help with Pooja Sankalp, Temple Darshan, or Pandit Booking?
+              </p>
+              <div className="drawer-care-actions">
+                <a
+                  href="https://wa.me/917225016699?text=Namaste,%20I%20need%20assistance%20regarding%20Prabhu%20Pooja%20services"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="drawer-wa-btn"
+                >
+                  <FaWhatsapp /> WhatsApp Care
+                </a>
+                <a href="tel:+917225016699" className="drawer-call-btn">
+                  <FaPhoneVolume /> Call Us
+                </a>
+              </div>
+            </div>
+
+            {isLoggin && user1 ? (
+              <div className="drawer-user-box">
+                <div className="drawer-user-meta">
+                  <span className="drawer-devotee-name">🙏 {user1.name || "Devotee"}</span>
+                  <span className="drawer-wallet-tag">Wallet: ₹{user1.balance || "0.00"}</span>
+                </div>
+                <Link to="/profile" className="drawer-account-link" onClick={handleLinkClick}>
+                  My Account →
+                </Link>
+              </div>
+            ) : null}
+
+            <div className="drawer-holy-tagline">
+              <span>✨ प्रभु पूजा — आपकी भक्ति, हमारा संकल्प</span>
+            </div>
+          </div>
         </div>
 
         <div className="header-right">
@@ -860,99 +914,80 @@ const getServicePath = (service) => {
               />
               {profileMenuOpen && (
                 <div className="profile-dropdown">
-                  <img
-                    src={user1?.image || userprofileimg}
-                    alt="User"
-                    className="userimg1"
-                    onClick={handleProfileToggle}
-                  />
-                  <p className="user-name">
-                    {user1.name}{" "}
-                    {isMember && (
-                      <span style={{ fontSize: "14px", marginTop: "2px" }}>
-                        💎
-                      </span>
-                    )}
-                    <FaEdit
-                      className="edit_icon"
-                      onClick={() => handleItemClick(handleEditProfile)}
-                    />
-                  </p>
-                  <p className="user-mobile">{user1?.mobile}</p>
-
-                  <div className="separator"></div>
-                  <p
-                    className="user-balance"
-                    onClick={() => handleItemClick(handleBalanceClick)}
+                  <div
+                    className="profile-dropdown-header"
+                    onClick={() => handleItemClick(handleEditProfile)}
+                    title="Open My Profile & Dashboard"
                   >
-                    <FaWallet className="HomeAllIcon" />
-                    Wallet balance: ₹ {user1?.balance}
-                  </p>
-                  <p className="ChatHistory" onClick={() => handleChatUsers()}>
-                    <IoChatbox className="HomeAllIcon" /> Chat History
-                  </p>
-                  <div className="myorderssubmenus">
-                    <div className="my-orders-wrapper">
-                      <p className="my-orders-title">
-                        <FaShoppingCart className="HomeAllIcon" />
-                        My Orders
+                    <div className="profile-avatar-wrapper">
+                      <img
+                        src={user1?.image || userprofileimg}
+                        alt={user1?.name || "User"}
+                        className="user-dropdown-avatar"
+                      />
+                      {isMember && (
+                        <span className="member-badge-star" title="VIP Devotee">
+                          💎
+                        </span>
+                      )}
+                    </div>
+                    <div className="profile-user-info">
+                      <div className="profile-name-row">
+                        <h4 className="user-dropdown-name">
+                          {user1?.name ? user1.name : "Devotee"}
+                        </h4>
+                        <span
+                          className="edit-profile-icon-btn"
+                          title="Edit Profile"
+                        >
+                          <FaEdit />
+                        </span>
+                      </div>
+                      <p className="user-dropdown-meta">
+                        {user1?.mobile || "Verified Devotee"}
                       </p>
+                    </div>
+                  </div>
 
-                      <div className="orders-dropdown">
-                        <p
-                          className="user-booking"
-                          onClick={() =>
-                            handleItemClick(handleEcommerceBookingClick)
-                          }
-                        >
-                          <BsCart className="HomeAllIcon" />
-                          Orders: <span>{productCount}</span>
-                        </p>
-                        <p
-                          className="user-booking"
-                          onClick={() =>
-                            handleItemClick(handlePrasadBookingClick)
-                          }
-                        >
-                          <IoRestaurantOutline className="HomeAllIcon" /> Prasad
-                          Booking: <span>{prasadCount}</span>
-                        </p>
-                        <p
-                          className="user-booking"
-                          onClick={() =>
-                            handleItemClick(handleTempleBookingClick)
-                          }
-                        >
-                          <MdTempleHindu className="HomeAllIcon" /> Temple
-                          Booking: <span>{templeCount}</span>
-                        </p>
-                        <p
-                          className="user-booking"
-                          onClick={() =>
-                            handleItemClick(handleYogaBookingClick)
-                          }
-                        >
-                          <TbYoga className="HomeAllIcon" /> Yoga Booking:{" "}
-                          <span>{yogaCount}</span>
-                        </p>
-                        <p
-                          className="user-booking"
-                          onClick={() =>
-                            handleItemClick(handlePoojaBookingClick)
-                          }
-                        >
-                          <FaPrayingHands className="HomeAllIcon" /> Pooja
-                          Booking:
-                          <span>
-                            {probemPoojaCount + onlinePoojaCount || 0}
-                          </span>
-                        </p>
+                  {/* Sacred Wallet Box */}
+                  <div
+                    className="profile-wallet-card"
+                    onClick={() => handleItemClick(() => navigate("/editprofile", { state: { activeTab: "wallet" } }))}
+                  >
+                    <div className="wallet-card-left">
+                      <div className="wallet-icon-box">
+                        <FaWallet />
+                      </div>
+                      <div className="wallet-info">
+                        <span className="wallet-label">Pooja Wallet</span>
+                        <span className="wallet-amount">
+                          ₹ {Number(user1?.balance || 0).toFixed(2)}
+                        </span>
                       </div>
                     </div>
-                    <p className="supportbtn" onClick={handleSupport}>
-                      <MdOutlineSupportAgent className="HomeAllsupportIcon" />
-                      Support
-                    </p>
+                    <button className="wallet-recharge-btn" type="button">
+                      + Recharge
+                    </button>
+                  </div>
+
+                  {/* Quick Profile Menu Links */}
+                  <div className="profile-quick-menu-links">
+                    <div
+                      className="profile-menu-item"
+                      onClick={() => handleItemClick(() => navigate("/editprofile", { state: { activeTab: "profile" } }))}
+                    >
+                      <FaEdit className="p-item-icon" />
+                      <span>My Profile & Dashboard</span>
+                    </div>
+                  </div>
+
+                  {/* Logout Button */}
+                  <div
+                    className="profile-logout-btn"
+                    onClick={handleProfileLogout}
+                  >
+                    <MdLogout className="logout-icon-svg" />
+                    <span>Logout Account</span>
                   </div>
                 </div>
               )}

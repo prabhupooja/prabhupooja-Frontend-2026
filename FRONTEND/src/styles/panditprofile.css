@@ -1,62 +1,60 @@
+/* =========================================================
+   PANDIT PROFILE CSS - FULLY RESPONSIVE & MODERN
+   ========================================================= */
+
 .pandit-profile {
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  max-width: 1200px;
-  margin: 60px auto;
+  padding: 30px 20px 60px;
+  background-color: #fffdfa;
+  min-height: 80vh;
 }
 
 .profile-container-pandit {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  max-width: 1100px;
+  margin: 20px auto 0;
+  width: 100%;
 }
 
 .profile-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 36px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 36px;
+  border: 1px solid rgba(254, 215, 170, 0.6);
+  box-shadow: 0 10px 30px rgba(234, 88, 12, 0.06);
+  align-items: start;
 }
 
+/* ================= IMAGE COLUMN ================= */
+
 .profile-image-column {
-  flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  max-width: 300px;
+  width: 100%;
 }
 
 .profile-image {
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  height: auto;
   object-fit: cover;
-  border-radius: 12px;
-  border: 4px solid #e0e0e0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  border: 4px solid #fff7ed;
+  box-shadow: 0 12px 28px rgba(234, 88, 12, 0.18);
 }
 
+/* ================= DETAILS COLUMN ================= */
+
 .profile-details-column {
-  flex: 2;
+  width: 100%;
 }
 
 .profile-details {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-}
-
-.profile-name {
-  font-size: 28px;
-  margin: 0 0 15px;
-  color: #333333;
-  font-weight: bold;
-}
-
-.profile-description {
-  font-size: 16px;
-  color: #666666;
-  margin-bottom: 20px;
+  background-color: transparent;
+  padding: 0;
 }
 
 .profile-header-top {
@@ -65,179 +63,177 @@
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.profile-name {
+  font-size: 32px;
+  margin: 0 0 10px;
+  color: #1e293b;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .profile-meta {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .verified-badge {
-  background-color: #eaf6f0;
-  color: #0f8f4b;
-  padding: 8px 14px;
+  background-color: #dcfce7;
+  color: #15803d;
+  padding: 6px 14px;
   border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .profile-price {
-  font-size: 18px;
-  font-weight: 700;
-  color: #cd5702;
+  font-size: 20px;
+  font-weight: 800;
+  color: #ea580c;
 }
+
+.profile-description {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 24px;
+}
+
+/* ================= INFO GRID ================= */
 
 .profile-info-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-bottom: 28px;
 }
 
 .profile-info-item {
-  background-color: #f8f6f0;
-  border-radius: 12px;
-  padding: 16px;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  padding: 14px 16px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.profile-info-item:hover {
+  border-color: #ea580c;
+  transform: translateY(-2px);
 }
 
 .profile-info-item span {
   display: block;
-  color: #7a7a7a;
-  font-size: 14px;
-  margin-bottom: 6px;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
 }
 
 .profile-info-item strong {
-  color: #333333;
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+/* ================= ENQUIRE & ACTIONS ================= */
+
+.enquire-button {
+  width: 100%;
+  padding: 15px 24px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ea580c, #f97316);
+  color: #ffffff;
+  font-weight: 700;
   font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.28);
+  display: inline-block;
+}
+
+.enquire-button:hover {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.38);
 }
 
 .action-buttons-row {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 16px;
 }
 
 .action-button-column {
-  flex: 1;
+  width: 100%;
 }
 
 .action-button {
   width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  color: #000;
-  border: 2px solid #cd5702;
+  padding: 12px 14px;
+  border: 1.5px solid #ea580c;
+  border-radius: 12px;
+  color: #ea580c;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 700;
   text-align: center;
-  transition: background-color 0.3s, transform 0.2s;
-  background: transparent;
+  transition: all 0.25s ease;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.chat_button {
-  /* background-color: #007bff; */
-}
-
-.voice-call-button {
-  /* background-color: #28a745; */
-}
-
-.video-call-button {
-  /* background-color: #dc3545; */
+  gap: 8px;
 }
 
 .action-button:hover {
-  opacity: 0.9;
-  transform: scale(1.02);
+  background: #ea580c;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
 }
 
-.action-button-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* ================= LOADER & MESSAGES ================= */
 
-.action-button-text {
-  font-weight: 600;
-}
-
-.enquire-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  /* background-color: #17a2b8; */
-  background: transparent;
-  border: 1px solid #cd5702;
-  color: #000;
-  font-weight: 500;
-  font-size: 16px;
-  cursor: pointer;
+.loading_text {
   text-align: center;
-  margin-top: 5px;
-  transition: background-color 0.3s, transform 0.2s;
+  color: #64748b;
+  font-size: 16px;
+  margin-top: 12px;
 }
 
-/* .enquire-button:hover {
-  background-color: #138496;
-  transform: scale(1.02);
-} */
-
-.loader-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(247, 244, 244, 0.918);
-  color: #000;
-}
-
-.loaderContent p{
-  color: #000;
-}
-
-.loader-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.loader-spinner img {
-  width: 60px;
-  height: 60px;
-}
-
-.loading-message,
 .error-message,
 .no-data-message {
   text-align: center;
   font-size: 18px;
-  color: #333333;
-  padding: 20px;
+  color: #64748b;
+  padding: 80px 20px;
 }
 
 .error-message {
-  color: #dc3545;
+  color: #dc2626;
 }
 
-.no-data-message {
-  color: #6c757d;
-}
+/* ================= RESPONSIVE ================= */
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .profile-row {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 28px;
   }
 
   .profile-image-column {
@@ -245,57 +241,48 @@
   }
 
   .profile-image {
-    width: 300px;
-    height: 300px;
-  }
-
-  .profile-details {
-    padding: 15px;
+    max-width: 220px;
   }
 
   .profile-name {
-    font-size: 24px;
-  }
-
-  .profile-description {
-    font-size: 14px;
-  }
-
-  .action-buttons-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .action-button {
-    font-size: 14px;
-  }
-
-  .enquire-button {
-    font-size: 14px;
+    font-size: 26px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+  .pandit-profile {
+    padding: 15px 12px 40px;
+  }
+
+  .profile-row {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .profile-image {
+    max-width: 180px;
+  }
+
   .profile-name {
-    font-size: 20px;
+    font-size: 22px;
   }
 
-  .profile-description {
-    font-size: 12px;
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .action-button {
-    font-size: 12px;
-    padding: 10px;
+  .profile-info-item {
+    padding: 12px 14px;
+  }
+
+  .action-buttons-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .enquire-button {
-    font-size: 12px;
-    padding: 10px;
-  }
-
-  .loader-spinner img {
-    width: 50px;
-    height: 50px;
+    font-size: 15px;
+    padding: 13px;
   }
 }

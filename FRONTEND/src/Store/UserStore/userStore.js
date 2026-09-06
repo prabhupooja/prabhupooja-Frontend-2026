@@ -48,10 +48,13 @@ const useUserStore = create((set) => ({
         `/temple/user/${userId}`,
         useUserStore.getState().getAuthHeaders()
       );
-      set({ templeCount: response.data.count });
+      const dataArr = response?.data?.data || response?.data?.bookings || [];
+      const count = Array.isArray(dataArr) ? dataArr.length : (Number(response?.data?.count) || 0);
+      set({ templeCount: count });
       return response;
     } catch (error) {
       console.error("Failed to fetch temple:", error);
+      set({ templeCount: 0 });
     } finally {
       set({ isLoading: false });
     }
@@ -64,10 +67,13 @@ const useUserStore = create((set) => ({
         `/user/prasad/getuser/${userId}`,
         useUserStore.getState().getAuthHeaders()
       );
-      set({ prasadCount: response.data.prasadCount });
+      const dataArr = response?.data?.data || [];
+      const count = Array.isArray(dataArr) ? dataArr.length : (Number(response?.data?.prasadCount) || 0);
+      set({ prasadCount: count });
       return response;
     } catch (error) {
       console.error("Failed to fetch prasad:", error);
+      set({ prasadCount: 0 });
     } finally {
       set({ isLoading: false });
     }
@@ -80,10 +86,13 @@ const useUserStore = create((set) => ({
         `/yoga/getuser/${userId}`,
         useUserStore.getState().getAuthHeaders()
       );
-      set({ yogaCount: response.data.count, yogaData: response.data.data });
+      const dataArr = response?.data?.data || [];
+      const count = Array.isArray(dataArr) ? dataArr.length : (Number(response?.data?.count) || 0);
+      set({ yogaCount: count, yogaData: dataArr });
       return response;
     } catch (error) {
       console.error("Failed to fetch yoga:", error);
+      set({ yogaCount: 0, yogaData: [] });
     } finally {
       set({ isLoading: false });
     }

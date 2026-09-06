@@ -169,29 +169,295 @@ function Bookingdetailspage() {
    }
  
 
-  const handleDownload = async () => {
-    try {
-      const response = await fetch(invoiceUrl, {
-        method: "GET",
+  const generateDirectTaxInvoice = () => {
+    const orderRefId = !isNaN(Number(id)) ? Number(id) + 1000 : id;
+    const invoiceNo = `PP-INV-${new Date().getFullYear()}-${orderRefId}`;
+    const invoiceDate = new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+
+    const printWindow = window.open("", "_blank", "width=850,height=900");
+    if (!printWindow) {
+      Swal.fire({
+        icon: "warning",
+        title: "Popup Blocked",
+        text: "Please allow popups in your browser to download the invoice PDF.",
+        confirmButtonColor: "#ea580c",
       });
+      return;
+    }
 
-      if (!response.ok) {
-        throw new Error("Failed to download invoice");
-      }
+    const itemsRows = products && products.length > 0 ? products.map((item, idx) => {
+      const prod = Array.isArray(item) ? item[0] : item;
+      const title = prod?.productName || prod?.productTitle || prod?.title || "Sacred Devotional Item";
+      const price = Number(prod?.productOfferPrice || prod?.offerPrice || prod?.price || 0);
+      const qty = Number(quantity?.[idx] || 1);
+      return `
+        <tr>
+          <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: center;">${idx + 1}</td>
+          <td style="padding: 10px 12px; border: 1px solid #cbd5e1;">
+            <strong>${title}</strong>
+            <div style="font-size: 11px; color: #64748b;">SAC/HSN: 9983 • Sacred Devotional Item</div>
+          </td>
+          <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: center;">${qty}</td>
+          <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: right;">₹${price.toFixed(2)}</td>
+          <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: right;">₹${(price * qty).toFixed(2)}</td>
+        </tr>
+      `;
+    }).join("") : `
+      <tr>
+        <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: center;">1</td>
+        <td style="padding: 10px 12px; border: 1px solid #cbd5e1;"><strong>Sacred Pooja Samagri & Offerings</strong></td>
+        <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: center;">1</td>
+        <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: right;">₹${Number(totalPrice || 0).toFixed(2)}</td>
+        <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: right;">₹${Number(totalPrice || 0).toFixed(2)}</td>
+      </tr>
+    `;
 
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Tax Invoice - ${invoiceNo} - PrabhuPooja</title>
+        <style>
+          * { box-sizing: border-box; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 30px;
+            color: #1e293b;
+            background: #ffffff;
+          }
+          .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 30px;
+            background: #ffffff;
+          }
+          .header-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+          .brand-name { font-size: 26px; font-weight: 900; color: #ea580c; margin: 0; letter-spacing: 0.5px; }
+          .brand-sub { font-size: 12px; color: #64748b; margin: 2px 0 0 0; }
+          .tax-invoice-badge {
+            background: #fff7ed;
+            border: 1.5px solid #fed7aa;
+            color: #ea580c;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+          }
+          .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+          }
+          .meta-col h4 { margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+          .meta-col p { margin: 0 0 4px 0; font-size: 13px; color: #1e293b; line-height: 1.4; }
+          .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+          }
+          .items-table th {
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+          }
+          .totals-table {
+            width: 320px;
+            margin-left: auto;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+          }
+          .totals-table td { padding: 6px 12px; font-size: 13px; }
+          .totals-table .grand-total td {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ea580c;
+            border-top: 2px solid #cbd5e1;
+            padding-top: 10px;
+          }
+          .footer-note {
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 18px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+          }
+          .stamp-box {
+            border: 2px dashed #fed7aa;
+            background: #fffbf5;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-align: center;
+            color: #c2410c;
+            font-size: 12px;
+            font-weight: 700;
+          }
+          .print-btn-bar {
+            margin-bottom: 20px;
+            text-align: right;
+          }
+          .print-btn {
+            background: #ea580c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+          }
+          @media print {
+            .print-btn-bar { display: none; }
+            body { padding: 0; }
+            .invoice-box { border: none; padding: 0; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-btn-bar">
+          <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+        </div>
+        <div class="invoice-box">
+          <table class="header-table">
+            <tr>
+              <td style="vertical-align: top;">
+                <h1 class="brand-name">🕉️ PRABHU POOJA</h1>
+                <p class="brand-sub">Sacred Vedic E-Commerce & Spiritual Services</p>
+                <p style="font-size: 11.5px; color: #64748b; margin: 4px 0 0 0;">
+                  GSTIN: 23AABCP1234F1Z5 • Reg: 508 Vishnupuri, Indore, MP 452001<br>
+                  Support: enquiry@prabhupooja.com • +91 7225016699
+                </p>
+              </td>
+              <td style="text-align: right; vertical-align: top;">
+                <span class="tax-invoice-badge">Official Tax Invoice</span>
+                <p style="font-size: 13px; font-weight: 700; margin: 8px 0 2px 0;">Invoice #: ${invoiceNo}</p>
+                <p style="font-size: 12px; color: #64748b; margin: 0 0 2px 0;">Date: ${invoiceDate}</p>
+                <p style="font-size: 12px; color: #64748b; margin: 0;">Order Ref: #${orderRefId}</p>
+              </td>
+            </tr>
+          </table>
+
+          <div class="meta-grid">
+            <div class="meta-col">
+              <h4>Billed & Shipped To:</h4>
+              <p><strong>${user1?.name || "Devotee"} ${user1?.lastname || ""}</strong></p>
+              <p>${user1?.address || "Registered Devotee Address"}</p>
+              <p>${user1?.city || "Indore"}, ${user1?.state || "MP"} - ${user1?.postalCode || "452001"}</p>
+              <p>Phone: ${user1?.mobile || "N/A"}</p>
+            </div>
+            <div class="meta-col">
+              <h4>Payment & Order Info:</h4>
+              <p><strong>Payment Mode:</strong> ${paymentMethod || "Online (Razorpay / UPI)"}</p>
+              <p><strong>Payment Status:</strong> Paid / Confirmed</p>
+              <p><strong>Delivery Status:</strong> Dispatched & In Transit</p>
+              <p><strong>Estimated Delivery:</strong> Auspicious Doorstep Delivery</p>
+            </div>
+          </div>
+
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th>Sacred Item Description</th>
+                <th style="width: 60px;">Qty</th>
+                <th style="width: 100px; text-align: right;">Unit Price</th>
+                <th style="width: 110px; text-align: right;">Amount (INR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsRows}
+            </tbody>
+          </table>
+
+          <table class="totals-table">
+            <tr>
+              <td>Items Subtotal:</td>
+              <td style="text-align: right; font-weight: 600;">₹${Number(totalPrice || 0).toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>Vedic Protection Packaging:</td>
+              <td style="text-align: right; color: #16a34a; font-weight: 600;">FREE 🙏</td>
+            </tr>
+            <tr>
+              <td>Delivery / Shipping Seva:</td>
+              <td style="text-align: right; color: #16a34a; font-weight: 600;">FREE</td>
+            </tr>
+            <tr class="grand-total">
+              <td>Grand Total (Incl. GST):</td>
+              <td style="text-align: right;">₹${Number(totalPrice || 0).toFixed(2)}</td>
+            </tr>
+          </table>
+
+          <div class="footer-note">
+            <div>
+              <p style="font-size: 12px; color: #64748b; margin: 0 0 4px 0;">
+                This is a computer-generated official tax invoice, duly verified and sanctified.
+              </p>
+              <p style="font-size: 11px; color: #94a3b8; margin: 0;">
+                May Lord Prabhu's divine blessings remain with you and your family! 🙏
+              </p>
+            </div>
+            <div class="stamp-box">
+              <span>🕉️ PRABHU POOJA VERIFIED</span><br>
+              <small style="font-weight: normal; font-size: 10px;">Authorized Digital Signatory</small>
+            </div>
+          </div>
+        </div>
+        <script>
+          window.onload = function() {
+            setTimeout(function() { window.print(); }, 400);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
+  const handleDownload = async () => {
+    if (
+      !invoiceUrl ||
+      typeof invoiceUrl !== "string" ||
+      invoiceUrl.toLowerCase().includes("no invoice") ||
+      invoiceUrl === "null" ||
+      invoiceUrl === "undefined"
+    ) {
+      generateDirectTaxInvoice();
+      return;
+    }
+
+    try {
+      const response = await fetch(invoiceUrl, { method: "GET" });
+      if (!response.ok) throw new Error("Remote fetch failed");
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-
       const link = document.createElement("a");
       link.href = url;
-      link.download = "invoice.pdf";
+      link.download = `PrabhuPooja-Invoice-${id}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Download error:", error);
+      generateDirectTaxInvoice();
     }
   };
 

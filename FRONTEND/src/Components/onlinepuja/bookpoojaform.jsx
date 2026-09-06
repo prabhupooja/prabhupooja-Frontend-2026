@@ -39,9 +39,15 @@ function BookPoojaForm({ onClose, data }) {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let finalVal = type === "checkbox" ? checked : value;
+    if (name === "whatsapp_number") {
+      finalVal = value.replace(/\D/g, "").slice(0, 10);
+    } else if (name === "pincode") {
+      finalVal = value.replace(/\D/g, "").slice(0, 6);
+    }
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: finalVal,
     }));
   };
 
@@ -75,11 +81,12 @@ function BookPoojaForm({ onClose, data }) {
       return;
     }
 
-    if (!formData.whatsapp_number.trim()) {
+    const cleanWhatsApp = formData.whatsapp_number.replace(/\D/g, "");
+    if (!/^[6-9]\d{9}$/.test(cleanWhatsApp)) {
       Swal.fire({
         icon: "error",
-        title: "WhatsApp Number Required",
-        text: "Please provide WhatsApp number to receive Live Video call link and photos.",
+        title: "Valid WhatsApp Number Required",
+        text: "Please provide a valid 10-digit WhatsApp number (e.g. 9876543210).",
       });
       return;
     }
@@ -327,7 +334,8 @@ function BookPoojaForm({ onClose, data }) {
               type="tel"
               name="whatsapp_number"
               required
-              placeholder="e.g. 9876543210"
+              maxLength={10}
+              placeholder="e.g. 9876543210 (10 Digits)"
               value={formData.whatsapp_number}
               onChange={handleChange}
               className="booking-field-input"

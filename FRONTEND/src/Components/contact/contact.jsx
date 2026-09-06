@@ -53,12 +53,14 @@ const Enquiryform = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="inputphone">Phone No.</label>
+                  <label htmlFor="inputphone">Phone No. (10 Digits)</label>
                   <input
                     type="tel"
                     className="form-control"
                     required
-                    placeholder="phone number"
+                    maxLength={10}
+                    placeholder="e.g. 9876543210"
+                    onInput={(e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10); }}
                   />
                 </div>
 

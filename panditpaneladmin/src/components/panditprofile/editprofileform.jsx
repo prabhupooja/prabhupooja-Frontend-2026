@@ -164,7 +164,7 @@ function EditProfileForm() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "50vh", marginLeft: "270px" }}>
+      <div className="edit-profile-form edit-profile-loader-box">
         <TailSpin height="50" width="50" color="#ff7a00" />
         <p className="loading_text" style={{ marginTop: "15px", color: "#64748b", fontWeight: "600" }}>Loading profile details...</p>
       </div>

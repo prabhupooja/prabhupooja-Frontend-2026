@@ -475,7 +475,7 @@ const NewHome = () => {
             className="fp-view-all-btn"
             onClick={() => navigate("/e-commerce")}
           >
-            View All Products
+            View All Products →
           </button>
         </div>
         <p className="fp-subtext">
@@ -486,7 +486,7 @@ const NewHome = () => {
         <div className="fp-grid">
           {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => (
             <div key={product.id} className="fp-card">
-              <span className="fp-discount">{`15%`}</span>
+              <span className="fp-discount">{product.discount || `15% OFF`}</span>
               <div
                 className="fp-img"
                 onClick={() =>
@@ -498,133 +498,88 @@ const NewHome = () => {
                   alt={product.productName}
                 />
               </div>
-              <p className="fp-category">{product.style}</p>
-              <h3 className="fp-title">
-                {product.productName.length > 55
-                  ? product.productName.slice(0, 55) + "..."
-                  : product.productName}
-              </h3>
-              <div className="fp-rating">
-                {/* {"★".repeat(product.rating)}{" "} */}
-                {/* <span>({product.reviewCount} Review)</span> */}
-              </div>
-              <div className="fp-price">
-                ₹{product.offerPrice} <del>₹{product.price}</del>
-              </div>
-              <div className="fp-footer">
-                <div className="fp-quantity">
-                  <button onClick={() => handleDecrement(product.id)}>-</button>
-                  <p>{quantities[product.id] || 1}</p>
-                  <button onClick={() => handleIncrement(product.id)}>+</button>
-                </div>
-                <button
-                  className="fp-cart-btn"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={addCartloading === product.id}
+              <div className="fp-card-content">
+                <p className="fp-category">{product.style || "Sacred Pooja Item"}</p>
+                <h3 
+                  className="fp-title"
+                  onClick={() =>
+                    navigate(`/productdetails/${encryptId(product.id)}`)
+                  }
                 >
-                  {addCartloading === product.id
-                    ? "Please Wait..."
-                    : "Add to Cart"}
-                </button>
+                  {product.productName.length > 50
+                    ? product.productName.slice(0, 50) + "..."
+                    : product.productName}
+                </h3>
+                <div className="fp-price-row">
+                  <span className="fp-price">₹{product.offerPrice || product.price}</span>
+                  {product.price && product.offerPrice && product.offerPrice !== product.price && (
+                    <del className="fp-old-price">₹{product.price}</del>
+                  )}
+                </div>
+                <div className="fp-footer">
+                  <div className="fp-quantity">
+                    <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
+                    <span>{quantities[product.id] || 1}</span>
+                    <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
+                  </div>
+                  <button
+                    className="fp-cart-btn"
+                    onClick={() => handleAddToCart(product)}
+                    disabled={addCartloading === product.id}
+                  >
+                    {addCartloading === product.id ? (
+                      "Adding..."
+                    ) : (
+                      <>
+                        <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
       <section className="fps-section">
+        <div className="fps-header">
+          <h2>Popular <span>Divine Poojas</span></h2>
+          <p>Participate in sacred Vedic rituals conducted by certified priests for health, prosperity, and peace.</p>
+        </div>
         {pujas && (
           <div className="fps-grid">
-            {/* Card 1 */}
-            <div
-              className="fps-card"
-              style={{
-                backgroundImage: `url(${pujas[0]?.image})`,
-              }}
-            >
-              <div className="fps-overlay">
-                <h3>{pujas[0]?.name}</h3>
-                <p>{pujas[0]?.shortDescription}</p>
-                <button
-                  className="fps-btn"
-                  onClick={() =>
-                    navigate(
-                      `/${slugify(pujas[0]?.name)}/${encryptId(pujas[0]?.id)}`
-                    )
-                  }
-                >
-                  Book Now
-                </button>
+            {pujas.slice(0, 4).map((puja, index) => (
+              <div
+                key={puja?.id || index}
+                className="fps-card"
+                style={{
+                  backgroundImage: `url(${puja?.image})`,
+                }}
+                onClick={() =>
+                  navigate(
+                    `/${slugify(puja?.name || "pooja")}/${encryptId(puja?.id)}`
+                  )
+                }
+              >
+                <span className="fps-card-tag">✨ Vedic Pooja</span>
+                <div className="fps-overlay">
+                  <h3>{puja?.name}</h3>
+                  <p>{puja?.shortDescription || "Participate in auspicious rituals for divine blessings and spiritual well-being."}</p>
+                  <button
+                    className="fps-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(
+                        `/${slugify(puja?.name || "pooja")}/${encryptId(puja?.id)}`
+                      );
+                    }}
+                  >
+                    Book Pooja Now 🙏
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* Card 2 */}
-            <div
-              className="fps-card"
-              style={{
-                backgroundImage: `url(${pujas[1]?.image})`,
-              }}
-            >
-              <div className="fps-overlay">
-                <h3>{pujas[1]?.name}</h3>
-                <p>{pujas[1]?.shortDescription}</p>
-                <button
-                  className="fps-btn"
-                  onClick={() =>
-                    navigate(
-                      `/${slugify(pujas[1]?.name)}/${encryptId(pujas[1]?.id)}`
-                    )
-                  }
-                >
-                  Book Now
-                </button>
-              </div>
-            </div>
-
-            {/* Card 3 (Tall Right) */}
-            <div
-              className="fps-card fps-tall"
-              style={{
-                backgroundImage: `url(${pujas[3]?.image})`,
-              }}
-            >
-              <div className="fps-overlay">
-                <h3>{pujas[3]?.name}</h3>
-                <p>{pujas[3]?.shortDescription}</p>
-                <button
-                  className="fps-btn-outline"
-                  onClick={() =>
-                    navigate(
-                      `/${slugify(pujas[2]?.name)}/${encryptId(pujas[3]?.id)}`
-                    )
-                  }
-                >
-                  Book Now
-                </button>
-              </div>
-            </div>
-
-            {/* Card 4 (Bottom Wide) */}
-            <div
-              className="fps-card fps-wide"
-              style={{
-                backgroundImage: `url(${pujas[2]?.image})`,
-              }}
-            >
-              <div className="fps-overlay">
-                <h3>{pujas[2]?.name}</h3>
-                <p>{pujas[2]?.shortDescription}</p>
-                <button
-                  className="fps-btn"
-                  onClick={() =>
-                    navigate(
-                      `/${slugify(pujas[3].name)}/${encryptId(pujas[2].id)}`
-                    )
-                  }
-                >
-                  Book Now
-                </button>
-              </div>
-            </div>
+            ))}
           </div>
         )}
       </section>
@@ -642,7 +597,7 @@ const NewHome = () => {
             className="view-all-btn"
             onClick={() => navigate("/onlinepooja")}
           >
-            View All Poojas
+            View All Poojas →
           </button>
         </div>
 
@@ -662,14 +617,14 @@ const NewHome = () => {
               </button>
             </div>
             <div className="banner-links">
-              <div className="link-row">
-                <span>Church</span> <span className="arrow">→</span>
+              <div className="link-row" onClick={() => navigate("/onlinepooja")}>
+                <span>Online Pooja</span> <span className="arrow">→</span>
               </div>
-              <div className="link-row">
-                <span>Buddha</span> <span className="arrow">→</span>
+              <div className="link-row" onClick={() => navigate("/astrology")}>
+                <span>Astrology Consultation</span> <span className="arrow">→</span>
               </div>
-              <div className="link-row">
-                <span>Mandir</span> <span className="arrow">→</span>
+              <div className="link-row" onClick={() => navigate("/temple")}>
+                <span>Temple Darshan</span> <span className="arrow">→</span>
               </div>
             </div>
           </div>
@@ -683,6 +638,9 @@ const NewHome = () => {
               breakpoints={{
                 0: {
                   slidesPerView: 1,
+                },
+                640: {
+                  slidesPerView: 2,
                 },
                 1081: {
                   slidesPerView: 3,
@@ -703,7 +661,7 @@ const NewHome = () => {
                       className="pooja-img"
                     />
                     <h4 className="pooja-name">{item.name}</h4>
-                    <div className="pooja-rating">{item.rating} Rating</div>
+                    <div className="pooja-rating">⭐ {item.rating} Rating</div>
                   </div>
                 </SwiperSlide>
               ))}
@@ -725,19 +683,35 @@ const NewHome = () => {
         <div className="service-grid">
           {services?.map((service, index) => (
             <div
-              className="service-card"
-              key={index}
+              className="service-card-flip"
+              key={service.id || index}
               onClick={() => navigate(`/${slugify(service.name)}`)}
             >
-              <div className="card-front">
-                <div className="service-icon-wrapper">
-                  <img
-                    src={service.image}
-                    alt={service.name}
-                    className="service-icon"
-                  />
+              <div className="service-card-inner">
+                {/* Front */}
+                <div className="service-card-front">
+                  <div className="service-icon-wrapper">
+                    <img
+                      src={service.image}
+                      alt={service.name}
+                      className="service-icon"
+                    />
+                  </div>
+                  <p className="service-title">{service.name}</p>
                 </div>
-                <p className="service-title">{service.name}</p>
+
+                {/* Back (3D Flip) */}
+                <div className="service-card-back">
+                  <div className="service-back-badge">🕉 Vedic Service</div>
+                  <h4 className="service-back-title">{service.name}</h4>
+                  <p className="service-back-desc">
+                    {service.description ||
+                      `Experience authentic and blessed ${service.name} services with Prabhu Pooja.`}
+                  </p>
+                  <button className="service-back-btn">
+                    Explore Service →
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -758,29 +732,29 @@ const NewHome = () => {
         <div className="experience-grid">
           {[
             {
-              title: "Original Product",
+              title: "Original & Pure",
               description:
-                "We provide money back guarantee if the product is not original",
+                "100% authentic and energised spiritual items directly sourced.",
             },
             {
-              title: "Free Shipping",
+              title: "Free Fast Shipping",
               description:
-                "We provide money back guarantee if the product is not original",
+                "Safe, tamper-proof and prompt doorstep delivery across India.",
             },
             {
               title: "100% Secure Payment",
               description:
-                "We provide money back guarantee if the product is not original",
+                "Encrypted UPI, Cards and Net Banking checkout protection.",
             },
             {
-              title: "Original Product",
+              title: "Expert Pandits",
               description:
-                "We provide money back guarantee if the product is not original",
+                "Rituals performed by certified Vedic pandits with devotion.",
             },
           ].map((item, index) => (
             <div className="experience-card" key={index}>
               <div className="experience-icon">
-                <BiBadgeCheck size={35} color="#666" />
+                <BiBadgeCheck size={38} color="#ea580c" />
               </div>
               <h4>{item.title}</h4>
               <p>{item.description}</p>
@@ -797,60 +771,59 @@ const NewHome = () => {
           <p>
             Discover the products our customers love most. Handpicked for their
             quality, performance, and great value, these best sellers have
-            earned their place at the top. Whether you're shopping for something
-            new or restocking your favorites, you can trust these popular picks
-            to deliver every time.
+            earned their place at the top.
           </p>
         </div>
 
-        <div className="product-grid">
-          {(Array.isArray(products) ? products : []).slice(0, 8).map((product, index) => (
-            <div className="newHomeproduct-card" key={index}>
-              <span className="product-discount">{product.discount || "10%"}</span>
-              <div className="product-image">
+        <div className="fp-grid">
+          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => (
+            <div className="fp-card" key={product.id}>
+              <span className="fp-discount">{product.discount || "10% OFF"}</span>
+              <div 
+                className="fp-img"
+                onClick={() =>
+                  navigate(`/productdetails/${encryptId(product.id)}`)
+                }
+              >
                 <img
                   src={getSafeImageUrl(product.image, noProductImg)}
                   alt={product.productName}
+                />
+              </div>
+              <div className="fp-card-content">
+                <span className="fp-category">{product.style || "Pooja Decor"}</span>
+                <h3 
+                  className="fp-title"
                   onClick={() =>
                     navigate(`/productdetails/${encryptId(product.id)}`)
                   }
-                />
-                {/* <div className="product-actions">
-                <AiOutlineHeart />
-                <AiOutlineEye />
-              </div> */}
-              </div>
-              <div className="product-info">
-                <span className="product-category">{product.style}</span>
-                <h4>
-                  {product.productName.length > 40
-                    ? product.productName.slice(0, 40) + "..."
+                >
+                  {product.productName.length > 50
+                    ? product.productName.slice(0, 50) + "..."
                     : product.productName}
-                </h4>
-                {/* <div className="rating">
-                  ★★★★★ {product.rating}{" "}
-                  <span className="rating-text">
-                    ({product.reviews} Review)
-                  </span>
-                </div> */}
-                <div className="price">
-                  <strong>₹{product.price}</strong>
-                  <del>₹{product.price}</del>
+                </h3>
+                <div className="fp-price-row">
+                  <span className="fp-price">₹{product.offerPrice || product.price}</span>
+                  {product.price && product.offerPrice && product.offerPrice !== product.price && (
+                    <del className="fp-old-price">₹{product.price}</del>
+                  )}
                 </div>
-                <div className="add-to-cart">
-                  <button onClick={() => handleDecrement(product.id)}>-</button>
-                  <span>{quantities[product.id] || 1}</span>
-                  <button onClick={() => handleIncrement(product.id)}>+</button>
+                <div className="fp-footer">
+                  <div className="fp-quantity">
+                    <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
+                    <span>{quantities[product.id] || 1}</span>
+                    <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
+                  </div>
                   <button
-                    className="cart-icon"
+                    className="fp-cart-btn"
                     onClick={() => handleAddToCart(product)}
                     disabled={addCartloading === product.id}
                   >
                     {addCartloading === product.id ? (
-                      "Please Wait..."
+                      "Adding..."
                     ) : (
                       <>
-                        Add to Cart <AiOutlineShoppingCart />
+                        <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
                       </>
                     )}
                   </button>
@@ -861,7 +834,7 @@ const NewHome = () => {
         </div>
         <div className="viewAllButton">
           <button onClick={() => navigate("/e-commerce")}>
-            View All Products
+            View All Best Sellers →
           </button>
         </div>
       </section>

@@ -133,7 +133,7 @@ const NewEvents = () => {
                       setSelectedEvent(evt);
                       setShowPopup(true);
                     }}>
-                      🚩 पूजा बुक करें
+                      🚩 अभी बुक करें
                     </button>
                     <button
                       onClick={() => {
@@ -181,8 +181,8 @@ const NewEvents = () => {
       </div>
 
       {showPopup && (
-        <EventForm 
-          setShowPopup={setShowPopup} 
+        <EventForm
+          setShowPopup={setShowPopup}
           eventTitle={selectedEvent?.title || ""}
           prefilledService={selectedEvent?.title || ""}
           prefilledDate={selectedEvent?.start_date || ""}

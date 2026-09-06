@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./otp.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import useAuthStore from "../Store/AuthStore/AuthStore";
-import { Oval } from 'react-loader-spinner';
+import { Oval } from "react-loader-spinner";
+import logo from "../../assets/LOGO-NEW1.png";
+import { FaShieldAlt, FaArrowLeft } from "react-icons/fa";
 
 function Otp() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -18,7 +20,7 @@ function Otp() {
   useEffect(() => {
     const countdown = setInterval(() => {
       setTimer((prev) => {
-        if (prev === 1) {
+        if (prev <= 1) {
           clearInterval(countdown);
           setCanResend(true);
           return 0;
@@ -27,7 +29,7 @@ function Otp() {
       });
     }, 1000);
     return () => clearInterval(countdown);
-  }, []);
+  }, [canResend]);
 
   const handleChange = (index, value) => {
     if (!/^\d?$/.test(value)) return;
@@ -37,43 +39,45 @@ function Otp() {
     setOtp(newOtpValues);
 
     if (value && index < 5) {
-      inputRefs.current[index + 1].focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1].focus();
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const enteredOtp = otp.join(""); // Rename variable to avoid conflict
+    const enteredOtp = otp.join("");
     if (enteredOtp.length !== 6) {
       setErrorMessage("Please enter a 6-digit OTP.");
       return;
     }
     try {
-      await userOTP({ otp: enteredOtp }); // Use enteredOtp instead of otp
+      await userOTP({ otp: enteredOtp });
       navigate("/home");
     } catch (error) {
       console.error("OTP verification failed:", error);
       setErrorMessage(
         error.response?.data?.message ||
-          "OTP verification failed. Please try again."
+          "Invalid OTP. Please check and enter again."
       );
     }
   };
 
   const resendOtp = async () => {
     if (!inputTarget) {
-      return setErrorMessage("Something went wrong, try after some time");
+      return setErrorMessage("Session expired. Please back to login.");
     }
     try {
       const response = await login({ input: inputTarget });
       if (response && response.status === 200) {
         setTimer(60);
+        setCanResend(false);
+        setErrorMessage("");
       }
     } catch (error) {
       console.error("Error resending OTP:", error);
@@ -86,11 +90,22 @@ function Otp() {
   };
 
   return (
-    <div className="otp-container">
-      <div className="otp-box">
-        <h2>Enter OTP</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="otp-input-container">
+    <div className="pandit-otp-wrapper">
+      <div className="pandit-otp-bg-overlay"></div>
+
+      <div className="pandit-otp-card">
+        <div className="pandit-otp-header">
+          <img src={logo} alt="Prabhu Pooja" className="pandit-otp-logo" />
+          <div className="otp-om-symbol">🕉️</div>
+          <h2 className="pandit-otp-title">Enter Verification Code</h2>
+          <p className="pandit-otp-subtitle">
+            We have sent a 6-digit OTP to{" "}
+            <strong>{inputTarget || "your registered number"}</strong>
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="pandit-otp-form">
+          <div className="otp-digits-row">
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -102,40 +117,47 @@ function Otp() {
                 maxLength="1"
                 autoFocus={index === 0}
                 placeholder="•"
-                className="otp-input"
+                className="otp-digit-box"
                 ref={(el) => (inputRefs.current[index] = el)}
               />
             ))}
           </div>
-          {errorMessage && <p className="errorOtp">{errorMessage}</p>}
 
-          <button type="submit" className="otp-btn">
+          {errorMessage && <p className="otp-error-banner">{errorMessage}</p>}
+
+          <button type="submit" className="otp-verify-btn" disabled={Loading}>
             {Loading ? (
               <div className="spinner-container">
-                <Oval color="white" height={24} width={24} />
-                <span> Please Wait...</span>
+                <Oval color="white" height={20} width={20} />
+                <span> Verifying Code...</span>
               </div>
             ) : (
-              "Verify OTP"
+              "Verify & Access Dashboard 🙏"
             )}
           </button>
 
-          <p className="otp-timer">
-            {timer > 0 ? `Resend OTP in ${timer}s` : ""}
-          </p>
+          <div className="otp-resend-area">
+            {timer > 0 ? (
+              <p className="otp-timer-text">Resend OTP in <span>{timer}s</span></p>
+            ) : (
+              canResend && (
+                <button
+                  type="button"
+                  className="resend-action-btn"
+                  onClick={handleResendOtp}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Sending..." : "Resend OTP"}
+                </button>
+              )
+            )}
+          </div>
 
-          {canResend && (
-            <span className="resend-otp" onClick={handleResendOtp}>
-              {isLoading ? (
-                <div className="spinner-container">
-                  <Oval color="white" height={24} width={24} />
-                  <span> Please Wait...</span>
-                </div>
-              ) : (
-                "Resend OTP"
-              )}
-            </span>
-          )}
+          <div className="otp-footer-links">
+            <Link to="/" className="back-login-link">
+              <FaArrowLeft /> Change Mobile / Email
+            </Link>
+          </div>
         </form>
       </div>
     </div>

@@ -1,6 +1,8 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "../components/sidenavbar/sidenavbar";
+import useAuthStore from "../components/Store/AuthStore/AuthStore";
+import VerificationPending from "../components/VerificationPending/VerificationPending";
 
 // ⚡ Lazy Loaded Pandit Admin Components
 const Userlistrequest = lazy(() => import("../components/alluserrequestlist/alluserrequestlistrequest"));
@@ -23,6 +25,34 @@ const AdminLoader = () => (
 );
 
 function Mainhome() {
+  const { pandit, panditGet, loading1 } = useAuthStore();
+
+  useEffect(() => {
+    if (!pandit) {
+      panditGet();
+    }
+  }, [pandit, panditGet]);
+
+  // Check verification
+  // If pandit has verified === 0 or status === "pending" or unverified
+  const isVerified =
+    pandit &&
+    (pandit.verified === 1 ||
+      pandit.verified === "1" ||
+      pandit.verified === true ||
+      pandit.status === "approved" ||
+      pandit.status === "verified" ||
+      pandit.is_verified === 1);
+
+  if (loading1 && !pandit) {
+    return <AdminLoader />;
+  }
+
+  // If pandit data exists and account is not verified by admin
+  if (pandit && !isVerified) {
+    return <VerificationPending />;
+  }
+
   return (
     <>
       <div>
@@ -52,3 +82,4 @@ function Mainhome() {
 }
 
 export default Mainhome;
+

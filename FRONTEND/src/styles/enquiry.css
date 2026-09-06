@@ -271,7 +271,66 @@
 .form_heading p {
   font-size: 14px;
   color: #64748b;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+}
+
+/* ================= PREFILLED SERVICE BANNER ================= */
+.prefilled_service_banner {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1.5px solid #fdba74;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
+}
+
+.prefilled_service_banner .banner_left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.prefilled_service_banner .banner_badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #c2410c;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.prefilled_service_banner .banner_title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #9a3412;
+  margin: 0;
+}
+
+.banner_clear_btn {
+  background: #ffffff;
+  border: 1px solid #fed7aa;
+  color: #64748b;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.banner_clear_btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fca5a5;
 }
 
 .form-group-modern {
@@ -335,8 +394,44 @@
   cursor: not-allowed;
 }
 
+@media (max-width: 991px) {
+  .sub_header_contact_new {
+    padding: 110px 0 80px;
+  }
+  .contact_info_box {
+    margin-bottom: 24px;
+  }
+}
+
 @media (max-width: 768px) {
+  .sub_header_contact_new {
+    padding: 90px 15px 70px;
+  }
+  .subheader_text_contact h1 {
+    font-size: 32px;
+  }
+  .subheader_text_contact p {
+    font-size: 15px;
+  }
   .contact_form_card {
-    padding: 25px 20px;
+    padding: 25px 18px;
+    border-radius: 16px;
+  }
+  .contact_info_box {
+    padding: 25px 18px;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .subheader_text_contact h1 {
+    font-size: 26px;
+  }
+  .contact_main_section {
+    padding: 30px 0;
+  }
+  .contact_form_card,
+  .contact_info_box {
+    padding: 20px 14px;
   }
 }

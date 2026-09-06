@@ -80,25 +80,53 @@ const LatestEventDetailPage = () => {
     <div className="pe-detail-page">
       {/* Detail Hero */}
       <section className="pe-detail-hero">
-        <img
-          className="pe-detail-hero-bg-img"
-          src={imageUrl}
-          alt={currentEvent.title}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = defaultLatestImg;
-          }}
+        <div 
+          className="pe-detail-hero-bg-blur"
+          style={{ backgroundImage: `url(${imageUrl})` }}
         />
         <div className="pe-detail-hero-overlay" />
-        <div className="pe-detail-hero-content">
-          <button className="pe-back-btn" onClick={() => navigate("/latest-events")}>
-            ← Back to Events
-          </button>
-          {currentEvent.tag && <span className="pe-detail-tag">✨ {currentEvent.tag}</span>}
-          <h1>{currentEvent.title}</h1>
-          <div className="pe-detail-meta">
-            <span>📅 {currentEvent.date_info || currentEvent.start_date || "Upcoming"}</span>
-            <span>📍 {currentEvent.location || currentEvent.service_type || "भारत"}</span>
+        <div className="pe-detail-hero-container">
+          <div className="pe-detail-hero-left">
+            <button className="pe-back-btn" onClick={() => navigate("/latest-events")}>
+              ← Back to Events
+            </button>
+            {currentEvent.tag && <span className="pe-detail-tag">✨ {currentEvent.tag}</span>}
+            <h1>{currentEvent.title}</h1>
+            <div className="pe-detail-meta">
+              <span>📅 {currentEvent.date_info || currentEvent.start_date || "Upcoming"}</span>
+              <span>📍 {currentEvent.location || currentEvent.service_type || "भारत"}</span>
+              {currentEvent.special_pooja && <span>🕉 {currentEvent.special_pooja}</span>}
+            </div>
+            <div className="pe-detail-hero-actions">
+              <button 
+                className="pe-hero-cta-btn"
+                onClick={() => {
+                  const linkUrl = currentEvent.website || currentEvent.redirect_url;
+                  if (linkUrl && (linkUrl.startsWith("http://") || linkUrl.startsWith("https://"))) {
+                    window.open(linkUrl, "_blank", "noopener,noreferrer");
+                  } else if (linkUrl) {
+                    navigate(linkUrl.startsWith("/") ? linkUrl : `/${linkUrl}`);
+                  } else {
+                    setShowPopup(true);
+                  }
+                }}
+              >
+                🚩 Participate / Register Now
+              </button>
+            </div>
+          </div>
+          <div className="pe-detail-hero-right">
+            <div className="pe-detail-hero-img-wrapper">
+              <img
+                className="pe-detail-hero-featured-img"
+                src={imageUrl}
+                alt={currentEvent.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = defaultLatestImg;
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 const Login = lazy(() => import('./components/Login/login'));
+const Register = lazy(() => import('./components/Register/Register'));
 const Mainhome = lazy(() => import('./pages/Mainhome'));
 const Otp = lazy(() => import('./components/Otp/otp'));
 
@@ -19,6 +20,7 @@ function App() {
         <Suspense fallback={<AdminAppLoader />}>
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/otp" element={<Otp />} />
             <Route path="/*" element={<Mainhome />} />
           </Routes>

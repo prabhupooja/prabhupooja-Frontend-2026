@@ -199,6 +199,12 @@ const categoryList = [
   { name: "Pooja Samagri", icon: <FaFire />, value: "pooja-samagri" },
   { name: "Silver Idols", icon: <FaStar />, value: "silver" },
   { name: "Brass Idols", icon: <FaStar />, value: "brass" },
+  { name: "Rudraksha", icon: <FaGem />, value: "rudraksha" },
+  { name: "Mala & Rosary", icon: <FaStar />, value: "mala" },
+  { name: "Havan Samagri", icon: <FaFire />, value: "havan" },
+  { name: "Vastu & Feng Shui", icon: <FaYinYang />, value: "vastu" },
+  { name: "Dhoop & Incense", icon: <FaFire />, value: "dhoop" },
+  { name: "Locket & Kawach", icon: <FaGem />, value: "kawach" },
 ];
 
 // 🎨 Material filters

@@ -64,8 +64,10 @@ const Ujjaintemple = () => {
             </div>
 
             <div className="col-sm-5">
-              <div className="temple_content">
-                <Link className="primary_btn" to="/enquiryform">
+                <Link
+                  className="primary_btn"
+                  to={`/enquiryform?service=${encodeURIComponent("Mahakaleshwar Temple VIP Darshan & Puja")}&category=temple&reason=${encodeURIComponent("Temple VIP Darshan & Puja Arrangements")}`}
+                >
                   Enquiry Now
                 </Link>
 

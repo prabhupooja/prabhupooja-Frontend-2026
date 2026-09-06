@@ -233,13 +233,27 @@
   background: #dc2626 !important;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 768px) {
   .pandit_video_call_page {
     margin-left: 0;
-    padding: 10px;
+    margin-top: 65px;
+    height: calc(100vh - 75px);
+    padding: 10px 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .local_video_box {
-    width: 140px;
-    height: 100px;
+    width: 130px;
+    height: 90px;
+    bottom: 75px;
+    right: 12px;
+  }
+  .video_top_bar {
+    padding: 8px 12px;
+  }
+  .video_controls_bar {
+    bottom: 12px;
+    padding: 8px 16px;
+    gap: 12px;
   }
 }

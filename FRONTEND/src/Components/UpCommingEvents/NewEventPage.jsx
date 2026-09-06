@@ -1,7 +1,10 @@
 // NewEventPage.jsx
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./NewEventPage.css";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../Axios/api";
+import useAuthStore from "../../Store/UserStore/userAuthStore";
 
 import {
   FaFire,
@@ -12,39 +15,114 @@ import {
 } from "react-icons/fa";
 
 import { MdCalendarMonth } from "react-icons/md";
-
 import { GiSparkles } from "react-icons/gi";
 
-import img from "../Assets/events/2.png";
-import img1 from "../Assets/events/4.png";
-
+import defaultImg from "../Assets/events/2.png";
+import defaultImg1 from "../Assets/events/4.png";
 import EventForm from "./EventForm";
 
 const NewEventPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [showPopup, setShowPopup] = useState(false);
+  const [eventData, setEventData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getImageUrl = (image, fallback) => {
+    if (!image || image === "null" || image === "undefined") return fallback;
+    const cleanImg = typeof image === "string" ? image.trim() : "";
+    if (!cleanImg || cleanImg === "null" || cleanImg === "undefined") return fallback;
+    if (
+      cleanImg.startsWith("http://") ||
+      cleanImg.startsWith("https://") ||
+      cleanImg.startsWith("data:") ||
+      cleanImg.startsWith("/static/")
+    ) {
+      return cleanImg;
+    }
+    const backendBase =
+      process.env.REACT_APP_BACKEND_URL ||
+      process.env.REACT_APP_BASE_URL ||
+      "https://api.prabhupooja.com";
+    return `${backendBase}/uploads/${cleanImg}`;
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchEventData = async () => {
+      try {
+        if (id) {
+          const res = await api.get(`/events/get/${id}`);
+          if (res.data?.success && res.data?.data) {
+            setEventData(res.data.data);
+            setLoading(false);
+            return;
+          }
+        }
+        // If no ID or ID fetch fails, fetch the primary latest event
+        const resAll = await api.get("/events/getall?type=latest");
+        if (resAll.data?.success && Array.isArray(resAll.data?.data) && resAll.data.data.length > 0) {
+          setEventData(resAll.data.data[0]);
+        }
+      } catch (err) {
+        console.error("Error fetching dynamic event page data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEventData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div style={{ padding: "120px 20px", textAlign: "center", minHeight: "60vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        <div className="sawan-loader" style={{ width: "40px", height: "40px", borderColor: "rgba(255, 122, 0, 0.2)", borderTopColor: "#ff7a00", borderWidth: "3px" }}></div>
+        <p style={{ marginTop: "16px", color: "#666", fontSize: "16px" }}>लोड हो रहा है... कृपया प्रतीक्षा करें</p>
+      </div>
+    );
+  }
+
+  if (!eventData) {
+    return (
+      <div style={{ padding: "120px 20px", textAlign: "center", minHeight: "60vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        <h2 style={{ fontSize: "28px", color: "#1e1e1e", marginBottom: "12px" }}>कोई इवेंट उपलब्ध नहीं है</h2>
+        <p style={{ color: "#666", maxWidth: "480px", marginBottom: "24px" }}>
+          फिलहाल यह इवेंट उपलब्ध नहीं है या समाप्त हो चुका है। हमारे अन्य आगामी दिव्य आयोजनों को देखें।
+        </p>
+        <button className="book-btn" onClick={() => navigate("/latest-events")}>
+          सभी इवेंट्स देखें →
+        </button>
+      </div>
+    );
+  }
+
+  const currentEvent = eventData;
+  const heroImgUrl = getImageUrl(currentEvent.image, defaultImg);
+
   const features = [
     {
       icon: <GiSparkles size={38} />,
       title: "विशेष पूजा",
-      desc: "रुद्राभिषेक।",
+      desc: currentEvent.special_pooja || "वैदिक अनुष्ठान एवं विशेष जाप।",
     },
     {
       icon: <MdCalendarMonth size={38} />,
-      title: "पूरे सावन मास",
-      desc: "30 जुलाई 2026 से 28 अगस्त 2026 तक।",
+      title: "शुभ आयोजन",
+      desc: currentEvent.date_info || (currentEvent.start_date ? `${currentEvent.start_date} से ${currentEvent.end_date || ""}` : "संपूर्ण मास"),
     },
     {
       icon: <FaPhoneAlt size={38} />,
       title: "ऑनलाइन सुविधा",
-      desc: "घर बैठे पूजा बुक करें एवं लाइव दर्शन।",
+      desc: currentEvent.service_type || "घर बैठे पूजा बुक करें एवं लाइव दर्शन।",
     },
   ];
 
   const benefits = [
-    "अनुभवी वैदिक पंडित",
-    "ऑनलाइन एवं ऑफलाइन पूजा",
-    "पूजा का लाइव प्रसारण",
-    "पूजा सामग्री की सम्पूर्ण व्यवस्था",
+    "अनुभवी वैदिक पंडितों द्वारा संकल्प",
+    "ऑनलाइन एवं ऑफलाइन पूजा की सुविधा",
+    "पूजा एवं आरती का लाइव प्रसारण",
+    "शुद्ध पूजा सामग्री की सम्पूर्ण व्यवस्था",
   ];
 
   const contacts = [
@@ -83,21 +161,27 @@ const NewEventPage = () => {
             {/* LEFT CONTENT */}
 
             <div className="new-event-hero-left">
-              <span className="new-event-hero-tag">🕉 सावन महोत्सव 2026</span>
+              <span className="new-event-hero-tag">{currentEvent.tag || "✨ विशेष दिव्य महोत्सव"}</span>
 
               <h1 className="new-event-hero-title">
-                महा <span>रुद्राभिषेक</span>
+                {currentEvent.title}
               </h1>
 
               <p className="new-event-hero-desc">
-                भगवान शिव की दिव्य कृपा प्राप्त करें और सावन के पावन महीने में
-                घर बैठे ऑनलाइन एवं ऑफलाइन रुद्राभिषेक पूजा बुक करें।
+                {currentEvent.description}
               </p>
 
               <div className="new-event-hero-buttons">
                 <button className="book-btn" onClick={() => setShowPopup(true)}>
-                🚩 पूजा बुक करें
-              </button>
+                  🚩 अभी बुक करें
+                </button>
+                <button 
+                  className="sawan-view-btn" 
+                  onClick={() => navigate("/latest-events")}
+                  style={{ marginLeft: "12px" }}
+                >
+                  सभी इवेंट्स देखें →
+                </button>
               </div>
 
               <div className="new-event-contact-row">
@@ -130,13 +214,13 @@ const NewEventPage = () => {
 
               <div className="new-event-hero-stats">
                 <div className="stat-card">
-                  <h3>30</h3>
-                  <p>जुलाई 2026</p>
+                  <h3>{currentEvent.start_date || "आगामी"}</h3>
+                  <p>आरंभ तिथि</p>
                 </div>
 
                 <div className="stat-card">
-                  <h3>28</h3>
-                  <p>अगस्त 2026</p>
+                  <h3>{currentEvent.end_date || "शुभ मुहूर्त"}</h3>
+                  <p>समापन तिथि</p>
                 </div>
 
                 <div className="stat-card">
@@ -149,7 +233,14 @@ const NewEventPage = () => {
             {/* RIGHT IMAGE */}
 
             <div className="new-event-hero-right">
-              <img src={img} alt="shiv pooja" />
+              <img 
+                src={heroImgUrl} 
+                alt={currentEvent.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = defaultImg;
+                }}
+              />
             </div>
           </div>
         </section>
@@ -159,7 +250,7 @@ const NewEventPage = () => {
         <section className="new-eventfeatures-section">
           <div className="new-event-section-header">
             <h2>
-              सावन पूजा <span>विशेषताएँ</span>
+              पूजा <span>विशेषताएँ</span>
             </h2>
 
             <p>अनुभवी पंडितों द्वारा वैदिक विधि से सम्पन्न पूजा एवं जाप।</p>
@@ -185,23 +276,27 @@ const NewEventPage = () => {
             {/* IMAGE */}
 
             <div className="new-event-about-image">
-              <img src={img1} alt="temple" />
+              <img 
+                src={heroImgUrl || defaultImg1} 
+                alt={currentEvent.title || "Spiritual event"} 
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = defaultImg1;
+                }}
+              />
             </div>
 
             {/* CONTENT */}
 
             <div className="new-event-about-content">
-              <span className="new-event-about-tag">Divine Blessings</span>
+              <span className="new-event-about-tag">{currentEvent.tag || "Divine Blessings"}</span>
 
               <h2>
-                भगवान शिव की कृपा
-                <br />
-                से भरें अपना जीवन
+                {currentEvent.title ? `${currentEvent.title} का महत्व` : "भगवान की असीम कृपा से भरें अपना जीवन"}
               </h2>
 
               <p>
-                रुद्राभिषेक से जीवन में शांति, समृद्धि एवं
-                सकारात्मक ऊर्जा प्राप्त करें।
+                {currentEvent.description || "विशेष पूजा एवं अनुष्ठान से जीवन में सुख, शांति, समृद्धि एवं सकारात्मक ऊर्जा प्राप्त करें।"}
               </p>
 
               <div className="new-event-benefits-list">
@@ -224,22 +319,29 @@ const NewEventPage = () => {
             <h2>
               अभी बुक करें
               <br />
-              <span>सावन विशेष पूजा</span>
+              <span>{currentEvent.title}</span>
             </h2>
 
             <p>
-              सीमित स्लॉट उपलब्ध हैं। अभी अपनी पूजा बुक करें और भगवान शिव की
-              कृपा प्राप्त करें।
+              सीमित स्लॉट उपलब्ध हैं। अभी अपनी पूजा बुक करें और प्रभु का आशीर्वाद प्राप्त करें।
             </p>
 
-            <button className="new-event-cta-btn">
+            <button className="new-event-cta-btn" onClick={() => setShowPopup(true)}>
               अभी बुक करें
               <FaArrowRight />
             </button>
           </div>
         </section>
       </div>
-      {showPopup && <EventForm setShowPopup={setShowPopup} />}
+      {showPopup && (
+        <EventForm 
+          setShowPopup={setShowPopup}
+          eventTitle={currentEvent.title}
+          prefilledService={currentEvent.special_pooja || currentEvent.title}
+          prefilledDate={currentEvent.start_date || ""}
+          user={user}
+        />
+      )}
     </>
   );
 };

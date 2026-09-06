@@ -87,8 +87,10 @@
   align-items: center;
 }
 
-.header_section .menu .head {
-  display: none;
+.header_section .menu .head,
+.header_section .menu .mobile-drawer-footer,
+.header_section .menu .login-item-mobile {
+  display: none !important;
 }
 
 .header_section .menu > ul {
@@ -456,125 +458,300 @@
   border-color: #f56709;
 }
 
-.userimg1 {
-  border-radius: 100px;
-  height: 90px;
-  margin-bottom: 10px;
-  margin-left: 55px;
-  margin-right: 55px;
-  object-fit: cover;
-  border: 1px solid orange;
-  width: 90px;
+/* User Profile Dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 54px;
+  right: 0;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(234, 88, 12, 0.18);
+  z-index: 1000;
+  width: 280px;
+  animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
 }
 
-.profile-info {
-  margin-left: 10px;
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.user-name {
-  font-weight: bold;
+.profile-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.profile-dropdown-header:hover {
+  opacity: 0.9;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.user-dropdown-avatar {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 2px solid #ea580c !important;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25) !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+.member-badge-star {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 13px;
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 1px;
+}
+
+.profile-user-info {
+  flex-grow: 1;
+  overflow: hidden;
+  text-align: left;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.user-dropdown-name {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-align: left !important;
+  display: block !important;
+}
+
+.edit-profile-icon-btn {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  color: #333; /* Profile dropdown text color, always dark */
-  text-align: center;
-  margin-bottom: -8px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
-.edit_icon {
-  color: rgb(71, 71, 194);
-  font-size: 16px;
-  margin-left: 5px;
+.edit-profile-icon-btn:hover {
+  background: #ea580c;
+  color: #ffffff;
 }
 
-.profile-dropdown {
-  position: absolute;
-  top: 50px;
-  right: 10px;
-  background-color: white; /* Always white background for profile dropdown */
+.user-dropdown-meta {
+  font-size: 12px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+  text-align: left;
+}
+
+/* Sacred Wallet Box */
+.profile-wallet-card {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 12px 0 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile-wallet-card:hover {
+  border-color: #f97316;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.15);
+  transform: translateY(-1px);
+}
+
+.wallet-card-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wallet-icon-box {
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  width: 250px;
+  background: #ea580c;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
 }
 
-.user-mobile {
+.wallet-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.wallet-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #9a3412;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.wallet-amount {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.1;
+}
+
+.wallet-recharge-btn {
+  background: #ea580c;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 9px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.wallet-recharge-btn:hover {
+  background: #c2410c;
+}
+
+/* Quick Profile Menu Links */
+.profile-quick-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.profile-menu-item:hover {
+  background: #fff7ed;
+  color: #ea580c;
+  transform: translateX(3px);
+}
+
+.p-item-icon {
   font-size: 14px;
-  margin: 5px 0;
-  color: #666;
+  color: #ea580c;
+  flex-shrink: 0;
+}
+
+.p-badge {
+  margin-left: auto;
+  background: #ea580c;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+/* My Profile & Dashboard Button */
+.profile-dashboard-btn {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 10px;
   text-align: center;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.user-balance {
+
+.profile-dashboard-btn:hover {
+  background: #ea580c;
+  color: #ffffff;
+  border-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+/* Logout Button */
+.profile-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  transition: all 0.2s ease;
+}
+
+.profile-logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+
+.logout-icon-svg {
   font-size: 15px;
-  margin: 5px 0;
-  color: #2e2e2e;
-  font-weight: 500;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.supportbtn {
-  font-size: 15px;
-  margin: 5px 0;
-  color: #2e2e2e;
-  font-weight: 500;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.user-booking {
-  margin: 5px;
-}
-
-.user-booking span {
-  color: rgb(109, 109, 109);
-  font-size: 14px;
-}
-
-.user-balance span {
-  color: rgb(109, 109, 109);
-  font-size: 14px;
-}
-
-.separator {
-  border-top: 1px solid #ddd;
-  margin: 10px 0;
-}
-
-.view-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  width: 100%;
-}
-
-.view-button:hover {
-  background-color: #d32f2f;
-}
-
-.logout-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  width: 100%;
-}
-
-.logout-button:hover {
-  background-color: #d32f2f;
 }
 
 .cart-badge {
@@ -897,17 +1074,19 @@
     position: fixed !important;
     right: 0 !important;
     top: 0 !important;
-    width: 320px !important;
-    max-width: 85vw !important;
+    width: 290px !important;
+    max-width: 80vw !important;
     height: 100vh !important;
     height: 100dvh !important;
     background-color: #ffffff !important;
     padding: 0 !important;
     overflow-y: auto !important;
     z-index: 99999 !important;
-    box-shadow: -6px 0 30px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 20px 0 0 20px !important;
     display: flex !important;
     flex-direction: column !important;
+    justify-content: space-between !important;
     transform: translateX(100%) !important;
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
@@ -921,7 +1100,7 @@
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 16px 20px !important;
+    padding: 16px 18px !important;
     background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%) !important;
     border-bottom: 1px solid #fed7aa !important;
     position: sticky !important;
@@ -932,26 +1111,26 @@
   .header_section .menu .head .drawer-brand a {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 8px !important;
     text-decoration: none !important;
   }
 
   .header_section .menu .head .drawer-brand img {
-    height: 36px !important;
-    width: 36px !important;
+    height: 34px !important;
+    width: 34px !important;
     object-fit: contain !important;
   }
 
   .header_section .menu .head .drawer-brand-name {
-    font-size: 18px !important;
+    font-size: 17px !important;
     font-weight: 700 !important;
     color: #ea580c !important;
-    letter-spacing: 0.3px !important;
+    letter-spacing: 0.2px !important;
   }
 
   .header_section .menu .close-menu-btn {
-    height: 36px !important;
-    width: 36px !important;
+    height: 34px !important;
+    width: 34px !important;
     border-radius: 50% !important;
     background-color: #f1f5f9 !important;
     color: #475569 !important;
@@ -976,10 +1155,10 @@
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
-    padding: 14px 16px 40px 16px !important;
+    padding: 12px 14px 16px 14px !important;
     margin: 0 !important;
     list-style: none !important;
-    gap: 4px !important;
+    gap: 3px !important;
     flex: 1 !important;
     flex-wrap: nowrap !important;
     align-items: stretch !important;
@@ -988,7 +1167,7 @@
   .header_section .menu > ul > li {
     display: block !important;
     width: 100% !important;
-    border-bottom: 1px solid #f1f5f9 !important;
+    border-bottom: 1px solid #f8fafc !important;
     position: relative !important;
     margin: 0 !important;
   }
@@ -1002,8 +1181,8 @@
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    padding: 12px 14px !important;
-    font-size: 15px !important;
+    padding: 10px 12px !important;
+    font-size: 14.5px !important;
     font-weight: 600 !important;
     color: #1e293b !important;
     text-shadow: none !important;
@@ -1023,7 +1202,7 @@
   /* Mobile Login Button */
   .header_section .menu .login-item-mobile {
     border-bottom: none !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 6px !important;
   }
 
   .header_section .menu .login-btn-mobile {
@@ -1031,10 +1210,10 @@
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    padding: 12px 16px !important;
+    padding: 11px 16px !important;
     background: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%) !important;
     color: #ffffff !important;
-    font-size: 15px !important;
+    font-size: 14.5px !important;
     font-weight: 700 !important;
     border: none !important;
     border-radius: 10px !important;
@@ -1055,15 +1234,15 @@
   }
 
   .header_section .menu .dropdown > a {
-    padding-right: 48px !important;
+    padding-right: 44px !important;
   }
 
   .header_section .menu .dropdown > i {
     position: absolute !important;
-    right: 8px !important;
-    top: 8px !important;
-    width: 32px !important;
-    height: 32px !important;
+    right: 6px !important;
+    top: 6px !important;
+    width: 30px !important;
+    height: 30px !important;
     border-radius: 6px !important;
     border: 1px solid #e2e8f0 !important;
     background: #f8fafc !important;
@@ -1071,7 +1250,7 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
     cursor: pointer !important;
     pointer-events: auto !important;
     transition: transform 0.25s ease, background 0.2s ease, color 0.2s ease !important;
@@ -1094,7 +1273,7 @@
     background-color: #f8fafc !important;
     border-radius: 8px !important;
     padding: 6px 8px !important;
-    margin: 4px 0 10px 0 !important;
+    margin: 4px 0 8px 0 !important;
     border: 1px solid #e2e8f0 !important;
     box-shadow: none !important;
     opacity: 1 !important;
@@ -1115,8 +1294,8 @@
   }
 
   .header_section .menu .sub-menu a {
-    padding: 9px 12px !important;
-    font-size: 13.5px !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
     font-weight: 500 !important;
     color: #334155 !important;
     border-radius: 6px !important;
@@ -1132,6 +1311,129 @@
     color: #ea580c !important;
     font-weight: 600 !important;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* ================= DRAWER FOOTER & DEVOTEE CARE ================= */
+  .mobile-drawer-footer {
+    margin-top: auto !important;
+    padding: 14px 14px 20px 14px !important;
+    background: linear-gradient(180deg, #ffffff 0%, #fff7ed 100%) !important;
+    border-top: 1px solid #fed7aa !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .drawer-quick-card {
+    background: #ffffff !important;
+    border: 1px solid #fed7aa !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08) !important;
+  }
+
+  .drawer-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 6px !important;
+  }
+
+  .drawer-care-badge {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: #c2410c !important;
+  }
+
+  .drawer-live-chip {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    background: #dcfce7 !important;
+    color: #15803d !important;
+    padding: 2px 8px !important;
+    border-radius: 20px !important;
+  }
+
+  .drawer-care-text {
+    font-size: 11.5px !important;
+    color: #64748b !important;
+    line-height: 1.4 !important;
+    margin: 0 0 10px 0 !important;
+  }
+
+  .drawer-care-actions {
+    display: flex !important;
+    gap: 8px !important;
+  }
+
+  .drawer-wa-btn,
+  .drawer-call-btn {
+    flex: 1 !important;
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    text-shadow: none !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .drawer-wa-btn {
+    background: #25d366 !important;
+    color: #ffffff !important;
+  }
+
+  .drawer-call-btn {
+    background: #ea580c !important;
+    color: #ffffff !important;
+  }
+
+  .drawer-user-box {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .drawer-user-meta {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  .drawer-devotee-name {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+  }
+
+  .drawer-wallet-tag {
+    font-size: 11px !important;
+    color: #15803d !important;
+    font-weight: 600 !important;
+  }
+
+  .drawer-account-link {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: #ea580c !important;
+    text-decoration: none !important;
+  }
+
+  .drawer-holy-tagline {
+    text-align: center !important;
+    font-size: 11px !important;
+    color: #9a3412 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.2px !important;
+    padding-top: 4px !important;
   }
 
   .cart-dropdown {

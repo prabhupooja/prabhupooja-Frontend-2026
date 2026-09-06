@@ -10,13 +10,22 @@ a {
   box-sizing: border-box;
 }
 
-body {
+html, body {
   font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
   top: 0 !important;
   scroll-behavior: smooth;
   scrollbar-width: thin;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .whatsapp-icon {

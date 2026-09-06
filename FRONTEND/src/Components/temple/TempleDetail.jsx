@@ -235,7 +235,10 @@ const TempleDetail = () => {
               <div className="temple_content_pshm">
                 {/* Action Buttons */}
                 <div className="button_group_pshm">
-                  <Link className="primary_btn_pshm" to="/enquiryform">
+                  <Link
+                    className="primary_btn_pshm"
+                    to={`/enquiryform?service=${encodeURIComponent(temple.name || "Temple Darshan")}&category=temple&reason=${encodeURIComponent("Temple VIP Darshan & Puja Arrangements")}`}
+                  >
                     Enquiry Now
                   </Link>
 

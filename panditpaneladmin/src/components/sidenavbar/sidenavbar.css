@@ -1,4 +1,6 @@
-/* Pandit Sidebar Styles */
+/* ============================================================
+   🕉️ PANDIT PANEL SIDEBAR & MOBILE DRAWER STYLING
+   ============================================================ */
 
 .pandit_sidebar {
   position: fixed;
@@ -41,6 +43,10 @@
   font-size: 1.3rem;
   font-weight: 800;
   margin: 0;
+}
+
+.btn_close_drawer {
+  display: none;
 }
 
 /* Profile Card */
@@ -256,10 +262,152 @@ input:checked + .slider:before {
   color: #ffffff;
 }
 
+/* Mobile Top App Bar (Hidden on desktop) */
+.pandit_mobile_header {
+  display: none;
+}
+
+/* ============================================================
+   📱 RESPONSIVE BREAKPOINT (<= 768px)
+   ============================================================ */
 @media screen and (max-width: 768px) {
-  .pandit_sidebar {
-    position: relative;
+  /* 1. Mobile Top Sticky Header Bar */
+  .pandit_mobile_header {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
+    height: 60px;
+    background: #111827;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    box-sizing: border-box;
+    z-index: 9999;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  .btn_mobile_menu {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f8fafc;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .btn_mobile_menu:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .mobile_brand_title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mb_tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #ff7a00;
+    letter-spacing: 0.06em;
+  }
+
+  .mobile_brand_title h4 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .mobile_header_right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mobile_live_dot {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+
+  .mobile_live_dot.online {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border: 1px solid #10b981;
+  }
+
+  .mobile_live_dot.offline {
+    background: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    border: 1px solid #94a3b8;
+  }
+
+  .mobile_avatar_thumb {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ff7a00;
+    cursor: pointer;
+  }
+
+  /* 2. Backdrop Overlay */
+  .sidebar_mobile_backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 99998;
+  }
+
+  /* 3. Slide-Out Drawer Sidebar on Mobile */
+  .pandit_sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 99999;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .pandit_sidebar.mobile_open {
+    transform: translateX(0);
+  }
+
+  .sidebar_brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn_close_drawer {
+    display: flex;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
   }
 }

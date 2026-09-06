@@ -90,8 +90,10 @@ const PanchmukhiShaniHanumanMandir = () => {
             <div className="col-lg-7 col-md-12">
               <div className="temple_content_pshm">
                 {/* Buttons */}
-                <div className="button_group_pshm">
-                  <Link className="primary_btn_pshm" to="/enquiryform">
+                  <Link
+                    className="primary_btn_pshm"
+                    to={`/enquiryform?service=${encodeURIComponent("Panchmukhi Shani Hanuman Mandir Darshan & Puja")}&category=temple&reason=${encodeURIComponent("Temple VIP Darshan & Puja Arrangements")}`}
+                  >
                     Enquiry Now
                   </Link>
 

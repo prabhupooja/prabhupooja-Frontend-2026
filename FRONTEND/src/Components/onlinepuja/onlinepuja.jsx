@@ -58,44 +58,52 @@ const Onlinepuja = () => {
 
       <div className="puja_category">
         <div className="container">
-          <div className="row" style={{ marginTop: "50px" }}>
+          <div className="row g-4" style={{ marginTop: "30px" }}>
             {pujas.map((service) => {
               const poojaUrl = getPoojaUrl(service);
+              const originalPrice = Number(service.price) || 0;
+              const finalPrice = Number(service.final_price) || originalPrice;
+              const hasDiscount = originalPrice > finalPrice;
+              const discountAmount = originalPrice - finalPrice;
 
               return (
-                <div className="col-sm-3" key={service.id}>
+                <div className="col-xl-3 col-lg-4 col-md-6 col-12 mb-4" key={service.id}>
                   <div className="tp-box-pooja">
                     <div className="tp-img-pooja">
                       <Link to={poojaUrl}>
                         <img src={service.image} alt={service.name} />
                       </Link>
+                      <span className="pooja-vedic-badge">🕉️ Vedic Pooja</span>
+                      {hasDiscount && discountAmount > 0 && (
+                        <span className="pooja-discount-badge">Save ₹{discountAmount}</span>
+                      )}
                     </div>
 
                     <div className="tp-box-content">
-                      <h2>{service.name}</h2>
+                      <h2 className="pooja-card-title">
+                        <Link to={poojaUrl}>{service.name}</Link>
+                      </h2>
+
+                      <div className="pooja-card-features">
+                        <span className="pooja-feat-chip">🪔 Vidhan & Sankalp</span>
+                        <span className="pooja-feat-chip">🌸 Pure Vedic Ritual</span>
+                      </div>
+
                       <div className="price-booknow">
                         <div className="price-grp">
-                          <p className="current_price">
-                            <strong>
-                              <span className="current_price_pooja">
-                                Rs.{service.price}
-                              </span>
-                            </strong>
-                          </p>
-                          <p className="current_price">
-                            <strong>
-                              <span className="final_price_pooja">
-                                Rs.{service.final_price}
-                              </span>
-                            </strong>
-                          </p>
+                          <div className="pooja-price-current">
+                            <span className="pooja-currency">₹</span>
+                            <span className="pooja-amount">{finalPrice}</span>
+                          </div>
+                          {hasDiscount && (
+                            <span className="pooja-price-original">
+                              ₹{originalPrice}
+                            </span>
+                          )}
                         </div>
 
-                        <Link
-                          className="booknow_btn"
-                          to={poojaUrl}
-                        >
-                          Book Now
+                        <Link className="booknow_btn" to={poojaUrl}>
+                          Book Now 🙏
                         </Link>
                       </div>
                     </div>

@@ -206,10 +206,10 @@ const Signup = ({ closeSingClose, onOpenLogin }) => {
                   <input
                     id="signup-mobile"
                     type="tel"
-                    maxLength="10"
+                    maxLength={10}
                     placeholder="10-digit mobile number"
                     value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
+                    onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
                     required
                   />
                 </div>

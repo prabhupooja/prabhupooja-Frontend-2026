@@ -74,25 +74,44 @@ const PastEventDetailPage = () => {
     <div className="pe-detail-page">
       {/* Hero */}
       <section className="pe-detail-hero">
-        <img
-          className="pe-detail-hero-bg-img"
-          src={imageUrl}
-          alt={event.title}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = img1;
-          }}
+        <div 
+          className="pe-detail-hero-bg-blur"
+          style={{ backgroundImage: `url(${imageUrl})` }}
         />
         <div className="pe-detail-hero-overlay" />
-        <div className="pe-detail-hero-content">
-          <button className="pe-back-btn" onClick={() => navigate("/past-events")}>
-            ← Back to Events
-          </button>
-          <span className="pe-detail-tag">✨ Past Event</span>
-          <h1>{event.title}</h1>
-          <div className="pe-detail-meta">
-            <span>📅 {eventDate}</span>
-            <span>📍 {eventLocation}</span>
+        <div className="pe-detail-hero-container">
+          <div className="pe-detail-hero-left">
+            <button className="pe-back-btn" onClick={() => navigate("/past-events")}>
+              ← Back to Events
+            </button>
+            <span className="pe-detail-tag">✨ Past Event</span>
+            <h1>{event.title}</h1>
+            <div className="pe-detail-meta">
+              <span>📅 {eventDate}</span>
+              <span>📍 {eventLocation}</span>
+              {eventSpeaker && <span>🙏 {eventSpeaker}</span>}
+            </div>
+            <div className="pe-detail-hero-actions">
+              <button 
+                className="pe-hero-cta-btn"
+                onClick={() => navigate("/onlinepooja")}
+              >
+                🕉 Book Similar Pooja
+              </button>
+            </div>
+          </div>
+          <div className="pe-detail-hero-right">
+            <div className="pe-detail-hero-img-wrapper">
+              <img
+                className="pe-detail-hero-featured-img"
+                src={imageUrl}
+                alt={event.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = img1;
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>

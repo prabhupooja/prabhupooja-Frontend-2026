@@ -90,50 +90,87 @@
 }
 
 .product-container {
-  display: flex;
-  flex-wrap: wrap;
-  /* justify-content: space-between; */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
   margin-bottom: 40px;
 }
 
 .pd-box1 {
-  border: 1px solid #dadada;
-  padding: 15px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  flex: 0 1 calc(33.33% - 20px);
-  margin: 10px;
-  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #ffffff;
+  transition: all 0.35s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 .pd-box1:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(234, 88, 12, 0.2);
+  border-color: rgba(234, 88, 12, 0.4);
+}
+
+.pd-img {
+  background: #faf7f2;
+  border-radius: 12px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 12px;
 }
 
 .pd-box1 img {
   max-width: 100% !important;
-  width: 100%;
-  height: 300px;
-  transition: transform 0.3s ease;
+  max-height: 190px !important;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.4s ease;
 }
 
 .pd-box1:hover img {
-  transform: scale(1.05);
+  transform: scale(1.08);
+}
+
+.product-container .pd-box-content {
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .product-container .pd-box-content h6 {
-  color: #313131;
-  font-weight: 500;
-  font-size: 20px;
-  margin-top: 15px !important;
-  margin-bottom: 0.5rem;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.35;
+  margin-bottom: 12px;
+  min-height: 42px;
+}
+
+.product-container .pd-box-content .price-booknow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.product-container .pd-box-content .price-booknow .price-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .product-container .pd-box-content .price-booknow .price-group .original-price {
-  color: #888;
-  font-size: 16px;
-  margin-bottom: 5px;
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 0;
   text-decoration: line-through;
 }
 
@@ -143,23 +180,36 @@
   .price-group
   .current-price
   strong {
-    color: rgb(58, 138, 4);
-    font-weight: bold;
+    color: #b45309;
+    font-weight: 800;
     font-size: 18px;
 }
 
 .product-container .pd-box-content .price-booknow .booknow-btn {
-  background-color: rgb(248, 117, 69);
+  background: linear-gradient(135deg, #ff7b00, #ea580c);
   color: #fff;
-  border-radius: 150px;
+  border-radius: 50px;
   text-decoration: none;
   cursor: pointer;
-  padding: 5px 15px;
-  font-size: 14px;
-  margin-left: auto;
-  margin-right: 5px;
-  white-space: nowrap;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
   border: none;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+  transition: all 0.25s ease;
+}
+
+.product-container .pd-box-content .price-booknow .booknow-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.5);
+}
+
+.product-container .pd-box-content .price-booknow .add-to-cart-btn {
+  background: #1e293b;
+}
+
+.product-container .pd-box-content .price-booknow .add-to-cart-btn:hover {
+  background: #ea580c;
 }
 
 .ecommerce_card {
