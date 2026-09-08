@@ -18,8 +18,8 @@
   max-height: 360px;
   border-radius: 18px;
   overflow: hidden;
-  display: grid;
-  grid-template-columns: 43% 57%;
+  display: flex;
+  flex-direction: row;
   background: linear-gradient(120deg, #fff2cc 0%, #fff8e1 40%, #f9e29f 100%);
   border: 1.5px solid rgba(217, 119, 6, 0.4);
   box-shadow: 0 10px 32px rgba(90, 33, 15, 0.12);
@@ -52,31 +52,24 @@
 }
 
 /* ==========================================================================
-   1. LEFT SECTION: DEDICATED IMAGE AREA WITH LARGE CURVED ARC
+   1. LEFT SECTION: DEDICATED 42% IMAGE AREA WITH LARGE CURVED ARC
    ========================================================================== */
-.banner-image-wrapper {
+.banner-image-section {
   position: relative;
+  width: 42%;
+  min-width: 42%;
+  max-width: 42%;
   height: 100%;
   min-height: 320px;
-  max-height: 360px;
-  overflow: visible;
-  z-index: 2;
-}
-
-/* Clipped Frame: Perfectly masks image, halo, and background to the golden arc curve */
-.banner-image-clipped-frame {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   clip-path: url(#bannerArcClip);
   -webkit-clip-path: url(#bannerArcClip);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 46% 50%, #fffbe8 0%, #fef08a 45%, #fcd34d 85%, #f59e0b 100%);
+  background: radial-gradient(circle at 46% 50%, #fffdf4 0%, #fef3c7 50%, #fde68a 85%, #fcd34d 100%);
   overflow: hidden;
-  padding: 6px 12px 6px 8px;
+  flex-shrink: 0;
+  z-index: 2;
 }
 
 /* Ambient Sacred Halo & Warm Glow behind the deity/product */
@@ -115,18 +108,29 @@
 }
 
 /* Uploaded Deity / Product Image: Always 100% visible, never cropped, perfectly blended */
+.banner-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px 8px 10px;
+  z-index: 3;
+}
+
 .banner-product-image {
   position: relative;
   width: 100%;
   height: 100%;
-  max-height: 98%;
-  max-width: 98%;
+  max-height: 100%;
+  max-width: 100%;
   object-fit: contain;
   object-position: center;
   display: block;
   mix-blend-mode: multiply;
-  -webkit-mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, black 75%, transparent 100%);
-  mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, black 75%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, black 80%, transparent 100%);
+  mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, black 80%, transparent 100%);
   filter: contrast(1.05) brightness(1.02) drop-shadow(0 10px 20px rgba(70, 30, 10, 0.2));
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 3;
@@ -143,18 +147,18 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 4;
+  z-index: 5;
 }
 
 .curve-gold-stroke {
   fill: none;
   stroke: var(--banner-accent, #d97706);
-  stroke-width: 3;
+  stroke-width: 3.2;
 }
 
 .curve-gold-glow {
   fill: none;
-  stroke: rgba(245, 158, 11, 0.5);
+  stroke: rgba(245, 158, 11, 0.55);
   stroke-width: 8;
   filter: blur(3px);
 }
@@ -164,6 +168,9 @@
    ========================================================================== */
 .banner-content {
   position: relative;
+  flex: 1;
+  width: 58%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -405,7 +412,6 @@
   transform: translateX(4px);
 }
 
-
 /* ==========================================================================
    TYPE 1: FULL GRAPHIC HERO BANNER (100% WIDTH FIT)
    ========================================================================== */
@@ -449,15 +455,18 @@
 /* Tablet: 768px - 1023px */
 @media (max-width: 1023px) {
   .dynamic-promo-banner-card {
-    grid-template-columns: 38% 62%;
     min-height: 280px;
     max-height: 310px;
   }
-  .banner-image-wrapper {
+  .banner-image-section {
+    width: 38%;
+    min-width: 38%;
+    max-width: 38%;
     min-height: 280px;
     max-height: 310px;
   }
   .banner-content {
+    width: 62%;
     padding: 16px 20px 16px 10px;
   }
   .banner-main-title {
@@ -489,24 +498,24 @@
 /* Mobile: <= 767px */
 @media (max-width: 767px) {
   .dynamic-promo-banner-card {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     min-height: auto;
     max-height: none;
     border-radius: 16px;
   }
-  .banner-image-wrapper {
-    height: 200px;
-    min-height: 200px;
-    max-height: 200px;
+  .banner-image-section {
     width: 100%;
-  }
-  .banner-image-clipped-frame {
+    min-width: 100%;
+    max-width: 100%;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
     clip-path: none;
     -webkit-clip-path: none;
     border-bottom: 2px solid #d97706;
   }
   .banner-product-image {
-    max-height: 180px;
+    max-height: 200px;
   }
   .banner-curve-divider-svg {
     display: none;
@@ -516,6 +525,7 @@
     height: 180px;
   }
   .banner-content {
+    width: 100%;
     padding: 14px 16px 22px 16px;
   }
   .banner-offer-seal-badge {
@@ -547,13 +557,13 @@
 
 /* Small Mobile: <= 480px */
 @media (max-width: 480px) {
-  .banner-image-wrapper {
-    height: 175px;
-    min-height: 175px;
-    max-height: 175px;
+  .banner-image-section {
+    height: 190px;
+    min-height: 190px;
+    max-height: 190px;
   }
   .banner-product-image {
-    max-height: 160px;
+    max-height: 175px;
   }
   .banner-main-title {
     font-size: 20px;

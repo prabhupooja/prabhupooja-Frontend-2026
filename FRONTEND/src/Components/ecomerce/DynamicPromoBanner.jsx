@@ -160,7 +160,7 @@ const DynamicPromoBanner = ({ banner, onBannerClick }) => {
       <svg width="0" height="0" className="banner-svg-defs" aria-hidden="true">
         <defs>
           <clipPath id="bannerArcClip" clipPathUnits="objectBoundingBox">
-            <path d="M 0,0 L 0.82,0 C 1.0,0.28 1.0,0.72 0.80,1 L 0,1 Z" />
+            <path d="M 0,0 L 0.85,0 C 1.0,0.25 1.0,0.75 0.85,1 L 0,1 Z" />
           </clipPath>
         </defs>
       </svg>
@@ -170,15 +170,14 @@ const DynamicPromoBanner = ({ banner, onBannerClick }) => {
       <div className="banner-mandala-watermark" aria-hidden="true" />
 
       {/* ============================================================
-          LEFT SECTION: DEDICATED IMAGE AREA WITH LARGE CURVED ARC
+          LEFT SECTION: DEDICATED IMAGE AREA (42%) WITH LARGE CURVED ARC
           ============================================================ */}
-      <div className="banner-image-wrapper">
-        {/* Clipped frame: Bounds image and halo lighting to the curved arc */}
-        <div className="banner-image-clipped-frame">
-          <div className="deity-ambient-halo" aria-hidden="true" />
-          <div className="deity-warm-glow" aria-hidden="true" />
+      <div className="banner-image-section">
+        <div className="deity-ambient-halo" aria-hidden="true" />
+        <div className="deity-warm-glow" aria-hidden="true" />
 
-          {/* Uploaded Deity / Product Image (Never cropped, never stretched) */}
+        {/* Image wrapper to maximize idol height and scale safely */}
+        <div className="banner-image-wrapper">
           {image && (
             <img
               src={image}
@@ -202,11 +201,11 @@ const DynamicPromoBanner = ({ banner, onBannerClick }) => {
           aria-hidden="true"
         >
           <path
-            d="M 82,0 C 100,28 100,72 80,100"
+            d="M 85,0 C 100,25 100,75 85,100"
             className="curve-gold-stroke"
           />
           <path
-            d="M 82,0 C 100,28 100,72 80,100"
+            d="M 85,0 C 100,25 100,75 85,100"
             className="curve-gold-glow"
           />
         </svg>
