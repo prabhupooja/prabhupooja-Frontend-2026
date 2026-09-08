@@ -47,11 +47,14 @@ const Signup = ({ closeSingClose, onOpenLogin }) => {
   };
 
   const validateNumber = () => {
-    const regex = /^\d{10}$/;
-    if (!regex.test(mobile)) {
+    const cleanMobile = mobile.replace(/\D/g, "");
+    const regex = /^[6-9]\d{9}$/;
+    if (cleanMobile.length !== 10 || !regex.test(cleanMobile)) {
       setNumberError("Please enter a valid 10-digit mobile number");
+      return false;
     } else {
       setNumberError("");
+      return true;
     }
   };
 
@@ -247,12 +250,17 @@ const Signup = ({ closeSingClose, onOpenLogin }) => {
                     <div className="singnupFormInputes">
                       <label htmlFor="number">Number:</label>
                       <input
-                        type="text"
+                        type="tel"
                         id="number"
+                        maxLength={10}
                         autoComplete="off"
-                        placeholder="Enter your Mobile Number"
+                        placeholder="Enter 10-digit Mobile Number"
                         value={mobile}
-                        onChange={(e) => setMobile(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          setMobile(val);
+                          if (numberError) setNumberError("");
+                        }}
                         onBlur={validateNumber}
                       />
                       {numberError && <p className="error">{numberError}</p>}

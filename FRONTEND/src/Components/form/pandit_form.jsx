@@ -26,9 +26,15 @@ const Pandit_form = () => {
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+    const cleanMobile = (mobile || "").replace(/\D/g, "");
+    if (!cleanMobile || cleanMobile.length !== 10 || !/^[6-9]\d{9}$/.test(cleanMobile)) {
+      setErrorMessage("Please enter a valid 10-digit mobile number.");
+      return;
+    }
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("mobile", mobile);
+    formData.append("mobile", cleanMobile);
     formData.append("email", email);
     formData.append("gotra", gotra);
     formData.append("qualification", qualification);
@@ -137,11 +143,13 @@ const Pandit_form = () => {
             <div className="col-sm-6">
               <label htmlFor="Number">Number:</label>
               <input
-                type="number"
+                type="tel"
+                id="Number"
+                maxLength={10}
                 autoComplete="off"
-                placeholder="Enter your Mobile Number"
+                placeholder="Enter 10-digit Mobile Number"
                 value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
+                onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
               />
             </div>
           </div>

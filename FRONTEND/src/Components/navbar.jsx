@@ -10,22 +10,31 @@ import useUserStore from "../Store/UserStore/userStore";
 import useUserCardStore from "../Store/userCardStore/userCardStore";
 import useOnlinePujaStore from "../Store/PoojaStore/OnlinePoojaStore";
 import useProblemPoojaStore from "../Store/ProblemPoojaStore/ProblemPoojaStore";
-import { FaEdit } from "react-icons/fa";
+import {
+  FaEdit,
+  FaWallet,
+  FaChevronDown,
+  FaChevronUp,
+  FaShoppingCart,
+  FaPrayingHands,
+  FaUser,
+  FaUserPlus,
+  FaSignInAlt,
+  FaBoxOpen,
+  FaGem,
+} from "react-icons/fa";
 // import GoogleTranslate from "../GoogleTranslate";
 import Login from "./login/NewLogin";
 import Signup from "./login/Signup";
 import OtpPopup from "./otp/Otp";
 import useHomeStore from "../Store/dataStore/homeStore";
 import CryptoJS from "crypto-js";
-import { FaWallet, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { IoChatbox, IoClose } from "react-icons/io5";
-import { FaShoppingCart } from "react-icons/fa";
 import { MdOutlineSupportAgent, MdLogout } from "react-icons/md";
 import { BsCart } from "react-icons/bs";
 import { IoRestaurantOutline } from "react-icons/io5";
 import { MdTempleHindu } from "react-icons/md";
 import { TbYoga } from "react-icons/tb";
-import { FaPrayingHands } from "react-icons/fa";
 import { IoMdNotifications } from "react-icons/io";
 import useNotificationStore from "../Store/notificationStore/notificationStore";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
@@ -89,7 +98,7 @@ function Navbar() {
 
   const { getUserPujaBookings } = useOnlinePujaStore();
   const { getBookings } = useProblemPoojaStore();
-  const { cartItems, getCartItems } = useUserCardStore();
+  const { cartItems, getCartItems, clearCart, setCartItems } = useUserCardStore();
   const [probemPoojaCount, setProbemPoojaCount] = useState(0);
   const [onlinePoojaCount, setOnlinePoojaCount] = useState(0);
   const [isSingupPopup, setIsSingupPopup] = useState(false);
@@ -103,9 +112,38 @@ function Navbar() {
     localStorage.removeItem("token");
     localStorage.removeItem("auth");
     localStorage.removeItem("user");
+    localStorage.removeItem("guestCart");
+    if (clearCart) clearCart();
     if (logout) logout();
     setProfileMenuOpen(false);
     navigate("/");
+  };
+
+  const openLoginFromDrawer = () => {
+    setMenuOpen(false);
+    openPopup();
+  };
+
+  const openSignupFromDrawer = () => {
+    setMenuOpen(false);
+    openSingPopup();
+  };
+
+  const handleProfileLogoutFromDrawer = () => {
+    setMenuOpen(false);
+    handleProfileLogout();
+  };
+
+  const handleNavigateFromDrawer = (path, state) => {
+    setMenuOpen(false);
+    setDropdownOpen(false);
+    setIsSecondDropdownOpen(false);
+    setIsFourthDropdownOpen(false);
+    if (state) {
+      navigate(path, { state });
+    } else {
+      navigate(path);
+    }
   };
 
   useEffect(() => {
@@ -601,14 +639,131 @@ const getServicePath = (service) => {
               <IoClose size={22} />
             </button>
           </div>
+
+          {/* Clean Login & Register Buttons on Mobile Drawer */}
+          {!isLoggin ? (
+            <div className="drawer-auth-buttons-wrap">
+              <button
+                type="button"
+                className="drawer-login-btn"
+                onClick={openLoginFromDrawer}
+              >
+                <FaSignInAlt /> Login
+              </button>
+              <button
+                type="button"
+                className="drawer-signup-btn"
+                onClick={openSignupFromDrawer}
+              >
+                <FaUserPlus /> Register
+              </button>
+            </div>
+          ) : user1 ? (
+            <div className="drawer-logged-user-card">
+              <div
+                className="drawer-profile-top"
+                onClick={() =>
+                  handleNavigateFromDrawer("/editprofile", {
+                    activeTab: "profile",
+                  })
+                }
+              >
+                <div className="drawer-profile-avatar-wrap">
+                  <img
+                    src={user1?.image || userprofileimg}
+                    alt={user1?.name || "Devotee"}
+                    className="drawer-profile-avatar"
+                  />
+                  {isMember && (
+                    <span className="drawer-vip-badge" title="VIP Devotee">
+                      💎
+                    </span>
+                  )}
+                </div>
+                <div className="drawer-profile-info">
+                  <div className="drawer-profile-name-row">
+                    <h4 className="drawer-profile-name">
+                      {user1?.name ? user1.name : "Devotee"}
+                    </h4>
+                    <span className="drawer-edit-chip" title="Edit Profile">
+                      <FaEdit />
+                    </span>
+                  </div>
+                  <p className="drawer-profile-contact">
+                    {user1?.mobile || user1?.email || "Verified Devotee"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Sacred Wallet Box */}
+              <div
+                className="drawer-wallet-pill"
+                onClick={() =>
+                  handleNavigateFromDrawer("/editprofile", {
+                    activeTab: "wallet",
+                  })
+                }
+              >
+                <div className="drawer-wallet-pill-left">
+                  <div className="drawer-wallet-icon">
+                    <FaWallet />
+                  </div>
+                  <div className="drawer-wallet-text">
+                    <span className="drawer-wallet-lbl">Pooja Wallet</span>
+                    <span className="drawer-wallet-val">
+                      ₹ {Number(user1?.balance || 0).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+                <span className="drawer-wallet-add-btn">+ Recharge</span>
+              </div>
+
+              {/* Quick Devotee Shortcuts */}
+              <div className="drawer-user-shortcuts">
+                <div
+                  className="drawer-shortcut-item"
+                  onClick={() =>
+                    handleNavigateFromDrawer("/editprofile", {
+                      activeTab: "profile",
+                    })
+                  }
+                >
+                  <FaUser className="d-icon" />
+                  <span>My Profile & Dashboard</span>
+                </div>
+                <div
+                  className="drawer-shortcut-item"
+                  onClick={() => handleNavigateFromDrawer("/poojabooking")}
+                >
+                  <FaPrayingHands className="d-icon" />
+                  <span>My Pooja Bookings</span>
+                </div>
+                <div
+                  className="drawer-shortcut-item"
+                  onClick={() => handleNavigateFromDrawer("/myorders")}
+                >
+                  <FaBoxOpen className="d-icon" />
+                  <span>My Store Orders</span>
+                </div>
+                <div
+                  className="drawer-shortcut-item"
+                  onClick={() => handleNavigateFromDrawer("/membership")}
+                >
+                  <FaGem className="d-icon" />
+                  <span>Devotee Membership</span>
+                </div>
+                <div
+                  className="drawer-shortcut-item drawer-shortcut-logout"
+                  onClick={handleProfileLogoutFromDrawer}
+                >
+                  <MdLogout className="d-icon logout-col" />
+                  <span>Logout Account</span>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           <ul>
-            {!isLoggin && (
-              <li className="login-item-mobile">
-                <button className="login-btn-mobile" onClick={openPopup}>
-                  Login / Sign Up
-                </button>
-              </li>
-            )}
             {(() => {
               const currentPath = location.pathname;
               const isHomeActive = currentPath === "/";
@@ -834,18 +989,6 @@ const getServicePath = (service) => {
                 </a>
               </div>
             </div>
-
-            {isLoggin && user1 ? (
-              <div className="drawer-user-box">
-                <div className="drawer-user-meta">
-                  <span className="drawer-devotee-name">🙏 {user1.name || "Devotee"}</span>
-                  <span className="drawer-wallet-tag">Wallet: ₹{user1.balance || "0.00"}</span>
-                </div>
-                <Link to="/profile" className="drawer-account-link" onClick={handleLinkClick}>
-                  My Account →
-                </Link>
-              </div>
-            ) : null}
 
             <div className="drawer-holy-tagline">
               <span>✨ प्रभु पूजा — आपकी भक्ति, हमारा संकल्प</span>

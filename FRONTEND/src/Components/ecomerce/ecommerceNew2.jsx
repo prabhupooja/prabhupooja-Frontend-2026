@@ -6,11 +6,17 @@ import React, {
   useMemo,
 } from "react";
 import "./ecommerceNew2.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import useUserCardStore from "../../Store/userCardStore/userCardStore";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 import useHomeStore from "../../Store/dataStore/homeStore";
+import useEcommerceBannerStore from "../../Store/ecommerceBannerStore/ecommerceBannerStore";
 import { TailSpin } from "react-loader-spinner";
 import CryptoJS from "crypto-js";
 import {
@@ -22,19 +28,18 @@ import {
   FaShoppingCart,
   FaTimes,
   FaFilter,
-  FaChevronLeft,
-  FaChevronRight,
-  FaTag,
   FaShieldAlt,
   FaTruck,
   FaCheck,
   FaChevronDown,
+  FaChevronLeft,
+  FaChevronRight,
   FaChevronUp,
   FaSlidersH,
   FaUndoAlt,
-  FaLayerGroup,
+  FaTag,
 } from "react-icons/fa";
-import { MdOutlineLocalOffer, MdVerified } from "react-icons/md";
+import { MdVerified } from "react-icons/md";
 import debounce from "lodash.debounce";
 
 // 🛡️ Helper: Parse image safely from array, JSON string, comma-separated string, or URL
@@ -228,53 +233,119 @@ const priceRanges = [
   { id: "above3000", label: "Above ₹3,000", min: 3000, max: Infinity },
 ];
 
-// 📢 Dynamic Promotional Offer Banners Data (Easily configurable / extensible)
-const offerBanners = [
-  {
-    id: 1,
-    tag: "FESTIVE SPECIAL OFFER",
-    title: "Sacred & Pure Spiritual Idols",
-    subtitle:
-      "Handcrafted Silver, Brass & Marble idols consecrated with Vedic rituals to invite divinity and prosperity into your home.",
-    discount: "UP TO 40% OFF",
-    code: "CODE: PRABHU40",
-    bgGradient: "linear-gradient(135deg, #4a1d00 0%, #b45309 45%, #ea580c 100%)",
-    accentColor: "#fef08a",
-    image: require("../Assets/productBanner.png"),
-    buttonText: "Shop Divine Idols",
-    filterAction: "",
-  },
-  {
-    id: 2,
-    tag: "100% CERTIFIED & ENERGIZED",
-    title: "Vedic Gemstones & Sacred Yantras",
-    subtitle:
-      "Authentic, lab-certified natural gemstones and energized Sri Yantras crafted according to ancient astrological principles.",
-    discount: "FLAT 25% OFF",
-    code: "CODE: VEDIC25",
-    bgGradient: "linear-gradient(135deg, #1e1b4b 0%, #3730a3 50%, #b45309 100%)",
-    accentColor: "#fed7aa",
-    image: require("../Assets/gemstoneimg.jpg"),
-    buttonText: "Explore Gemstones",
-    filterAction: "gemstones",
-  },
-  {
-    id: 3,
-    tag: "COMPLETE POOJA SAMAGRI",
-    title: "Authentic Pooja & Havan Kits",
-    subtitle:
-      "Eco-friendly, chemical-free dhoop, Gangajal, pure cow ghee diya sets, and premium havan samagri delivered safely to your doorstep.",
-    discount: "STARTING @ ₹99",
-    code: "FREE PRASAD ON ₹999+",
-    bgGradient: "linear-gradient(135deg, #3f1d0b 0%, #9a3412 50%, #c2410c 100%)",
-    accentColor: "#fde047",
-    image: require("../Assets/ecommercebanner.webp"),
-    buttonText: "View Samagri Kits",
-    filterAction: "pooja-samagri",
-  },
-];
+
+// 🌟 Compact Landscape Hero Banner Slider for E-Commerce Store using Swiper
+const EcommerceHeroBannerSlider = ({ banners = [] }) => {
+  const navigate = useNavigate();
+
+  const validBanners = useMemo(() => {
+    const fallbackList = [
+      {
+        id: "default-ecom-1",
+        title: "100% Authentic Vedic & Spiritual Store",
+        image: "https://prabhupooja1.s3.ap-south-1.amazonaws.com/ecommerce-banners/1788856047252-ganesh%20ji%20banner.png",
+        redirect_url: "",
+      },
+    ];
+    if (!Array.isArray(banners) || banners.length === 0) {
+      return fallbackList;
+    }
+    const filtered = banners.filter((b) => b && (b.image || b.bannerImage || b.banner || b.imageUrl));
+    return filtered.length > 0 ? filtered : fallbackList;
+  }, [banners]);
+
+  const handleBannerClick = (banner) => {
+    const url = banner?.redirect_url || banner?.redirectUrl || banner?.url || banner?.link;
+    if (url) {
+      if (url.startsWith("http://") || url.startsWith("https://")) {
+        window.open(url, "_blank", "noopener,noreferrer");
+      } else {
+        navigate(url.startsWith("/") ? url : `/${url}`);
+      }
+    } else if (banner?.product_id) {
+      navigate(`/productdetails/${banner.product_id}`);
+    }
+  };
+
+  return (
+    <div className="ecom-hero-banner-wrapper">
+      <Swiper
+        navigation={validBanners.length > 1}
+        pagination={
+          validBanners.length > 1
+            ? { clickable: true, dynamicBullets: true }
+            : false
+        }
+        autoplay={
+          validBanners.length > 1
+            ? { delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true }
+            : false
+        }
+        loop={validBanners.length > 1}
+        speed={600}
+        modules={[Navigation, Autoplay, Pagination]}
+        className="ecom-hero-swiper"
+      >
+        {validBanners.map((banner, idx) => {
+          const rawImg = banner?.image || banner?.bannerImage || banner?.banner || banner?.imageUrl;
+          const bannerImg =
+            typeof rawImg === "string"
+              ? rawImg.startsWith("http://") || rawImg.startsWith("https://") || rawImg.startsWith("data:") || rawImg.startsWith("blob:")
+                ? rawImg
+                : rawImg.startsWith("/")
+                ? `${process.env.REACT_APP_BASE_URL || ""}${rawImg}`
+                : `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
+              : rawImg;
+
+          const isClickable = Boolean(banner?.redirect_url || banner?.redirectUrl || banner?.url || banner?.link || banner?.product_id);
+
+          return (
+            <SwiperSlide key={banner.id || `ecom-banner-${idx}`}>
+              <div
+                className={`ecom-hero-banner-slide ${isClickable ? "clickable" : ""}`}
+                onClick={() => isClickable && handleBannerClick(banner)}
+                style={{ cursor: isClickable ? "pointer" : "default" }}
+              >
+                <img
+                  src={bannerImg}
+                  alt={banner?.title || `Spiritual Store Banner ${idx + 1}`}
+                  className="ecom-hero-banner-image"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://prabhupooja1.s3.ap-south-1.amazonaws.com/ecommerce-banners/1788856047252-ganesh%20ji%20banner.png";
+                  }}
+                />
+                {banner?.title && (
+                  <div className="ecom-hero-banner-overlay">
+                    <div className="ecom-banner-badge">
+                      <span className="badge-text">{banner.title}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
+    </div>
+  );
+};
 
 const EcommerceNew2 = () => {
+  const navigate = useNavigate();
+  const { banners: ecommerceBanners, fetchEcommerceBanners } = useEcommerceBannerStore();
+
+  useEffect(() => {
+    fetchEcommerceBanners();
+  }, []);
+
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const catParam = searchParams.get('category') || searchParams.get('cat');
+    if (catParam) {
+      setSelectedCategory(catParam);
+    }
+  }, [searchParams]);
   const [filter, setFilter] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState("");
@@ -286,14 +357,13 @@ const EcommerceNew2 = () => {
   const limit = 12;
   const [loading, setLoading] = useState(null);
   const [bestSellers, setBestSellers] = useState([]);
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
-  const [isBannerHovered, setIsBannerHovered] = useState(false);
+  
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState({
     categories: false,
     materials: false,
     price: false,
-    bestsellers: true,
+    bestsellers: false,
   });
 
   const toggleSection = (sectionKey) => {
@@ -320,7 +390,6 @@ const EcommerceNew2 = () => {
   ]);
 
   const lastProductRef = useRef(null);
-  const bannerTimerRef = useRef(null);
 
   const { addToCart, getCartItems } = useUserCardStore();
   const { user1 } = useAuthStore();
@@ -330,26 +399,6 @@ const EcommerceNew2 = () => {
     getFilterProducts,
     isLoading,
   } = useHomeStore();
-
-  // Dynamic Banner Auto-Play Timer
-  useEffect(() => {
-    if (!isBannerHovered) {
-      bannerTimerRef.current = setInterval(() => {
-        setCurrentBannerIndex((prev) => (prev + 1) % offerBanners.length);
-      }, 5000);
-    }
-    return () => clearInterval(bannerTimerRef.current);
-  }, [isBannerHovered]);
-
-  const handleNextBanner = () => {
-    setCurrentBannerIndex((prev) => (prev + 1) % offerBanners.length);
-  };
-
-  const handlePrevBanner = () => {
-    setCurrentBannerIndex(
-      (prev) => (prev - 1 + offerBanners.length) % offerBanners.length
-    );
-  };
 
   // Debounced search handler
   const debounceSearch = useCallback(
@@ -571,90 +620,8 @@ const EcommerceNew2 = () => {
       </div>
 
       <div className="ecom-container">
-        {/* 🎨 DYNAMIC PROMOTIONAL OFFER BANNER (Auto-Slider with Controls) */}
-        <div
-          className="dynamic-banner-section"
-          onMouseEnter={() => setIsBannerHovered(true)}
-          onMouseLeave={() => setIsBannerHovered(false)}
-        >
-          <div
-            className="dynamic-banner-card"
-            style={{
-              background: offerBanners[currentBannerIndex].bgGradient,
-            }}
-          >
-            <div className="banner-content">
-              <span className="banner-tag">
-                <MdOutlineLocalOffer /> {offerBanners[currentBannerIndex].tag}
-              </span>
-              <h1 className="banner-title">
-                {offerBanners[currentBannerIndex].title}
-              </h1>
-              <p className="banner-subtitle">
-                {offerBanners[currentBannerIndex].subtitle}
-              </p>
-              <div className="banner-cta-row">
-                <div className="banner-discount-badge">
-                  <span className="discount-value">
-                    {offerBanners[currentBannerIndex].discount}
-                  </span>
-                  <span className="coupon-code">
-                    {offerBanners[currentBannerIndex].code}
-                  </span>
-                </div>
-                <button
-                  className="banner-cta-btn"
-                  onClick={() => {
-                    if (offerBanners[currentBannerIndex].filterAction) {
-                      handleCategoryChange(
-                        offerBanners[currentBannerIndex].filterAction
-                      );
-                    }
-                  }}
-                >
-                  {offerBanners[currentBannerIndex].buttonText} &rarr;
-                </button>
-              </div>
-            </div>
-
-            <div className="banner-visual">
-              <img
-                src={offerBanners[currentBannerIndex].image}
-                alt="Promotion"
-                className="banner-hero-img"
-              />
-            </div>
-          </div>
-
-          {/* Banner Slider Controls */}
-          <button
-            className="banner-arrow-btn prev-btn"
-            onClick={handlePrevBanner}
-            aria-label="Previous Slide"
-          >
-            <FaChevronLeft />
-          </button>
-          <button
-            className="banner-arrow-btn next-btn"
-            onClick={handleNextBanner}
-            aria-label="Next Slide"
-          >
-            <FaChevronRight />
-          </button>
-
-          {/* Indicator Dots */}
-          <div className="banner-dots">
-            {offerBanners.map((banner, index) => (
-              <span
-                key={banner.id}
-                className={`banner-dot ${
-                  index === currentBannerIndex ? "active" : ""
-                }`}
-                onClick={() => setCurrentBannerIndex(index)}
-              />
-            ))}
-          </div>
-        </div>
+        {/* 🌟 Dynamic E-Commerce Hero Banner Slider */}
+        <EcommerceHeroBannerSlider banners={ecommerceBanners} />
 
         {/* 📱 Mobile Filter Open Button */}
         <div className="mobile-filter-trigger">
@@ -706,215 +673,218 @@ const EcommerceNew2 = () => {
                 )}
               </div>
 
-              {/* Accordion Section 1: Categories */}
-              <div className="unified-filter-section">
-                <button
-                  className="section-header-btn"
-                  onClick={() => toggleSection("categories")}
-                  type="button"
-                >
-                  <div className="section-title-wrap">
-                    <span className="section-bullet"></span>
-                    <span className="section-title">Categories</span>
-                    {selectedCategory && (
-                      <span className="section-indicator-pill">
-                        {categoryList.find((c) => c.value === selectedCategory)?.name || "Selected"}
-                      </span>
-                    )}
-                  </div>
-                  {collapsedSections.categories ? (
-                    <FaChevronDown className="section-chevron" />
-                  ) : (
-                    <FaChevronUp className="section-chevron" />
-                  )}
-                </button>
-                {!collapsedSections.categories && (
-                  <div className="section-content-body">
-                    <ul className="category-list">
-                      {categoryList.map((cat) => (
-                        <li
-                          key={cat.name}
-                          className={`category-item ${
-                            selectedCategory === cat.value ? "active" : ""
-                          }`}
-                          onClick={() => handleCategoryChange(cat.value)}
-                        >
-                          <span className="cat-icon">{cat.icon}</span>
-                          <span className="cat-name">{cat.name}</span>
-                          {selectedCategory === cat.value && (
-                            <FaCheck className="cat-check" />
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion Section 2: Metal & Material */}
-              <div className="unified-filter-section">
-                <button
-                  className="section-header-btn"
-                  onClick={() => toggleSection("materials")}
-                  type="button"
-                >
-                  <div className="section-title-wrap">
-                    <span className="section-bullet"></span>
-                    <span className="section-title">Metal & Material</span>
-                    {selectedMaterial && (
-                      <span className="section-indicator-pill">
-                        {selectedMaterial}
-                      </span>
-                    )}
-                  </div>
-                  {collapsedSections.materials ? (
-                    <FaChevronDown className="section-chevron" />
-                  ) : (
-                    <FaChevronUp className="section-chevron" />
-                  )}
-                </button>
-                {!collapsedSections.materials && (
-                  <div className="section-content-body">
-                    <div className="material-chips-grid">
-                      {materialList.map((mat) => {
-                        const isChecked = selectedMaterial === mat;
-                        return (
-                          <button
-                            key={mat}
-                            type="button"
-                            className={`material-chip-btn ${
-                              isChecked ? "active" : ""
-                            }`}
-                            onClick={() => handleMaterialChange(mat)}
-                          >
-                            {isChecked && <FaCheck className="chip-check-icon" />}
-                            <span>{mat}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion Section 3: Price Range */}
-              <div className="unified-filter-section">
-                <button
-                  className="section-header-btn"
-                  onClick={() => toggleSection("price")}
-                  type="button"
-                >
-                  <div className="section-title-wrap">
-                    <span className="section-bullet"></span>
-                    <span className="section-title">Price Range</span>
-                    {selectedPriceRange !== "all" && (
-                      <span className="section-indicator-pill">
-                        {priceRanges.find((r) => r.id === selectedPriceRange)?.label}
-                      </span>
-                    )}
-                  </div>
-                  {collapsedSections.price ? (
-                    <FaChevronDown className="section-chevron" />
-                  ) : (
-                    <FaChevronUp className="section-chevron" />
-                  )}
-                </button>
-                {!collapsedSections.price && (
-                  <div className="section-content-body">
-                    <div className="price-chips-grid">
-                      {priceRanges.map((range) => (
-                        <button
-                          key={range.id}
-                          type="button"
-                          className={`price-grid-btn ${
-                            selectedPriceRange === range.id ? "active" : ""
-                          }`}
-                          onClick={() => handlePriceRangeChange(range.id)}
-                        >
-                          {range.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion Section 4: Best Sellers Widget (Collapsible) */}
-              <div className="unified-filter-section bestsellers-section">
-                <button
-                  className="section-header-btn"
-                  onClick={() => toggleSection("bestsellers")}
-                  type="button"
-                >
-                  <div className="section-title-wrap">
-                    <span className="section-bullet"></span>
-                    <span className="section-title">Popular Divine Picks</span>
-                  </div>
-                  {collapsedSections.bestsellers ? (
-                    <FaChevronDown className="section-chevron" />
-                  ) : (
-                    <FaChevronUp className="section-chevron" />
-                  )}
-                </button>
-                {!collapsedSections.bestsellers && (
-                  <div className="section-content-body">
-                    <div className="bestseller-list">
-                      {bestSellers && bestSellers.length > 0 ? (
-                        bestSellers.slice(0, 3).map((product, index) => {
-                          const encryptedId = encryptId(product.id || index);
-                          const prodImg = getSafeImageUrl(product.image, 0);
-                          return (
-                            <Link
-                              to={`/productdetails/${encryptedId}`}
-                              className="bestseller-item"
-                              key={product.id || index}
-                            >
-                              <div className="bestseller-img-wrap">
-                                <img src={prodImg} alt={product.productName} />
-                              </div>
-                              <div className="bestseller-info">
-                                <h4 className="bestseller-name">
-                                  {product.productName}
-                                </h4>
-                                <div className="bestseller-price-row">
-                                  <span className="bestseller-price">
-                                    ₹{product.offerPrice || product.price}
-                                  </span>
-                                  {product.offerPrice &&
-                                    product.price > product.offerPrice && (
-                                      <span className="bestseller-oldprice">
-                                        ₹{product.price}
-                                      </span>
-                                    )}
-                                </div>
-                                <div className="bestseller-stars">
-                                  <FaStar />
-                                  <FaStar />
-                                  <FaStar />
-                                  <FaStar />
-                                  <FaStar />
-                                </div>
-                              </div>
-                            </Link>
-                          );
-                        })
-                      ) : (
-                        <p className="no-bestseller-text">
-                          Popular picks loading...
-                        </p>
+              {/* Seamless Unified Scroll Container for All Filter Categories */}
+              <div className="sidebar-scrollable-body">
+                {/* Accordion Section 1: Categories */}
+                <div className="unified-filter-section">
+                  <button
+                    className="section-header-btn"
+                    onClick={() => toggleSection("categories")}
+                    type="button"
+                  >
+                    <div className="section-title-wrap">
+                      <span className="section-bullet"></span>
+                      <span className="section-title">Categories</span>
+                      {selectedCategory && (
+                        <span className="section-indicator-pill">
+                          {categoryList.find((c) => c.value === selectedCategory)?.name || "Selected"}
+                        </span>
                       )}
                     </div>
-                  </div>
-                )}
-              </div>
-            </div>
+                    {collapsedSections.categories ? (
+                      <FaChevronDown className="section-chevron" />
+                    ) : (
+                      <FaChevronUp className="section-chevron" />
+                    )}
+                  </button>
+                  {!collapsedSections.categories && (
+                    <div className="section-content-body">
+                      <ul className="category-list">
+                        {categoryList.map((cat) => (
+                          <li
+                            key={cat.name}
+                            className={`category-item ${
+                              selectedCategory === cat.value ? "active" : ""
+                            }`}
+                            onClick={() => handleCategoryChange(cat.value)}
+                          >
+                            <span className="cat-icon">{cat.icon}</span>
+                            <span className="cat-name">{cat.name}</span>
+                            {selectedCategory === cat.value && (
+                              <FaCheck className="cat-check" />
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
 
-            {/* Spiritual Assurance Banner */}
-            <div className="sidebar-assurance-box">
-              <FaShieldAlt className="assurance-icon" />
-              <div>
-                <h4>100% Vedic Sanctified</h4>
-                <p>All items energized by verified Vedic Pandits.</p>
+                {/* Accordion Section 2: Metal & Material */}
+                <div className="unified-filter-section">
+                  <button
+                    className="section-header-btn"
+                    onClick={() => toggleSection("materials")}
+                    type="button"
+                  >
+                    <div className="section-title-wrap">
+                      <span className="section-bullet"></span>
+                      <span className="section-title">Metal & Material</span>
+                      {selectedMaterial && (
+                        <span className="section-indicator-pill">
+                          {selectedMaterial}
+                        </span>
+                      )}
+                    </div>
+                    {collapsedSections.materials ? (
+                      <FaChevronDown className="section-chevron" />
+                    ) : (
+                      <FaChevronUp className="section-chevron" />
+                    )}
+                  </button>
+                  {!collapsedSections.materials && (
+                    <div className="section-content-body">
+                      <div className="material-chips-grid">
+                        {materialList.map((mat) => {
+                          const isChecked = selectedMaterial === mat;
+                          return (
+                            <button
+                              key={mat}
+                              type="button"
+                              className={`material-chip-btn ${
+                                isChecked ? "active" : ""
+                              }`}
+                              onClick={() => handleMaterialChange(mat)}
+                            >
+                              {isChecked && <FaCheck className="chip-check-icon" />}
+                              <span>{mat}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Accordion Section 3: Price Range */}
+                <div className="unified-filter-section">
+                  <button
+                    className="section-header-btn"
+                    onClick={() => toggleSection("price")}
+                    type="button"
+                  >
+                    <div className="section-title-wrap">
+                      <span className="section-bullet"></span>
+                      <span className="section-title">Price Range</span>
+                      {selectedPriceRange !== "all" && (
+                        <span className="section-indicator-pill">
+                          {priceRanges.find((r) => r.id === selectedPriceRange)?.label}
+                        </span>
+                      )}
+                    </div>
+                    {collapsedSections.price ? (
+                      <FaChevronDown className="section-chevron" />
+                    ) : (
+                      <FaChevronUp className="section-chevron" />
+                    )}
+                  </button>
+                  {!collapsedSections.price && (
+                    <div className="section-content-body">
+                      <div className="price-chips-grid">
+                        {priceRanges.map((range) => (
+                          <button
+                            key={range.id}
+                            type="button"
+                            className={`price-grid-btn ${
+                              selectedPriceRange === range.id ? "active" : ""
+                            }`}
+                            onClick={() => handlePriceRangeChange(range.id)}
+                          >
+                            {range.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Accordion Section 4: Best Sellers Widget (Collapsible) */}
+                <div className="unified-filter-section bestsellers-section">
+                  <button
+                    className="section-header-btn"
+                    onClick={() => toggleSection("bestsellers")}
+                    type="button"
+                  >
+                    <div className="section-title-wrap">
+                      <span className="section-bullet"></span>
+                      <span className="section-title">Popular Divine Picks</span>
+                    </div>
+                    {collapsedSections.bestsellers ? (
+                      <FaChevronDown className="section-chevron" />
+                    ) : (
+                      <FaChevronUp className="section-chevron" />
+                    )}
+                  </button>
+                  {!collapsedSections.bestsellers && (
+                    <div className="section-content-body">
+                      <div className="bestseller-list">
+                        {bestSellers && bestSellers.length > 0 ? (
+                          bestSellers.slice(0, 3).map((product, index) => {
+                            const encryptedId = encryptId(product.id || index);
+                            const prodImg = getSafeImageUrl(product.image, 0);
+                            return (
+                              <Link
+                                to={`/productdetails/${encryptedId}`}
+                                className="bestseller-item"
+                                key={product.id || index}
+                              >
+                                <div className="bestseller-img-wrap">
+                                  <img src={prodImg} alt={product.productName} />
+                                </div>
+                                <div className="bestseller-info">
+                                  <h4 className="bestseller-name">
+                                    {product.productName}
+                                  </h4>
+                                  <div className="bestseller-price-row">
+                                    <span className="bestseller-price">
+                                      ₹{product.offerPrice || product.price}
+                                    </span>
+                                    {product.offerPrice &&
+                                      product.price > product.offerPrice && (
+                                        <span className="bestseller-oldprice">
+                                          ₹{product.price}
+                                        </span>
+                                      )}
+                                  </div>
+                                  <div className="bestseller-stars">
+                                    <FaStar />
+                                    <FaStar />
+                                    <FaStar />
+                                    <FaStar />
+                                    <FaStar />
+                                  </div>
+                                </div>
+                              </Link>
+                            );
+                          })
+                        ) : (
+                          <p className="no-bestseller-text">
+                            Popular picks loading...
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Spiritual Assurance Banner */}
+                <div className="sidebar-assurance-box">
+                  <FaShieldAlt className="assurance-icon" />
+                  <div>
+                    <h4>100% Vedic Sanctified</h4>
+                    <p>All items energized by verified Vedic Pandits.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </aside>

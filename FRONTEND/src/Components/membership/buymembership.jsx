@@ -35,8 +35,9 @@ const Buymembership = () => {
   const validateForm = () => {
     const newErrors = {};
     if (!name) newErrors.name = "Name is required";
-    if (!mobile || !/^\d{10}$/.test(mobile))
-      newErrors.mobile = "Valid mobile number is required";
+    const cleanMobile = (mobile || "").replace(/\D/g, "");
+    if (!cleanMobile || cleanMobile.length !== 10 || !/^[6-9]\d{9}$/.test(cleanMobile))
+      newErrors.mobile = "Please enter a valid 10-digit mobile number";
     if (!email || !/\S+@\S+\.\S+/.test(email))
       newErrors.email = "Valid email is required";
     if (!city) newErrors.city = "City is required";
@@ -205,12 +206,13 @@ const Buymembership = () => {
         <div className="inputGroup_membership">
           <label htmlFor="number">Number:</label>
           <input
-            type="text"
+            type="tel"
             id="number"
+            maxLength={10}
             autoComplete="off"
-            placeholder="Enter your Mobile Number"
+            placeholder="Enter 10-digit Mobile Number"
             value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
+            onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
           />
           {errors.mobile && <p className="errorText">{errors.mobile}</p>}
         </div>

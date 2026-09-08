@@ -68,6 +68,105 @@ const defaultBanners = [
   },
 ];
 
+const getServiceRoute = (serviceName) => {
+  const clean = String(serviceName || "").toLowerCase().trim();
+  if (clean.includes("member")) return "/membership";
+  if (clean.includes("online") || (clean.includes("pooja") && !clean.includes("problem"))) return "/onlinepooja";
+  if (clean.includes("prasad")) return "/prasaddelivery";
+  if (clean.includes("astro")) return "/astrology";
+  if (clean.includes("muhurat")) return "/muhurat";
+  if (clean.includes("e-com") || clean.includes("ecom") || clean.includes("store") || clean.includes("samagri") || clean.includes("shop")) return "/e-commerce";
+  if (clean.includes("temple") || clean.includes("darshan")) return "/temple";
+  if (clean.includes("pandit")) return "/pandit";
+  if (clean.includes("yoga") || clean.includes("meditation")) return "/yoga";
+  return `/${serviceName ? serviceName.toString().toLowerCase().replace(/\s+/g, "-") : "onlinepooja"}`;
+};
+
+const getServiceMeta = (service) => {
+  const name = service?.name || "";
+  const clean = name.toLowerCase().trim();
+
+  if (clean.includes("member")) {
+    return {
+      tag: "👑 Prabhu VIP Circle",
+      title: "Divine Membership",
+      desc: service?.description || "Monthly puja blessings, priority astrologer guidance, and free sanctified prasad deliveries.",
+      btnText: "Join Membership →",
+    };
+  }
+  if (clean.includes("online") || (clean.includes("pooja") && !clean.includes("problem"))) {
+    return {
+      tag: "✨ 100% Vedic Rituals",
+      title: "Online Pooja & Jaap",
+      desc: service?.description || "Personalized Vedic poojas & havans conducted live by certified priests with sacred sankalp.",
+      btnText: "Book Pooja Now 🙏",
+    };
+  }
+  if (clean.includes("prasad")) {
+    return {
+      tag: "🚩 Mahaprasad Blessings",
+      title: "Temple Prasad Delivery",
+      desc: service?.description || "Pure, sanctified prasad delivered directly to your doorstep from revered holy temples.",
+      btnText: "Order Prasad 📦",
+    };
+  }
+  if (clean.includes("astro")) {
+    return {
+      tag: "⭐ Certified Astrologers",
+      title: "Astrology & Kundli",
+      desc: service?.description || "Accurate Kundli analysis, horoscope predictions & life guidance from Vedic Jyotish experts.",
+      btnText: "Consult Astrologer 💬",
+    };
+  }
+  if (clean.includes("muhurat")) {
+    return {
+      tag: "⏳ Shubh Timings",
+      title: "Auspicious Muhurat",
+      desc: service?.description || "Accurate auspicious timings for Griha Pravesh, Vivah, vehicle purchase, and holy ceremonies.",
+      btnText: "Check Muhurat 🗓️",
+    };
+  }
+  if (clean.includes("e-com") || clean.includes("ecom") || clean.includes("store") || clean.includes("samagri") || clean.includes("shop")) {
+    return {
+      tag: "🛍️ Consecrated Items",
+      title: "Sacred Spiritual Store",
+      desc: service?.description || "Energized idols, pure havan samagri, certified natural gemstones, malas, and holy yantras.",
+      btnText: "Explore Store →",
+    };
+  }
+  if (clean.includes("temple") || clean.includes("darshan")) {
+    return {
+      tag: "🛕 Divine Darshan",
+      title: "Temple Darshan & Seva",
+      desc: service?.description || "Book online darshan, special VIP entry, and archana sevas across revered temples across India.",
+      btnText: "Book Darshan 🪔",
+    };
+  }
+  if (clean.includes("pandit")) {
+    return {
+      tag: "🕉️ Certified Pandits",
+      title: "Book Verified Pandit",
+      desc: service?.description || "Experienced, Sanskrit-certified Vedic Pandits for at-home ceremonies, weddings, and rituals.",
+      btnText: "Book Pandit Ji 🙏",
+    };
+  }
+  if (clean.includes("yoga") || clean.includes("meditation")) {
+    return {
+      tag: "🧘 Holistic Wellness",
+      title: "Yoga & Wellness",
+      desc: service?.description || "Traditional yoga, guided meditation, and spiritual healing sessions for mind and soul.",
+      btnText: "Explore Yoga →",
+    };
+  }
+
+  return {
+    tag: "🕉 Vedic Service",
+    title: name,
+    desc: service?.description || `Experience authentic and blessed ${name} services with Prabhu Pooja.`,
+    btnText: "Explore Service →",
+  };
+};
+
 
 const faqs = [
   {
@@ -442,31 +541,34 @@ const NewHome = () => {
             const rawImg =
               slide?.image || slide?.bannerImage || slide?.banner || slide?.imageUrl || slide;
             const imgUrl =
-              typeof rawImg === "string" &&
-              !rawImg.startsWith("http") &&
-              !rawImg.startsWith("data:") &&
-              !rawImg.startsWith("/")
-                ? `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
+              typeof rawImg === "string"
+                ? rawImg.startsWith("http://") || rawImg.startsWith("https://") || rawImg.startsWith("data:") || rawImg.startsWith("blob:")
+                  ? rawImg
+                  : rawImg.startsWith("/")
+                  ? `${process.env.REACT_APP_BASE_URL || ""}${rawImg}`
+                  : `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
                 : rawImg;
+
+            const targetUrl = slide?.redirect_url || slide?.link || slide?.url;
 
             return (
               <SwiperSlide key={slide?.id || `banner-${index}`}>
                 <div
                   className="hero-slide"
                   onClick={() => {
-                    if (slide?.link) {
-                      if (slide.link.startsWith("http")) {
-                        window.open(slide.link, "_blank", "noopener,noreferrer");
+                    if (targetUrl) {
+                      if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+                        window.open(targetUrl, "_blank", "noopener,noreferrer");
                       } else {
-                        navigate(slide.link);
+                        navigate(targetUrl);
                       }
                     } else if (slide?.product_id) {
-                      navigate(`/product/${slide.product_id}`);
+                      navigate(`/productdetails/${slide.product_id}`);
                     }
                   }}
                   style={{
                     cursor:
-                      slide?.link || slide?.product_id
+                      targetUrl || slide?.product_id
                         ? "pointer"
                         : "default",
                   }}
@@ -475,6 +577,10 @@ const NewHome = () => {
                     src={imgUrl}
                     alt={slide?.title || slide?.name || `Banner ${index + 1}`}
                     className="hero-banner-img"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = ganeshBannerHindi;
+                    }}
                   />
                 </div>
               </SwiperSlide>
@@ -702,40 +808,44 @@ const NewHome = () => {
         />
 
         <div className="service-grid">
-          {services?.map((service, index) => (
-            <div
-              className="service-card-flip"
-              key={service.id || index}
-              onClick={() => navigate(`/${slugify(service.name)}`)}
-            >
-              <div className="service-card-inner">
-                {/* Front */}
-                <div className="service-card-front">
-                  <div className="service-icon-wrapper">
-                    <img
-                      src={service.image}
-                      alt={service.name}
-                      className="service-icon"
-                    />
-                  </div>
-                  <p className="service-title">{service.name}</p>
-                </div>
+          {services?.map((service, index) => {
+            const meta = getServiceMeta(service);
+            const route = getServiceRoute(service.name);
 
-                {/* Back (3D Flip) */}
-                <div className="service-card-back">
-                  <div className="service-back-badge">🕉 Vedic Service</div>
-                  <h4 className="service-back-title">{service.name}</h4>
-                  <p className="service-back-desc">
-                    {service.description ||
-                      `Experience authentic and blessed ${service.name} services with Prabhu Pooja.`}
-                  </p>
-                  <button className="service-back-btn">
-                    Explore Service →
-                  </button>
+            return (
+              <div
+                className="service-card-flip"
+                key={service.id || index}
+                onClick={() => navigate(route)}
+              >
+                <div className="service-card-inner">
+                  {/* Front */}
+                  <div className="service-card-front">
+                    <div className="service-icon-wrapper">
+                      <img
+                        src={service.image}
+                        alt={service.name}
+                        className="service-icon"
+                      />
+                    </div>
+                    <p className="service-title">{service.name}</p>
+                  </div>
+
+                  {/* Back (3D Flip) */}
+                  <div className="service-card-back">
+                    <div className="service-back-top">
+                      <span className="service-back-badge">{meta.tag}</span>
+                      <h4 className="service-back-title">{meta.title}</h4>
+                      <p className="service-back-desc">{meta.desc}</p>
+                    </div>
+                    <button className="service-back-btn">
+                      {meta.btnText}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

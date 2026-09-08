@@ -13,53 +13,57 @@ const Login = ({ onCloseLogin, onOpenOtp, onOpenSignup, setLoginInput }) => {
   const { login, isLoading, setIsLoading } = useAuthStore();
 
   const validateInput = () => {
-    const mobileRegex = /^\d{10}$/;
+    const cleanInput = input.trim();
+    const mobileRegex = /^[6-9]\d{9}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!mobileRegex.test(input) && !emailRegex.test(input)) {
+    if (!cleanInput) {
       setInputError(
         "Please enter a valid 10-digit mobile number or email address"
       );
-    } else {
-      setInputError("");
+      return false;
     }
+
+    if (/^\d+$/.test(cleanInput)) {
+      if (cleanInput.length !== 10) {
+        setInputError("Mobile number must be exactly 10 digits");
+        return false;
+      }
+      if (!mobileRegex.test(cleanInput)) {
+        setInputError("Please enter a valid 10-digit mobile number starting with 6-9");
+        return false;
+      }
+    } else if (!emailRegex.test(cleanInput)) {
+      setInputError("Please enter a valid 10-digit mobile number or email address");
+      return false;
+    }
+
+    setInputError("");
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    validateInput();
-    if (inputError) {
-      setIsLoading(false);
+    if (!validateInput()) {
       return;
     }
-    if (!input) {
-      setInputError(
-        "Please enter a valid 10-digit mobile number or email address"
-      );
-      setIsLoading(false);
-    } else {
-      try {
-        const response = await login({ input });
-
-        setLoginInput(input);
-
-        if (!response || !response.data) {
-          throw new Error("Invalid response format");
-        }
-        onOpenOtp();
-        // console.log("Login success:", response);
-      } catch (error) {
-        console.error("Login failed:", error);
-
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data.message);
-        } else {
-          setErrorMessage("Login failed. Please try again later.");
-        }
-      } finally {
-        setIsLoading(false);
+    setIsLoading(true);
+    try {
+      const response = await login({ input: input.trim() });
+      setLoginInput(input.trim());
+      if (!response || !response.data) {
+        throw new Error("Invalid response format");
       }
+      onOpenOtp();
+    } catch (error) {
+      console.error("Login failed:", error);
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage("Login failed. Please try again later.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleGoogleLogin = () => {
@@ -89,7 +93,15 @@ const Login = ({ onCloseLogin, onOpenOtp, onOpenSignup, setLoginInput }) => {
                     autoComplete="off"
                     placeholder="Enter your Mobile Number or Email"
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (/^\d+$/.test(val)) {
+                        setInput(val.slice(0, 10));
+                      } else {
+                        setInput(val);
+                      }
+                      if (inputError) setInputError("");
+                    }}
                     onBlur={validateInput}
                   />
                   <button

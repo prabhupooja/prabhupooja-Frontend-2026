@@ -93,12 +93,21 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!cleanInput) {
-      setInputError("Please enter your Mobile Number or Email.");
+      setInputError("Please enter your 10-digit Mobile Number or Email.");
       return false;
     }
 
-    if (!mobileRegex.test(cleanInput) && !emailRegex.test(cleanInput)) {
-      setInputError("Please enter a valid 10-digit mobile number or email.");
+    if (/^\d+$/.test(cleanInput)) {
+      if (cleanInput.length !== 10) {
+        setInputError("Mobile number must be exactly 10 digits.");
+        return false;
+      }
+      if (!mobileRegex.test(cleanInput)) {
+        setInputError("Please enter a valid 10-digit mobile number starting with 6-9.");
+        return false;
+      }
+    } else if (!emailRegex.test(cleanInput)) {
+      setInputError("Please enter a valid 10-digit mobile number or email address.");
       return false;
     }
 
@@ -266,7 +275,12 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
                         placeholder="e.g. 9876543210 or name@example.com"
                         value={input}
                         onChange={(e) => {
-                          setInput(e.target.value);
+                          const val = e.target.value;
+                          if (/^\d+$/.test(val)) {
+                            setInput(val.slice(0, 10));
+                          } else {
+                            setInput(val);
+                          }
                           if (inputError) setInputError("");
                         }}
                         onBlur={validateInput}
