@@ -1,0 +1,567 @@
+/* ==========================================================================
+   PRABHU POOJA - DYNAMIC CURVED-SPLIT PROMOTIONAL BANNER
+   Pure CSS Spiritual Gradient + Large Curved Arc + Dynamic API Content
+   ========================================================================== */
+
+.banner-svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.dynamic-promo-banner-card {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  max-height: 360px;
+  border-radius: 18px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 43% 57%;
+  background: linear-gradient(120deg, #fff2cc 0%, #fff8e1 40%, #f9e29f 100%);
+  border: 1.5px solid rgba(217, 119, 6, 0.4);
+  box-shadow: 0 10px 32px rgba(90, 33, 15, 0.12);
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  user-select: none;
+}
+
+.dynamic-promo-banner-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(90, 33, 15, 0.18);
+}
+
+/* Subtle background spiritual light & mandala watermark */
+.banner-spiritual-ambient-light {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 18% 50%, rgba(254, 240, 138, 0.55) 0%, transparent 60%),
+              radial-gradient(circle at 82% 30%, rgba(218, 160, 45, 0.18) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.banner-mandala-watermark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% 50%, rgba(217, 119, 6, 0.06) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   1. LEFT SECTION: DEDICATED IMAGE AREA WITH LARGE CURVED ARC
+   ========================================================================== */
+.banner-image-wrapper {
+  position: relative;
+  height: 100%;
+  min-height: 320px;
+  max-height: 360px;
+  overflow: visible;
+  z-index: 2;
+}
+
+/* Clipped Frame: Perfectly masks image, halo, and background to the golden arc curve */
+.banner-image-clipped-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  clip-path: url(#bannerArcClip);
+  -webkit-clip-path: url(#bannerArcClip);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 46% 50%, #fffbe8 0%, #fef08a 45%, #fcd34d 85%, #f59e0b 100%);
+  overflow: hidden;
+  padding: 6px 12px 6px 8px;
+}
+
+/* Ambient Sacred Halo & Warm Glow behind the deity/product */
+.deity-ambient-halo {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.85) 0%, rgba(245, 158, 11, 0.35) 50%, transparent 75%);
+  top: 50%;
+  left: 46%;
+  transform: translate(-50%, -50%);
+  filter: blur(24px);
+  pointer-events: none;
+  z-index: 1;
+  animation: haloPulse 4s ease-in-out infinite alternate;
+}
+
+.deity-warm-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 45% 60%, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes haloPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.96);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.06);
+    opacity: 1;
+  }
+}
+
+/* Uploaded Deity / Product Image: Always 100% visible, never cropped, perfectly blended */
+.banner-product-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 98%;
+  max-width: 98%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, black 75%, transparent 100%);
+  mask-image: radial-gradient(ellipse 96% 96% at 50% 50%, black 75%, transparent 100%);
+  filter: contrast(1.05) brightness(1.02) drop-shadow(0 10px 20px rgba(70, 30, 10, 0.2));
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 3;
+}
+
+.dynamic-promo-banner-card:hover .banner-product-image {
+  transform: scale(1.035);
+}
+
+/* Smooth Golden Arc Curved Divider Line on Top of Boundary */
+.banner-curve-divider-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.curve-gold-stroke {
+  fill: none;
+  stroke: var(--banner-accent, #d97706);
+  stroke-width: 3;
+}
+
+.curve-gold-glow {
+  fill: none;
+  stroke: rgba(245, 158, 11, 0.5);
+  stroke-width: 8;
+  filter: blur(3px);
+}
+
+/* ==========================================================================
+   2. RIGHT SECTION: DYNAMIC PROMOTIONAL CONTENT AREA
+   ========================================================================== */
+.banner-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px 36px 24px 18px;
+  z-index: 5;
+}
+
+/* --- Floating Royal Scalloped Seal Offer Badge (Top-Right) --- */
+.banner-offer-seal-badge {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--banner-primary, #781005) 0%, #4a0802 100%);
+  border: 3px solid #d97706;
+  box-shadow: 0 4px 16px rgba(74, 8, 2, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: transform 0.3s ease;
+}
+
+.dynamic-promo-banner-card:hover .banner-offer-seal-badge {
+  transform: rotate(-3deg) scale(1.05);
+}
+
+.seal-inner-border {
+  position: absolute;
+  inset: 2.5px;
+  border: 1.2px dashed rgba(253, 230, 138, 0.9);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  text-align: center;
+}
+
+.seal-offer-title {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #fef3c7;
+  line-height: 1.05;
+  max-width: 72px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1px;
+}
+
+.seal-offer-prefix {
+  font-size: 8px;
+  font-weight: 800;
+  color: #fde68a;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.seal-offer-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  font-family: "Cinzel", "Georgia", serif;
+  margin: 1px 0;
+}
+
+.seal-offer-suffix {
+  font-size: 8px;
+  font-weight: 800;
+  color: #fde68a;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* --- 1. Small Shloka / Eyebrow Heading with Side Gold Lines --- */
+.banner-shloka-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.shloka-side-line {
+  height: 1.5px;
+  width: 55px;
+  background: linear-gradient(to right, transparent, #d97706);
+}
+
+.shloka-side-line.right-line {
+  background: linear-gradient(to left, transparent, #d97706);
+}
+
+.shloka-text {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--banner-primary, #781005);
+  letter-spacing: 0.6px;
+}
+
+/* --- 2. Main Dynamic Title --- */
+.banner-main-title {
+  font-size: 32px;
+  font-weight: 900;
+  margin: 4px 0 6px 0;
+  color: var(--banner-primary, #781005);
+  font-family: "Cinzel", "Georgia", "Poppins", serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+  letter-spacing: -0.2px;
+  line-height: 1.15;
+}
+
+.title-ornament-left,
+.title-ornament-right {
+  color: var(--banner-accent, #d97706);
+  font-size: 18px;
+}
+
+/* --- 3. Dynamic Subtitle --- */
+.banner-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--banner-text, #451a03);
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+  max-width: 540px;
+}
+
+.subtitle-flank {
+  color: var(--banner-accent, #d97706);
+  font-size: 10px;
+}
+
+/* --- 4. Dynamic Features Strip --- */
+.banner-features-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.feature-divider-pipe {
+  width: 1px;
+  height: 28px;
+  background: rgba(120, 16, 5, 0.3);
+}
+
+.banner-feature-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feature-icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 13px;
+  border: 1.5px solid #d97706;
+  box-shadow: 0 2px 6px rgba(120, 16, 5, 0.25);
+  flex-shrink: 0;
+}
+
+.feature-text-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.feature-title {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--banner-text, #451a03);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.feature-subtitle {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--banner-primary, #781005);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* --- 5. Dynamic CTA Button --- */
+.banner-cta-wrapper {
+  margin-top: 0;
+}
+
+.banner-cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  border: 1.5px solid #d97706;
+  padding: 10px 32px;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(120, 16, 5, 0.35);
+  transition: all 0.25s ease;
+}
+
+.banner-cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(120, 16, 5, 0.45);
+  filter: brightness(1.1);
+}
+
+.cta-arrow-symbol {
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+
+.banner-cta-button:hover .cta-arrow-symbol {
+  transform: translateX(4px);
+}
+
+
+/* ==========================================================================
+   TYPE 1: FULL GRAPHIC HERO BANNER (100% WIDTH FIT)
+   ========================================================================== */
+.dynamic-promo-banner-raw {
+  position: relative;
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 32px rgba(90, 33, 15, 0.12);
+  border: 1.5px solid rgba(217, 119, 6, 0.35);
+  display: block;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  user-select: none;
+  background-color: #fffdf2;
+}
+
+.dynamic-promo-banner-raw:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(90, 33, 15, 0.18);
+}
+
+.dynamic-promo-banner-raw picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dynamic-promo-raw-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (Desktop, Tablet, Mobile, Small Mobile)
+   ========================================================================== */
+
+/* Tablet: 768px - 1023px */
+@media (max-width: 1023px) {
+  .dynamic-promo-banner-card {
+    grid-template-columns: 38% 62%;
+    min-height: 280px;
+    max-height: 310px;
+  }
+  .banner-image-wrapper {
+    min-height: 280px;
+    max-height: 310px;
+  }
+  .banner-content {
+    padding: 16px 20px 16px 10px;
+  }
+  .banner-main-title {
+    font-size: 24px;
+  }
+  .banner-subtitle {
+    font-size: 12.5px;
+  }
+  .banner-features-grid {
+    gap: 8px;
+  }
+  .feature-title {
+    font-size: 9.5px;
+  }
+  .feature-subtitle {
+    font-size: 8px;
+  }
+  .banner-offer-seal-badge {
+    width: 78px;
+    height: 78px;
+    top: 10px;
+    right: 12px;
+  }
+  .seal-offer-value {
+    font-size: 18px;
+  }
+}
+
+/* Mobile: <= 767px */
+@media (max-width: 767px) {
+  .dynamic-promo-banner-card {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    max-height: none;
+    border-radius: 16px;
+  }
+  .banner-image-wrapper {
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    width: 100%;
+  }
+  .banner-image-clipped-frame {
+    clip-path: none;
+    -webkit-clip-path: none;
+    border-bottom: 2px solid #d97706;
+  }
+  .banner-product-image {
+    max-height: 180px;
+  }
+  .banner-curve-divider-svg {
+    display: none;
+  }
+  .deity-ambient-halo {
+    width: 180px;
+    height: 180px;
+  }
+  .banner-content {
+    padding: 14px 16px 22px 16px;
+  }
+  .banner-offer-seal-badge {
+    position: static;
+    margin-bottom: 12px;
+    width: 82px;
+    height: 82px;
+  }
+  .banner-main-title {
+    font-size: 22px;
+  }
+  .banner-subtitle {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+  .banner-features-grid {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .feature-divider-pipe {
+    display: none;
+  }
+  .banner-cta-button {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 20px;
+  }
+}
+
+/* Small Mobile: <= 480px */
+@media (max-width: 480px) {
+  .banner-image-wrapper {
+    height: 175px;
+    min-height: 175px;
+    max-height: 175px;
+  }
+  .banner-product-image {
+    max-height: 160px;
+  }
+  .banner-main-title {
+    font-size: 20px;
+  }
+  .shloka-side-line {
+    width: 25px;
+  }
+  .shloka-text {
+    font-size: 12px;
+  }
+}
