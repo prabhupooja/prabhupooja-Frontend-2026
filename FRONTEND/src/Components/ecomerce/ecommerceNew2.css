@@ -112,67 +112,366 @@
   width: 100%;
   margin-bottom: 24px;
   position: relative;
-  border-radius: 16px;
   overflow: hidden;
-  background: #fdfcf9;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(234, 88, 12, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .ecom-hero-swiper {
   width: 100%;
-  height: 210px;
-  border-radius: 16px;
-  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.ecom-hero-swiper .swiper-wrapper {
+  align-items: stretch;
 }
 
 .ecom-hero-swiper .swiper-slide {
   width: 100%;
-  height: 100%;
+  height: auto;
+}
+
+/* ==========================================================================
+   DYNAMIC COMPOSED PROMO BANNER
+   ========================================================================== */
+.ecom-dynamic-promo-banner {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.ecom-dynamic-promo-grid {
+  display: grid;
+  grid-template-columns: 44% 56%;
+  min-height: 330px;
+  align-items: stretch;
+  position: relative;
+}
+
+/* --- Left Visual Section (Deity / Product Idol Blended Seamlessly) --- */
+.ecom-banner-visual-section {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px 20px 0;
+  z-index: 1;
+}
+
+.ecom-banner-halo-glow {
+  position: absolute;
+  width: 290px;
+  height: 290px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(234, 88, 12, 0.22) 50%, transparent 75%);
+  filter: blur(28px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  animation: auraPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes auraPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 1;
+  }
+}
+
+.ecom-banner-deity-img {
+  position: relative;
+  z-index: 2;
+  max-height: 94%;
+  max-width: 95%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+}
+
+.ecom-dynamic-promo-banner.clickable:hover .ecom-banner-deity-img {
+  transform: scale(1.03) translateY(-2px);
+}
+
+.ecom-banner-visual-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent 65%, rgba(36, 5, 1, 0.4) 85%, rgba(36, 5, 1, 0.95) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* --- Right Content Section (Rich Typography & Badges) --- */
+.ecom-banner-content-section {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 34px 24px 12px;
+  color: #ffffff;
+}
+
+.ecom-banner-shloka-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fef3c7;
+  letter-spacing: 0.5px;
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 4px 14px;
+  border-radius: 20px;
+  width: fit-content;
+  margin-bottom: 8px;
+  backdrop-filter: blur(4px);
+}
+
+.shloka-om-icon {
+  color: #f59e0b;
+  font-size: 12px;
+}
+
+.ecom-banner-main-title {
+  font-family: "Cinzel", "Georgia", "Poppins", serif;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 6px 0;
+  background: linear-gradient(135deg, #ffffff 0%, #fde68a 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.ecom-banner-subtitle {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0 0 14px 0;
+  font-weight: 400;
+  max-width: 520px;
+}
+
+/* --- Offer Badge --- */
+.ecom-banner-offer-badge {
+  display: inline-flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #781708 0%, #4a0c03 100%);
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  border-radius: 12px;
+  padding: 8px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  width: fit-content;
+  margin-bottom: 14px;
+}
+
+.offer-badge-ribbon {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fde68a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.ribbon-star {
+  color: #f59e0b;
+  font-size: 10px;
+}
+
+.offer-badge-body {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.offer-prefix {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.offer-value {
+  font-size: 26px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.offer-suffix {
+  font-size: 13px;
+  color: #fde68a;
+  font-weight: 600;
+}
+
+.offer-highlight-tag {
+  background: #ea580c;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.4);
+}
+
+/* --- Features Grid --- */
+.ecom-banner-features-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 16px;
+}
+
+.ecom-banner-feature-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 5px 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  transition: all 0.22s ease;
+}
+
+.ecom-banner-feature-pill:hover {
+  background: rgba(0, 0, 0, 0.45);
+  border-color: rgba(245, 158, 11, 0.4);
+  transform: translateY(-1px);
+}
+
+.feature-icon-bubble {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #f59e0b;
+  font-size: 13px;
 }
 
+.feature-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.feature-subtitle {
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.1;
+}
+
+/* --- CTA Button --- */
+.ecom-banner-cta-wrap {
+  margin-top: 2px;
+}
+
+.ecom-banner-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 18px rgba(234, 88, 12, 0.45);
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  width: fit-content;
+}
+
+.ecom-banner-cta-btn:hover {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(234, 88, 12, 0.65);
+}
+
+.cta-arrow-icon {
+  font-size: 12px;
+  transition: transform 0.25s ease;
+}
+
+.ecom-banner-cta-btn:hover .cta-arrow-icon {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   STATIC GRAPHIC SLIDE (BACKWARD COMPATIBILITY)
+   ========================================================================== */
 .ecom-hero-banner-slide {
   position: relative;
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: auto;
   overflow: hidden;
-  border-radius: 16px;
-  background: #fdfcf9;
-}
-
-.ecom-hero-banner-slide.clickable {
-  cursor: pointer;
+  border-radius: 18px;
+  display: block;
 }
 
 .ecom-hero-banner-image {
-  width: 100%;
-  height: 100%;
-  max-height: 210px;
-  object-fit: cover;
+  position: relative;
+  z-index: 3;
   display: block;
-  border-radius: 16px;
-  transition: transform 0.4s ease;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: initial;
+  object-position: center;
+  margin: 0;
+  border-radius: 18px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ecom-hero-banner-slide.clickable:hover .ecom-hero-banner-image {
-  transform: scale(1.015);
+  transform: scale(1.008);
 }
 
+.ecom-hero-banner-overlay {
+  display: none !important;
+}
+
+/* ==========================================================================
+   SWIPER CONTROLS
+   ========================================================================== */
 .ecom-hero-swiper .swiper-button-prev,
 .ecom-hero-swiper .swiper-button-next {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.55);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
   transition: all 0.25s ease;
   z-index: 10;
   display: flex;
@@ -196,12 +495,12 @@
 }
 
 .ecom-hero-swiper .swiper-pagination {
-  bottom: 8px !important;
+  bottom: 12px !important;
   z-index: 10;
 }
 
 .ecom-hero-swiper .swiper-pagination-bullet {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.75);
   opacity: 0.8;
   width: 8px;
   height: 8px;
@@ -213,26 +512,81 @@
   width: 22px;
   border-radius: 6px;
   opacity: 1;
-  box-shadow: 0 0 8px rgba(234, 88, 12, 0.8);
+  box-shadow: 0 0 10px rgba(234, 88, 12, 0.9);
 }
 
+/* ==========================================================================
+   RESPONSIVE LAYOUTS
+   ========================================================================== */
 @media (max-width: 991px) {
-  .ecom-hero-swiper,
-  .ecom-hero-banner-slide {
-    height: 170px;
+  .ecom-hero-banner-wrapper {
+    margin-bottom: 18px;
+    border-radius: 14px;
   }
+  .ecom-hero-swiper,
+  .ecom-dynamic-promo-banner,
+  .ecom-hero-banner-slide,
   .ecom-hero-banner-image {
-    max-height: 170px;
+    border-radius: 14px;
+  }
+  .ecom-dynamic-promo-grid {
+    grid-template-columns: 40% 60%;
+    min-height: 290px;
+  }
+  .ecom-banner-main-title {
+    font-size: 26px;
+  }
+  .ecom-banner-content-section {
+    padding: 18px 24px 18px 10px;
   }
 }
 
 @media (max-width: 767px) {
-  .ecom-hero-swiper,
-  .ecom-hero-banner-slide {
-    height: 130px;
+  .ecom-hero-banner-wrapper {
+    margin-bottom: 16px;
+    border-radius: 14px;
   }
+  .ecom-hero-swiper,
+  .ecom-dynamic-promo-banner,
+  .ecom-hero-banner-slide,
   .ecom-hero-banner-image {
-    max-height: 130px;
+    border-radius: 14px;
+  }
+  .ecom-dynamic-promo-grid {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+  .ecom-banner-visual-section {
+    height: 190px;
+    width: 100%;
+    padding: 16px 16px 0;
+    align-items: flex-end;
+  }
+  .ecom-banner-visual-fade {
+    background: linear-gradient(to bottom, transparent 60%, rgba(36, 5, 1, 0.85) 100%);
+  }
+  .ecom-banner-content-section {
+    padding: 16px 18px 22px;
+    text-align: center;
+    align-items: center;
+  }
+  .ecom-banner-main-title {
+    font-size: 24px;
+  }
+  .ecom-banner-subtitle {
+    font-size: 13px;
+  }
+  .ecom-banner-features-grid {
+    justify-content: center;
+    gap: 6px 10px;
+  }
+  .ecom-banner-cta-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 11px 18px;
+    font-size: 14.5px;
   }
   .ecom-hero-swiper .swiper-button-prev,
   .ecom-hero-swiper .swiper-button-next {

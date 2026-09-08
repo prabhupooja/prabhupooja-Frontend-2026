@@ -17,6 +17,7 @@ import useUserCardStore from "../../Store/userCardStore/userCardStore";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 import useHomeStore from "../../Store/dataStore/homeStore";
 import useEcommerceBannerStore from "../../Store/ecommerceBannerStore/ecommerceBannerStore";
+import DynamicPromoBanner from "./DynamicPromoBanner";
 import { TailSpin } from "react-loader-spinner";
 import CryptoJS from "crypto-js";
 import {
@@ -38,6 +39,12 @@ import {
   FaSlidersH,
   FaUndoAlt,
   FaTag,
+  FaLeaf,
+  FaHandsHelping,
+  FaArrowRight,
+  FaOm,
+  FaGift,
+  FaSeedling,
 } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
 import debounce from "lodash.debounce";
@@ -239,23 +246,14 @@ const EcommerceHeroBannerSlider = ({ banners = [] }) => {
   const navigate = useNavigate();
 
   const validBanners = useMemo(() => {
-    const fallbackList = [
-      {
-        id: "default-ecom-1",
-        title: "100% Authentic Vedic & Spiritual Store",
-        image: "https://prabhupooja1.s3.ap-south-1.amazonaws.com/ecommerce-banners/1788856047252-ganesh%20ji%20banner.png",
-        redirect_url: "",
-      },
-    ];
     if (!Array.isArray(banners) || banners.length === 0) {
-      return fallbackList;
+      return [];
     }
-    const filtered = banners.filter((b) => b && (b.image || b.bannerImage || b.banner || b.imageUrl));
-    return filtered.length > 0 ? filtered : fallbackList;
+    return banners.filter((b) => b && (b.image || b.bannerImage || b.banner || b.imageUrl));
   }, [banners]);
 
   const handleBannerClick = (banner) => {
-    const url = banner?.redirect_url || banner?.redirectUrl || banner?.url || banner?.link;
+    const url = banner?.cta?.link || banner?.redirect_url || banner?.redirectUrl || banner?.url || banner?.link;
     if (url) {
       if (url.startsWith("http://") || url.startsWith("https://")) {
         window.open(url, "_blank", "noopener,noreferrer");
@@ -266,6 +264,8 @@ const EcommerceHeroBannerSlider = ({ banners = [] }) => {
       navigate(`/productdetails/${banner.product_id}`);
     }
   };
+
+  if (validBanners.length === 0) return null;
 
   return (
     <div className="ecom-hero-banner-wrapper">
@@ -278,7 +278,7 @@ const EcommerceHeroBannerSlider = ({ banners = [] }) => {
         }
         autoplay={
           validBanners.length > 1
-            ? { delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true }
+            ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
             : false
         }
         loop={validBanners.length > 1}
@@ -286,46 +286,11 @@ const EcommerceHeroBannerSlider = ({ banners = [] }) => {
         modules={[Navigation, Autoplay, Pagination]}
         className="ecom-hero-swiper"
       >
-        {validBanners.map((banner, idx) => {
-          const rawImg = banner?.image || banner?.bannerImage || banner?.banner || banner?.imageUrl;
-          const bannerImg =
-            typeof rawImg === "string"
-              ? rawImg.startsWith("http://") || rawImg.startsWith("https://") || rawImg.startsWith("data:") || rawImg.startsWith("blob:")
-                ? rawImg
-                : rawImg.startsWith("/")
-                ? `${process.env.REACT_APP_BASE_URL || ""}${rawImg}`
-                : `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
-              : rawImg;
-
-          const isClickable = Boolean(banner?.redirect_url || banner?.redirectUrl || banner?.url || banner?.link || banner?.product_id);
-
-          return (
-            <SwiperSlide key={banner.id || `ecom-banner-${idx}`}>
-              <div
-                className={`ecom-hero-banner-slide ${isClickable ? "clickable" : ""}`}
-                onClick={() => isClickable && handleBannerClick(banner)}
-                style={{ cursor: isClickable ? "pointer" : "default" }}
-              >
-                <img
-                  src={bannerImg}
-                  alt={banner?.title || `Spiritual Store Banner ${idx + 1}`}
-                  className="ecom-hero-banner-image"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://prabhupooja1.s3.ap-south-1.amazonaws.com/ecommerce-banners/1788856047252-ganesh%20ji%20banner.png";
-                  }}
-                />
-                {banner?.title && (
-                  <div className="ecom-hero-banner-overlay">
-                    <div className="ecom-banner-badge">
-                      <span className="badge-text">{banner.title}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </SwiperSlide>
-          );
-        })}
+        {validBanners.map((banner, idx) => (
+          <SwiperSlide key={banner.id || `ecom-banner-${idx}`}>
+            <DynamicPromoBanner banner={banner} onBannerClick={handleBannerClick} />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );
