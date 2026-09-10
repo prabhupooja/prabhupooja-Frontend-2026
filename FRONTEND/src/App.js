@@ -135,9 +135,21 @@ function App() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    // 🌟 Extract token from OAuth redirect query param (?token=XYZ) if present
+    const query = new URLSearchParams(window.location.search);
+    const queryToken = query.get("token");
 
-    if (token) {
+    let effectiveToken = localStorage.getItem("token");
+
+    if (queryToken) {
+      localStorage.setItem("token", queryToken);
+      effectiveToken = queryToken;
+      // Clean query parameter from URL without page reload
+      const newUrl = window.location.pathname + (window.location.hash || "");
+      window.history.replaceState({}, document.title, newUrl);
+    }
+
+    if (effectiveToken) {
       setIsLoggin(true);
       getUser();
     } else {

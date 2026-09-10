@@ -151,7 +151,14 @@ const Signup = ({ closeSingClose, onOpenLogin }) => {
   
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || ""}/auth/google`;
+    const backendUrl =
+      process.env.REACT_APP_BACKEND_URL ||
+      process.env.REACT_APP_BASE_URL ||
+      "";
+    const currentPath = window.location.pathname;
+    window.location.href = `${backendUrl}/auth/google?state=${encodeURIComponent(
+      currentPath
+    )}`;
   };
 
   return (
