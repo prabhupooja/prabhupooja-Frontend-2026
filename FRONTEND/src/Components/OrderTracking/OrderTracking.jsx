@@ -818,6 +818,8 @@ const OrderTracking = () => {
                 </strong>
               </div>
             )}
+          </div>
+
           {/* Seller / Customer / Admin Cancellation Notice */}
           {(trackingData?.order_status === "cancel" || trackingData?.status === "cancelled" || isCancelled) && (
             <div
