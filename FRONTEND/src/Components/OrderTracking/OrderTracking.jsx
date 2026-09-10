@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./OrderTracking.css";
+import api from "../Axios/api";
 import {
   FaBoxOpen,
   FaTruck,
@@ -19,12 +20,16 @@ import {
   FaUser,
   FaGift,
   FaWhatsapp,
+  FaUndoAlt,
+  FaSyncAlt,
 } from "react-icons/fa";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 import useUserStore from "../../Store/UserStore/userStore";
 import { TailSpin } from "react-loader-spinner";
 import Swal from "sweetalert2";
 import prabhuPoojaLogo from "../Assets/PRABHU POOJA LOGO1.png";
+import ReturnRequestModal from "./ReturnRequestModal";
+import ReturnStatusModal from "./ReturnStatusModal";
 
 // Helper to safely parse image URLs
 const parseSafeImage = (img) => {
@@ -55,6 +60,25 @@ const OrderTracking = () => {
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
   const [invoiceUrl, setInvoiceUrl] = useState(null);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [returnInfo, setReturnInfo] = useState(null);
+
+  const fetchReturnStatus = async (currentUid) => {
+    try {
+      const uId = currentUid || user1?.id || trackingData?.user_id || trackingData?.userId;
+      if (uId && orderId) {
+        const res = await api.get(`/orders/user-returns/${uId}?orderId=${orderId}`);
+        if (res.data?.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+          setReturnInfo(res.data.data[0]);
+        } else {
+          setReturnInfo(null);
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+  };
 
   const fetchTrackingAndOrder = async () => {
     try {
@@ -84,6 +108,9 @@ const OrderTracking = () => {
             setTrackingData(orderRes.data.orders);
           }
         }
+
+        // 3. Fetch any return/refund status for this order
+        await fetchReturnStatus(user1?.id || trackRes?.order?.user_id || orderRes?.data?.orders?.user_id);
       }
     } catch (err) {
       console.error("Failed to fetch tracking data", err);
@@ -569,11 +596,9 @@ const OrderTracking = () => {
 
   const handleInvoiceClick = (e) => {
     e.preventDefault();
-    if (isValidInvoiceUrl(invoiceUrl)) {
-      window.open(invoiceUrl, "_blank");
-    } else {
-      generateTaxInvoicePdf();
-    }
+    // Direct Backend Stream Endpoint
+    const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "http://localhost:3002";
+    window.open(`${backendBase}/orders/invoice/${orderId}`, "_blank");
   };
 
   const handleCancelOrderClick = () => {
@@ -793,7 +818,57 @@ const OrderTracking = () => {
                 </strong>
               </div>
             )}
-          </div>
+          {/* Seller / Customer / Admin Cancellation Notice */}
+          {(trackingData?.order_status === "cancel" || trackingData?.status === "cancelled" || isCancelled) && (
+            <div
+              style={{
+                background: "#fef2f2",
+                border: "1px solid #fecaca",
+                padding: "14px 18px",
+                borderRadius: "10px",
+                margin: "15px 0",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#b91c1c", fontWeight: "700" }}>
+                <FaTimesCircle size={18} />
+                <span>
+                  Order Cancelled by {trackingData?.cancelled_by === "seller" ? "Merchant / Seller" : trackingData?.cancelled_by === "user" ? "You (Customer)" : "Admin"}
+                </span>
+              </div>
+              {(trackingData?.cancel_reason || cancelReason) && (
+                <p style={{ margin: "6px 0 0 26px", color: "#7f1d1d", fontSize: "13px" }}>
+                  <strong>Reason:</strong> {trackingData?.cancel_reason || cancelReason}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Courier Name & Tracking Number Banner (Shipped Orders) */}
+          {(trackingData?.courier_name || trackingData?.tracking_number) && (
+            <div
+              style={{
+                background: "#eff6ff",
+                border: "1px solid #bfdbfe",
+                padding: "12px 18px",
+                borderRadius: "10px",
+                margin: "15px 0",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <FaTruck style={{ color: "#2563eb", fontSize: "22px" }} />
+              <div>
+                <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "700", textTransform: "uppercase" }}>
+                  Dispatched via Express Courier
+                </span>
+                <p style={{ margin: "2px 0 0", color: "#1e3a8a", fontWeight: "700", fontSize: "14px" }}>
+                  {trackingData.courier_name || "Express Courier"}
+                  {trackingData.tracking_number ? ` — Tracking AWB: ${trackingData.tracking_number}` : ""}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Stepper Progress Pipeline */}
           <div className="tracking-timeline-stepper">
@@ -954,6 +1029,86 @@ const OrderTracking = () => {
           </div>
         </div>
 
+        {/* Active Return / Refund Status Alert (If already requested) */}
+        {returnInfo && (
+          <div
+            className="ot-return-banner"
+            style={{
+              background:
+                returnInfo.admin_status === "approved" || returnInfo.admin_status === "refunded"
+                  ? "#f0fdf4"
+                  : returnInfo.admin_status === "rejected"
+                  ? "#fef2f2"
+                  : "#fff7ed",
+              border: `1.5px solid ${
+                returnInfo.admin_status === "approved" || returnInfo.admin_status === "refunded"
+                  ? "#bbf7d0"
+                  : returnInfo.admin_status === "rejected"
+                  ? "#fecaca"
+                  : "#fed7aa"
+              }`,
+              borderRadius: "14px",
+              padding: "14px 18px",
+              marginTop: "20px",
+              marginBottom: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "12px",
+              boxShadow: "0 4px 14px rgba(0, 0, 0, 0.04)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span style={{ fontSize: "24px" }}>
+                {returnInfo.admin_status === "approved" || returnInfo.admin_status === "refunded"
+                  ? "✅"
+                  : returnInfo.admin_status === "rejected"
+                  ? "❌"
+                  : "⏳"}
+              </span>
+              <div>
+                <strong style={{ fontSize: "14.5px", color: "#0f172a" }}>
+                  {returnInfo.request_type === "refund" ? "Money Refund Request" : "Product Replacement Request"}
+                  {" — "}
+                  <span
+                    style={{
+                      color:
+                        returnInfo.admin_status === "approved" || returnInfo.admin_status === "refunded"
+                          ? "#15803d"
+                          : returnInfo.admin_status === "rejected"
+                          ? "#dc2626"
+                          : "#ea580c",
+                      textTransform: "uppercase",
+                      fontWeight: "700",
+                    }}
+                  >
+                    {returnInfo.admin_status || "Pending Verification"}
+                  </span>
+                </strong>
+                <p style={{ margin: "3px 0 0 0", fontSize: "12.5px", color: "#475569" }}>
+                  Reason: <em>"{returnInfo.reason}"</em>
+                  {returnInfo.transaction_reference && (
+                    <> • <strong>Bank UTR:</strong> {returnInfo.transaction_reference}</>
+                  )}
+                  {returnInfo.replacement_tracking_id && (
+                    <> • <strong>Replacement Tracking:</strong> {returnInfo.replacement_tracking_id} ({returnInfo.replacement_courier})</>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="ot-invoice-btn"
+              style={{ background: "#ffffff", padding: "8px 16px", fontSize: "13px" }}
+              onClick={() => setShowStatusModal(true)}
+            >
+              <FaSyncAlt /> View Full Return Details
+            </button>
+          </div>
+        )}
+
         {/* Order Actions Toolbar */}
         <div className="ot-actions-bar">
           {canCancel && (
@@ -966,6 +1121,31 @@ const OrderTracking = () => {
             </button>
           )}
 
+          {/* Return & Refund triggers (When Delivered) */}
+          {currentStatusRaw === "delivered" && (
+            <>
+              {!returnInfo ? (
+                <button
+                  type="button"
+                  className="ot-invoice-btn"
+                  style={{ background: "#fff7ed", color: "#c2410c", borderColor: "#fed7aa" }}
+                  onClick={() => setShowReturnModal(true)}
+                >
+                  <FaUndoAlt /> Request Return / Replacement
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="ot-invoice-btn"
+                  style={{ background: "#f0fdf4", color: "#166534", borderColor: "#bbf7d0" }}
+                  onClick={() => setShowStatusModal(true)}
+                >
+                  <FaSyncAlt /> Check Return / Refund Status
+                </button>
+              )}
+            </>
+          )}
+
           <button
             type="button"
             onClick={handleInvoiceClick}
@@ -975,7 +1155,7 @@ const OrderTracking = () => {
           </button>
 
           <a
-            href="https://wa.me/917225016699?text=Namaste,%20I%20have%20an%20inquiry%20regarding%20my%20Prabhu%20Pooja%20Order%20%231011"
+            href={`https://wa.me/917225016699?text=Namaste,%20I%20have%20an%20inquiry%20regarding%20my%20Prabhu%20Pooja%20Order%20%23${orderId}`}
             target="_blank"
             rel="noreferrer noopener"
             className="ot-support-btn"
@@ -984,6 +1164,26 @@ const OrderTracking = () => {
           </a>
         </div>
       </div>
+
+      {/* Return Request Modal */}
+      <ReturnRequestModal
+        order={trackingData || { orderId: orderId, totalPrice: finalDisplayTotal, user_id: user1?.id }}
+        isOpen={showReturnModal}
+        onClose={() => setShowReturnModal(false)}
+        onSuccess={() => {
+          setShowReturnModal(false);
+          fetchReturnStatus(user1?.id || trackingData?.user_id);
+          setShowStatusModal(true);
+        }}
+      />
+
+      {/* Return Status Modal */}
+      <ReturnStatusModal
+        userId={user1?.id || trackingData?.user_id}
+        orderId={orderId || trackingData?.id}
+        isOpen={showStatusModal}
+        onClose={() => setShowStatusModal(false)}
+      />
     </div>
   );
 };

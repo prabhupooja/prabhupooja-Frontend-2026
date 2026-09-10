@@ -14,6 +14,7 @@
 .dynamic-promo-banner-card {
   position: relative;
   width: 100%;
+  max-width: 100%;
   min-height: 320px;
   max-height: 360px;
   border-radius: 18px;
@@ -26,6 +27,7 @@
   cursor: pointer;
   transition: transform 0.35s ease, box-shadow 0.35s ease;
   user-select: none;
+  box-sizing: border-box;
 }
 
 .dynamic-promo-banner-card:hover {
@@ -70,13 +72,14 @@
   overflow: hidden;
   flex-shrink: 0;
   z-index: 2;
+  box-sizing: border-box;
 }
 
 /* Ambient Sacred Halo & Warm Glow behind the deity/product */
 .deity-ambient-halo {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(251, 191, 36, 0.85) 0%, rgba(245, 158, 11, 0.35) 50%, transparent 75%);
   top: 50%;
@@ -107,7 +110,7 @@
   }
 }
 
-/* Uploaded Deity / Product Image: Always 100% visible, never cropped, perfectly blended */
+/* Uploaded Deity / Product Image */
 .banner-image-wrapper {
   position: relative;
   width: 100%;
@@ -117,6 +120,7 @@
   justify-content: center;
   padding: 8px 16px 8px 10px;
   z-index: 3;
+  box-sizing: border-box;
 }
 
 .banner-product-image {
@@ -178,6 +182,7 @@
   text-align: center;
   padding: 24px 36px 24px 18px;
   z-index: 5;
+  box-sizing: border-box;
 }
 
 /* --- Floating Royal Scalloped Seal Offer Badge (Top-Right) --- */
@@ -185,8 +190,8 @@
   position: absolute;
   top: 12px;
   right: 16px;
-  width: 86px;
-  height: 86px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--banner-primary, #781005) 0%, #4a0802 100%);
   border: 3px solid #d97706;
@@ -235,7 +240,7 @@
 }
 
 .seal-offer-value {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 900;
   color: #ffffff;
   line-height: 1;
@@ -257,15 +262,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 6px;
   width: 100%;
+  max-width: 100%;
 }
 
 .shloka-side-line {
   height: 1.5px;
-  width: 55px;
+  width: 45px;
   background: linear-gradient(to right, transparent, #d97706);
+  flex-shrink: 1;
 }
 
 .shloka-side-line.right-line {
@@ -273,49 +280,56 @@
 }
 
 .shloka-text {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   color: var(--banner-primary, #781005);
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  white-space: normal;
 }
 
 /* --- 2. Main Dynamic Title --- */
 .banner-main-title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 900;
   margin: 4px 0 6px 0;
   color: var(--banner-primary, #781005);
   font-family: "Cinzel", "Georgia", "Poppins", serif;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
   letter-spacing: -0.2px;
-  line-height: 1.15;
+  line-height: 1.2;
+  word-break: break-word;
 }
 
 .title-ornament-left,
 .title-ornament-right {
   color: var(--banner-accent, #d97706);
-  font-size: 18px;
+  font-size: 16px;
+  flex-shrink: 0;
 }
 
 /* --- 3. Dynamic Subtitle --- */
 .banner-subtitle {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--banner-text, #451a03);
-  margin: 0 0 16px 0;
+  margin: 0 0 14px 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   line-height: 1.4;
-  max-width: 540px;
+  max-width: 520px;
 }
 
 .subtitle-flank {
   color: var(--banner-accent, #d97706);
   font-size: 10px;
+  flex-shrink: 0;
 }
 
 /* --- 4. Dynamic Features Strip --- */
@@ -323,33 +337,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  margin-bottom: 18px;
+  gap: 12px;
+  margin-bottom: 16px;
   width: 100%;
-  max-width: 640px;
+  max-width: 600px;
+  flex-wrap: wrap;
 }
 
 .feature-divider-pipe {
   width: 1px;
-  height: 28px;
+  height: 24px;
   background: rgba(120, 16, 5, 0.3);
 }
 
 .banner-feature-chip {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .feature-icon-circle {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   border: 1.5px solid #d97706;
   box-shadow: 0 2px 6px rgba(120, 16, 5, 0.25);
   flex-shrink: 0;
@@ -362,24 +377,23 @@
 }
 
 .feature-title {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 800;
   color: var(--banner-text, #451a03);
   line-height: 1.2;
-  white-space: nowrap;
 }
 
 .feature-subtitle {
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 600;
   color: var(--banner-primary, #781005);
   line-height: 1.1;
-  white-space: nowrap;
 }
 
 /* --- 5. Dynamic CTA Button --- */
 .banner-cta-wrapper {
   margin-top: 0;
+  width: auto;
 }
 
 .banner-cta-button {
@@ -388,13 +402,14 @@
   gap: 10px;
   color: #ffffff;
   border: 1.5px solid #d97706;
-  padding: 10px 32px;
+  padding: 9px 28px;
   border-radius: 25px;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(120, 16, 5, 0.35);
   transition: all 0.25s ease;
+  font-family: inherit;
 }
 
 .banner-cta-button:hover {
@@ -404,7 +419,7 @@
 }
 
 .cta-arrow-symbol {
-  font-size: 13px;
+  font-size: 12px;
   transition: transform 0.2s ease;
 }
 
@@ -418,6 +433,7 @@
 .dynamic-promo-banner-raw {
   position: relative;
   width: 100%;
+  max-width: 100%;
   border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
@@ -427,6 +443,7 @@
   transition: transform 0.35s ease, box-shadow 0.35s ease;
   user-select: none;
   background-color: #fffdf2;
+  box-sizing: border-box;
 }
 
 .dynamic-promo-banner-raw:hover {
@@ -444,6 +461,7 @@
   display: block;
   width: 100%;
   height: auto;
+  max-width: 100%;
   object-fit: contain;
   border-radius: 16px;
 }
@@ -455,15 +473,15 @@
 /* Tablet: 768px - 1023px */
 @media (max-width: 1023px) {
   .dynamic-promo-banner-card {
-    min-height: 280px;
-    max-height: 310px;
+    min-height: 270px;
+    max-height: 300px;
   }
   .banner-image-section {
     width: 38%;
     min-width: 38%;
     max-width: 38%;
-    min-height: 280px;
-    max-height: 310px;
+    min-height: 270px;
+    max-height: 300px;
   }
   .banner-content {
     width: 62%;
@@ -485,13 +503,13 @@
     font-size: 8px;
   }
   .banner-offer-seal-badge {
-    width: 78px;
-    height: 78px;
+    width: 74px;
+    height: 74px;
     top: 10px;
     right: 12px;
   }
   .seal-offer-value {
-    font-size: 18px;
+    font-size: 17px;
   }
 }
 
@@ -501,77 +519,95 @@
     flex-direction: column;
     min-height: auto;
     max-height: none;
-    border-radius: 16px;
+    border-radius: 14px;
+    width: 100%;
   }
   .banner-image-section {
     width: 100%;
     min-width: 100%;
     max-width: 100%;
-    height: 220px;
-    min-height: 220px;
-    max-height: 220px;
+    height: 180px;
+    min-height: 180px;
+    max-height: 180px;
     clip-path: none;
     -webkit-clip-path: none;
     border-bottom: 2px solid #d97706;
   }
   .banner-product-image {
-    max-height: 200px;
+    max-height: 165px;
   }
   .banner-curve-divider-svg {
     display: none;
   }
   .deity-ambient-halo {
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
   }
   .banner-content {
     width: 100%;
-    padding: 14px 16px 22px 16px;
+    max-width: 100%;
+    padding: 14px 14px 18px 14px;
+    box-sizing: border-box;
   }
   .banner-offer-seal-badge {
     position: static;
-    margin-bottom: 12px;
-    width: 82px;
-    height: 82px;
+    margin-bottom: 10px;
+    width: 72px;
+    height: 72px;
   }
   .banner-main-title {
-    font-size: 22px;
+    font-size: 20px;
   }
   .banner-subtitle {
     font-size: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .banner-features-grid {
     flex-wrap: wrap;
     gap: 8px;
+    justify-content: center;
   }
   .feature-divider-pipe {
     display: none;
   }
+  .banner-cta-wrapper {
+    width: 100%;
+  }
   .banner-cta-button {
     width: 100%;
     justify-content: center;
-    padding: 10px 20px;
+    padding: 9px 18px;
+    font-size: 14px;
+    box-sizing: border-box;
   }
 }
 
 /* Small Mobile: <= 480px */
 @media (max-width: 480px) {
   .banner-image-section {
-    height: 190px;
-    min-height: 190px;
-    max-height: 190px;
+    height: 160px;
+    min-height: 160px;
+    max-height: 160px;
   }
   .banner-product-image {
-    max-height: 175px;
+    max-height: 145px;
   }
   .banner-main-title {
-    font-size: 20px;
+    font-size: 18px;
   }
   .shloka-side-line {
-    width: 25px;
+    width: 20px;
   }
   .shloka-text {
     font-size: 12px;
+  }
+  .banner-features-grid {
+    gap: 6px;
+  }
+  .feature-title {
+    font-size: 10px;
+  }
+  .feature-subtitle {
+    font-size: 8.5px;
   }
 }

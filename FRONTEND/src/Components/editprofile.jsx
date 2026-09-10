@@ -32,6 +32,7 @@ import {
   FaSyncAlt,
   FaCreditCard,
   FaTicketAlt,
+  FaFileInvoice,
 } from "react-icons/fa";
 import { MdLogout, MdTempleHindu, MdOutlineSupportAgent } from "react-icons/md";
 import { IoRestaurantOutline, IoChatbox } from "react-icons/io5";
@@ -968,7 +969,7 @@ function Editprofile() {
                   <div className="order-category-box" onClick={() => setActiveTab("orders_product")}>
                     <div className="oc-top">
                       <span className="oc-icon oc-cart"><BsCart /></span>
-                      <span className="oc-count-pill">{productOrdersList.length} Orders</span>
+                      <span className="oc-count-pill">{productOrdersList.length === 1 ? "1 Order" : `${productOrdersList.length} Orders`}</span>
                     </div>
                     <h4>Product Orders</h4>
                     <p>Track delivery of divine idols, gemstones, yantras & samagri.</p>
@@ -980,7 +981,7 @@ function Editprofile() {
                   <div className="order-category-box" onClick={() => setActiveTab("orders_pooja")}>
                     <div className="oc-top">
                       <span className="oc-icon oc-pooja"><FaPrayingHands /></span>
-                      <span className="oc-count-pill">{poojaCount} Pujas</span>
+                      <span className="oc-count-pill">{poojaCount === 1 ? "1 Puja" : `${poojaCount} Pujas`}</span>
                     </div>
                     <h4>Online & Vedic Poojas</h4>
                     <p>Live darshan recordings, sankalp details & certified pandit seva.</p>
@@ -992,7 +993,7 @@ function Editprofile() {
                   <div className="order-category-box" onClick={() => setActiveTab("orders_prasad")}>
                     <div className="oc-top">
                       <span className="oc-icon oc-prasad"><IoRestaurantOutline /></span>
-                      <span className="oc-count-pill">{prasadBookingsList.length} Prasads</span>
+                      <span className="oc-count-pill">{prasadBookingsList.length === 1 ? "1 Prasad" : `${prasadBookingsList.length} Prasads`}</span>
                     </div>
                     <h4>Prasad Seva</h4>
                     <p>Sacred sanctified prasad dispatched directly from ancient temples.</p>
@@ -1004,7 +1005,7 @@ function Editprofile() {
                   <div className="order-category-box" onClick={() => setActiveTab("orders_temple")}>
                     <div className="oc-top">
                       <span className="oc-icon oc-temple"><MdTempleHindu /></span>
-                      <span className="oc-count-pill">{templeBookingsList.length} Temples</span>
+                      <span className="oc-count-pill">{templeBookingsList.length === 1 ? "1 Temple" : `${templeBookingsList.length} Temples`}</span>
                     </div>
                     <h4>Temple Darshan & VIP Pass</h4>
                     <p>Reserved tickets & special entry at prominent pilgrimage centers.</p>
@@ -1016,7 +1017,7 @@ function Editprofile() {
                   <div className="order-category-box" onClick={() => setActiveTab("orders_yoga")}>
                     <div className="oc-top">
                       <span className="oc-icon oc-yoga"><TbYoga /></span>
-                      <span className="oc-count-pill">{yogaBookingsList.length} Sessions</span>
+                      <span className="oc-count-pill">{yogaBookingsList.length === 1 ? "1 Session" : `${yogaBookingsList.length} Sessions`}</span>
                     </div>
                     <h4>Yoga & Meditation</h4>
                     <p>Vedic wellness classes and spiritual rejuvenation sessions.</p>
@@ -1110,9 +1111,30 @@ function Editprofile() {
                           </div>
                           <div className="do-footer">
                             <span className="do-price">₹{Number(order.totalPrice || 0).toLocaleString("en-IN")}</span>
-                            <Link to={`/track-order/${order.orderId}`} className="do-track-link">
-                              <FaTruck /> Track Order
-                            </Link>
+                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                              <Link to={`/track-order/${order.orderId}`} className="do-track-link">
+                                <FaTruck /> Track Order
+                              </Link>
+                              <button
+                                type="button"
+                                className="do-track-link"
+                                style={{
+                                  background: "#f8fafc",
+                                  color: "#334155",
+                                  border: "1px solid #cbd5e1",
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "6px"
+                                }}
+                                onClick={() => {
+                                  const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "http://localhost:3002";
+                                  window.open(`${backendBase}/orders/invoice/${order.orderId}`, "_blank");
+                                }}
+                              >
+                                <FaFileInvoice /> Invoice
+                              </button>
+                            </div>
                           </div>
                         </div>
                       );

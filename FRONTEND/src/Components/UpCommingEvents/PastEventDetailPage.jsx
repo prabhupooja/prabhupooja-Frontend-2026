@@ -70,6 +70,23 @@ const PastEventDetailPage = () => {
   const eventLocation = event.location || event.service_type || "भारत";
   const eventSpeaker = event.speaker || event.tag || event.special_pooja || "आचार्य";
 
+  const parseArrayField = (field) => {
+    if (!field) return [];
+    if (Array.isArray(field)) return field;
+    if (typeof field === "string") {
+      try {
+        const parsed = JSON.parse(field);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        return field.split(",").map((s) => s.trim()).filter(Boolean);
+      }
+    }
+    return [];
+  };
+
+  const highlightsList = parseArrayField(event.highlights);
+  const galleryList = parseArrayField(event.gallery);
+
   return (
     <div className="pe-detail-page">
       {/* Hero */}
@@ -142,11 +159,11 @@ const PastEventDetailPage = () => {
           </div>
 
           {/* Highlights */}
-          {event.highlights && event.highlights.length > 0 && (
+          {highlightsList.length > 0 && (
             <div className="pe-detail-section">
               <h2>Event Highlights</h2>
               <div className="pe-highlights-grid">
-                {event.highlights.map((h, i) => (
+                {highlightsList.map((h, i) => (
                   <div className="pe-highlight-item" key={i}>
                     <span className="pe-highlight-icon">✅</span>
                     <span>{h}</span>
@@ -157,11 +174,11 @@ const PastEventDetailPage = () => {
           )}
 
           {/* Gallery */}
-          {event.gallery && event.gallery.length > 0 && (
+          {galleryList.length > 0 && (
             <div className="pe-detail-section">
               <h2>📸 Event Gallery</h2>
               <div className="pe-gallery-grid">
-                {event.gallery.map((img, i) => (
+                {galleryList.map((img, i) => (
                   <div className="pe-gallery-img" key={i}>
                     <img
                       src={getImageUrl(img)}

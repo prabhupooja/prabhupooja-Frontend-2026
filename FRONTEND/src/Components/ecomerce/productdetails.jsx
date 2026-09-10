@@ -77,6 +77,45 @@ export const parseAllImages = (imgData) => {
   return fallback;
 };
 
+// 🛡️ Helper: Parse review images safely (handles JSON string, comma string, arrays, null)
+export const parseReviewImages = (imgData) => {
+  if (!imgData) return [];
+  const normalizeUrl = (img) => {
+    if (!img || typeof img !== "string") return "";
+    const clean = img.trim().replace(/^["'[\]]+|["'[\]]+$/g, "");
+    if (!clean) return "";
+    if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("data:")) {
+      return clean;
+    }
+    const backendBase = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BASE_URL || "";
+    if (clean.startsWith("/")) return `${backendBase}${clean}`;
+    return `${backendBase}/uploads/${clean}`;
+  };
+
+  if (Array.isArray(imgData)) {
+    return imgData.map(normalizeUrl).filter(Boolean);
+  }
+
+  if (typeof imgData === "string") {
+    const trimmed = imgData.trim();
+    if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map(normalizeUrl).filter(Boolean);
+        }
+      } catch (e) {}
+    }
+    if (trimmed.includes(",")) {
+      return trimmed.split(",").map(normalizeUrl).filter(Boolean);
+    }
+    const clean = normalizeUrl(trimmed);
+    return clean ? [clean] : [];
+  }
+
+  return [];
+};
+
 const Productdetails = () => {
   const { productId } = useParams();
   const [productData, setProductData] = useState({});
@@ -165,11 +204,19 @@ const Productdetails = () => {
     try {
       const resolvedId = decryptId(productId);
       const res = await api.get(`/products/getReview/${resolvedId}`);
-      if (res.data?.data) {
-        setReviews(res.data.data);
+      const raw = res.data?.data ?? res.data;
+      if (Array.isArray(raw)) {
+        const parsed = raw.map((rev) => ({
+          ...rev,
+          reviewImages: parseReviewImages(rev.reviewImages),
+        }));
+        setReviews(parsed);
+      } else {
+        setReviews([]);
       }
     } catch (err) {
       console.warn("Could not fetch reviews:", err);
+      setReviews([]);
     }
   };
 
@@ -842,20 +889,24 @@ const Productdetails = () => {
                         <p className="review-comment-text">{rev.text}</p>
 
                         {/* Customer Uploaded Review Images */}
-                        {rev.reviewImages && rev.reviewImages.length > 0 && (
-                          <div className="review-photos-strip">
-                            {rev.reviewImages.map((photo, pIdx) => (
-                              <img
-                                key={pIdx}
-                                src={photo}
-                                alt={`Customer upload ${pIdx + 1}`}
-                                onClick={() =>
-                                  openLightbox(rev.reviewImages, pIdx)
-                                }
-                              />
-                            ))}
-                          </div>
-                        )}
+                        {(() => {
+                          const revImagesList = parseReviewImages(rev.reviewImages);
+                          if (!revImagesList || revImagesList.length === 0) return null;
+                          return (
+                            <div className="review-photos-strip">
+                              {revImagesList.map((photo, pIdx) => (
+                                <img
+                                  key={pIdx}
+                                  src={photo}
+                                  alt={`Customer upload ${pIdx + 1}`}
+                                  onClick={() =>
+                                    openLightbox(revImagesList, pIdx)
+                                  }
+                                />
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </div>
                     ))}
                   </div>

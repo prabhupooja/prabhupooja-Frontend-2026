@@ -4,7 +4,9 @@ import "../../styles/booking.css";
 import { TailSpin } from "react-loader-spinner";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 import useUserStore from "../../Store/UserStore/userStore";
-import { FaRegCalendarTimes, FaShoppingBag, FaBoxOpen, FaTruck, FaChevronRight } from "react-icons/fa";
+import { FaRegCalendarTimes, FaShoppingBag, FaBoxOpen, FaTruck, FaChevronRight, FaUndoAlt, FaEye } from "react-icons/fa";
+import ReturnRequestModal from "../OrderTracking/ReturnRequestModal";
+import ReturnStatusModal from "../OrderTracking/ReturnStatusModal";
 
 // Helper function to safely parse image urls from API
 const parseImages = (imgs) => {
@@ -50,6 +52,9 @@ function EcommerceBookingPage() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
   const [count, setCount] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
   const { user1 } = useAuthStore();
   const navigate = useNavigate();
 
@@ -245,6 +250,49 @@ function EcommerceBookingPage() {
                     <Link to={`/track-order/${order.orderId}`} className="track-link-btn">
                       <FaTruck /> Track
                     </Link>
+
+                    {/* Return / Refund triggers if Delivered */}
+                    {(() => {
+                      const st = (
+                        order.order_progress_status ||
+                        order.status ||
+                        order.order_status ||
+                        order.statusName ||
+                        ""
+                      ).toLowerCase();
+                      const isDelivered = st.includes("deliver") || st.includes("complete");
+
+                      if (isDelivered) {
+                        return (
+                          <>
+                            <button
+                              type="button"
+                              className="track-link-btn"
+                              style={{ background: "#fff7ed", color: "#c2410c", borderColor: "#fed7aa" }}
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setShowReturnModal(true);
+                              }}
+                            >
+                              <FaUndoAlt /> Return / Replace
+                            </button>
+                            <button
+                              type="button"
+                              className="track-link-btn"
+                              style={{ background: "#f0fdf4", color: "#166534", borderColor: "#bbf7d0" }}
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setShowStatusModal(true);
+                              }}
+                            >
+                              <FaEye /> Refund Status
+                            </button>
+                          </>
+                        );
+                      }
+                      return null;
+                    })()}
+
                     <button
                       className="details-link-btn"
                       onClick={() => handleNavigate(order.orderId, order)}
@@ -267,6 +315,25 @@ function EcommerceBookingPage() {
           </Link>
         </div>
       )}
+
+      {/* Return & Refund Modals */}
+      <ReturnRequestModal
+        order={selectedOrder ? { ...selectedOrder, user_id: selectedOrder.user_id || selectedOrder.userId || user1?.id } : null}
+        isOpen={showReturnModal}
+        onClose={() => setShowReturnModal(false)}
+        onSuccess={() => {
+          setShowReturnModal(false);
+          setShowStatusModal(true);
+          fetchOrders();
+        }}
+      />
+
+      <ReturnStatusModal
+        userId={user1?.id}
+        orderId={selectedOrder?.orderId}
+        isOpen={showStatusModal}
+        onClose={() => setShowStatusModal(false)}
+      />
     </div>
   );
 }

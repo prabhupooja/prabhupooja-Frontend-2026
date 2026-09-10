@@ -283,6 +283,8 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/prasadcheckout" element={<Prasadcheckout />} />
             <Route path="/myorders" element={<Ecomerceookingpage />} />
+            <Route path="/my-orders" element={<Ecomerceookingpage />} />
+            <Route path="/orders" element={<Ecomerceookingpage />} />
             <Route path="/prasadbookingpage" element={<Prasadbookingpage />} />
             <Route path="/templebookingpage" element={<Templebookingpage />} />
             <Route path="/yogabookingpage" element={<Yogabookingpage />} />

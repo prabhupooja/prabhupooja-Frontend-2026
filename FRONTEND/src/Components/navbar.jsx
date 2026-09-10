@@ -178,21 +178,56 @@ function Navbar() {
     };
   }, [connectSocket, user1]);
 
+  const [navVisible, setNavVisible] = useState(true);
+  const lastScrollYRef = useRef(0);
+
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (window.scrollY > 25) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+          const prevScrollY = lastScrollYRef.current;
+          const scrollDelta = currentScrollY - prevScrollY;
+
+          // 1. If at or near top of page (<= 30px) -> always visible in resting theme
+          if (currentScrollY <= 30) {
+            setScrolled(false);
+            setNavVisible(true);
+          } else {
+            setScrolled(true);
+
+            // 2. Scrolling DOWN past 80px -> hide navbar if all dropdowns/modals are closed
+            if (scrollDelta > 6 && currentScrollY > 80) {
+              if (
+                !isMenuOpen &&
+                !profileMenuOpen &&
+                !cartDropdownOpen &&
+                !notificationModel
+              ) {
+                setNavVisible(false);
+              }
+            }
+            // 3. Scrolling UP even slightly -> IMMEDIATELY show navbar!
+            else if (scrollDelta < -4) {
+              setNavVisible(true);
+            }
+          }
+
+          lastScrollYRef.current = Math.max(0, currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [isMenuOpen, profileMenuOpen, cartDropdownOpen, notificationModel]);
 
   const openPopup = () => {
     setIsLoginPopup(true);
@@ -593,12 +628,14 @@ const getServicePath = (service) => {
   };
 
   return (
-    <div
-      className={`header_section 
-        ${isMenuOpen ? "menu-open" : ""} 
-        ${scrolled ? "scrolled" : ""} 
-        ${isNotHome ? "not-home" : ""}`}
-    >
+    <>
+      <header
+        className={`header_section 
+          ${isMenuOpen ? "menu-open" : ""} 
+          ${scrolled ? "scrolled" : ""} 
+          ${!navVisible ? "nav-hidden" : "nav-visible"} 
+          ${isNotHome ? "not-home" : ""}`}
+      >
       {/* Mobile Drawer Overlay Backdrop */}
       <div
         className={`menu-overlay ${isMenuOpen ? "active" : ""}`}
@@ -1181,7 +1218,9 @@ const getServicePath = (service) => {
       {isSingupPopup && (
         <Signup closeSingClose={closeSingPopup} onOpenLogin={openPopup} />
       )}
-    </div>
+      </header>
+      <div className="header-spacer" aria-hidden="true" />
+    </>
   );
 }
 

@@ -338,6 +338,23 @@ const EcommerceNew2 = () => {
     }));
   };
 
+  // Lock body scroll and close on Escape when mobile filter drawer is open
+  useEffect(() => {
+    if (mobileFilterOpen) {
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e) => {
+        if (e.key === "Escape") setMobileFilterOpen(false);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [mobileFilterOpen]);
+
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (debouncedSearch) count += 1;
@@ -598,6 +615,13 @@ const EcommerceNew2 = () => {
             {hasActiveFilters && <span className="active-dot" />}
           </button>
         </div>
+
+        {/* Backdrop for Mobile Sidebar Drawer */}
+        <div
+          className={`ecom-sidebar-backdrop ${mobileFilterOpen ? "active" : ""}`}
+          onClick={() => setMobileFilterOpen(false)}
+          aria-label="Close filters backdrop"
+        />
 
         {/* 🛍️ MAIN STORE LAYOUT (LEFT FILTERS + RIGHT PRODUCTS) */}
         <div className="ecom-main-layout">

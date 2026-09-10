@@ -1,0 +1,375 @@
+/* ==========================================================================
+   PRABHU POOJA - RETURN, REFUND & REPLACEMENT MODALS STYLES
+   ========================================================================== */
+
+.ppm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 16px;
+  animation: ppmFadeIn 0.25s ease-out;
+}
+
+@keyframes ppmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ppmSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ppm-modal-box {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 620px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(234, 88, 12, 0.1);
+  animation: ppmSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  border: 1px solid #fed7aa;
+}
+
+.ppm-modal-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-bottom: 1px solid #fed7aa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-radius: 20px 20px 0 0;
+}
+
+.ppm-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #9a3412;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ppm-close-btn {
+  background: #ffffff;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ppm-close-btn:hover {
+  background: #ea580c;
+  color: #ffffff;
+  border-color: #ea580c;
+  transform: rotate(90deg);
+}
+
+.ppm-modal-body {
+  padding: 24px;
+}
+
+/* Request Type Selector (Pills) */
+.ppm-type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ppm-type-card {
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ppm-type-card:hover {
+  border-color: #fdba74;
+  background: #fff7ed;
+}
+
+.ppm-type-card.active {
+  border-color: #ea580c;
+  background: #fff7ed;
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.15);
+}
+
+.ppm-type-card input[type="radio"] {
+  accent-color: #ea580c;
+  width: 18px;
+  height: 18px;
+}
+
+.ppm-type-info strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.ppm-type-info span {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Input Fields */
+.ppm-field-group {
+  margin-bottom: 18px;
+}
+
+.ppm-field-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.ppm-field-label span.req {
+  color: #ef4444;
+}
+
+.ppm-input, .ppm-textarea, .ppm-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  font-size: 0.95rem;
+  color: #1e293b;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.ppm-input:focus, .ppm-textarea:focus, .ppm-select:focus {
+  outline: none;
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+}
+
+/* Bank & UPI Details Box */
+.ppm-payout-box {
+  background: #faf5ff;
+  border: 1.5px dashed #c084fc;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.ppm-payout-header {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #6b21a8;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ppm-or-divider {
+  display: flex;
+  align-items: center;
+  margin: 14px 0;
+  color: #9333ea;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ppm-or-divider::before, .ppm-or-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e9d5ff;
+}
+
+.ppm-or-divider span {
+  padding: 0 10px;
+}
+
+.ppm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .ppm-type-grid {
+    grid-template-columns: 1fr;
+  }
+  .ppm-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Modal Actions */
+.ppm-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.ppm-btn-cancel {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ppm-btn-cancel:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.ppm-btn-submit {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ppm-btn-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+}
+
+.ppm-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Status Cards in ReturnStatusModal */
+.ppm-status-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s;
+}
+
+.ppm-status-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.ppm-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 12px;
+}
+
+.ppm-badge {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ppm-badge-pending {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.ppm-badge-approved, .ppm-badge-refunded, .ppm-badge-replaced {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.ppm-badge-rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.ppm-status-detail-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.ppm-receipt-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.ppm-receipt-link:hover {
+  background: #dbeafe;
+  text-decoration: underline;
+}
+
+.ppm-tracking-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+}

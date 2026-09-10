@@ -284,21 +284,45 @@ const useUserStore = create((set) => ({
   },
   addReview: async (payload) => {
     try {
-        // console.log(payload,'dfdfd')
-        const response = await api.post('/products/addReview', payload,{
-            headers:{
-                'Content-Type': 'multipart/form-data',
-            }
-        });
-        // console.log(response,'ddfddfdfdf')
-        return response;
+      const response = await api.post('/products/addReview', payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+      return response;
     } catch (error) {
-        // console.log(error)
-        throw error;
+      throw error;
     }
-},
+  },
 
+  submitReturnOrder: async (payload) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.post('/orders/return-order', payload, useUserStore.getState().getAuthHeaders());
+      return response.data;
+    } catch (error) {
+      console.error("Failed to submit return order:", error);
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
+  getUserReturns: async (userId, orderId) => {
+    set({ isLoading: true });
+    try {
+      const url = orderId
+        ? `/orders/user-returns/${userId}?orderId=${orderId}`
+        : `/orders/user-returns/${userId}`;
+      const response = await api.get(url, useUserStore.getState().getAuthHeaders());
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch user returns:", error);
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));
 
 export default useUserStore;

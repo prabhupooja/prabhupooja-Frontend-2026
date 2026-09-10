@@ -4,21 +4,26 @@ import "../../styles/bookingdetailspage.css";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 import useUserStore from "../../Store/UserStore/userStore";
 import Swal from "sweetalert2";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { FaStar, FaRegStar, FaUndoAlt, FaEye } from "react-icons/fa";
 import CryptoJS from "crypto-js";
 import { TailSpin } from "react-loader-spinner";
+import ReturnRequestModal from "../OrderTracking/ReturnRequestModal";
+import ReturnStatusModal from "../OrderTracking/ReturnStatusModal";
 
 function Bookingdetailspage() {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [orderData, setOrderData] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
   const [customReason, setCustomReason] = useState("");
   const searchParams = new URLSearchParams(location.search);
   const orderDate = searchParams.get("orderDate");
   const paramQuantity = searchParams.get("quantity");
-  const quantities = paramQuantity.split(",").map(Number);
+  const quantities = paramQuantity ? paramQuantity.split(",").map(Number) : [1];
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState(null);
@@ -111,6 +116,7 @@ function Bookingdetailspage() {
     try {
       const response = await userOrdersFetchByOrderId(id);
       if (response.data.success) {
+        setOrderData(response?.data?.orders || { orderId: id, totalPrice: totalPrice });
         setPaymentMethod(response?.data?.orders?.paymentMethod);
         const fetchedProducts = response.data.products;
         if (Array.isArray(fetchedProducts)) {
@@ -596,6 +602,63 @@ function Bookingdetailspage() {
               <button onClick={handleTrackOrder}>Track Your Order</button>
             </div>
 
+            {/* Return / Refund Action Buttons */}
+            {(() => {
+              const statusStr = (
+                orderData?.order_progress_status ||
+                orderData?.status ||
+                orderData?.order_status ||
+                ""
+              ).toLowerCase();
+              const isDelivered = statusStr.includes("deliver") || statusStr.includes("complete");
+
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
+                  {isDelivered && (
+                    <button
+                      type="button"
+                      onClick={() => setShowReturnModal(true)}
+                      style={{
+                        padding: "10px",
+                        background: "#fff7ed",
+                        color: "#c2410c",
+                        border: "1.5px solid #fed7aa",
+                        borderRadius: "8px",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px"
+                      }}
+                    >
+                      <FaUndoAlt /> Request Return / Replacement
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setShowStatusModal(true)}
+                    style={{
+                      padding: "10px",
+                      background: "#f0fdf4",
+                      color: "#166534",
+                      border: "1.5px solid #bbf7d0",
+                      borderRadius: "8px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px"
+                    }}
+                  >
+                    <FaEye /> Check Return & Refund Status
+                  </button>
+                </div>
+              );
+            })()}
+
             <div className="rating-containermain">
               <h3 className="rating-title">How was your product?</h3>
             
@@ -620,6 +683,25 @@ function Bookingdetailspage() {
           </div>
         </div>
       </div>
+
+      {/* Return Request Modal */}
+      <ReturnRequestModal
+        order={orderData || { orderId: id, totalPrice: totalPrice, user_id: user1?.id }}
+        isOpen={showReturnModal}
+        onClose={() => setShowReturnModal(false)}
+        onSuccess={() => {
+          setShowReturnModal(false);
+          setShowStatusModal(true);
+        }}
+      />
+
+      {/* Return Status Modal */}
+      <ReturnStatusModal
+        userId={user1?.id}
+        orderId={id}
+        isOpen={showStatusModal}
+        onClose={() => setShowStatusModal(false)}
+      />
     </div>
   );
 }
