@@ -258,32 +258,32 @@ function Navbar() {
     setIsSingupPopup(false);
   };
 
-const defaultServices = [
-  { id: 1, name: "Membership", path: "/membership" },
-  { id: 2, name: "Online Pooja", path: "/onlinepooja" },
-  { id: 3, name: "Prasad Delivery", path: "/prasaddelivery" },
-  { id: 4, name: "Astrology", path: "/astrology" },
-  { id: 5, name: "Muhurat", path: "/muhurat" },
-  { id: 6, name: "E-Commerce", path: "/e-commerce" },
-  { id: 7, name: "Temple", path: "/temple" },
-  { id: 8, name: "Pandit", path: "/pandit" },
-  { id: 9, name: "Yoga", path: "/yoga" },
-];
+  const defaultServices = [
+    { id: 1, name: "Membership", path: "/membership" },
+    { id: 2, name: "Online Pooja", path: "/onlinepooja" },
+    { id: 3, name: "Prasad Delivery", path: "/prasaddelivery" },
+    { id: 4, name: "Astrology", path: "/astrology" },
+    { id: 5, name: "Muhurat", path: "/muhurat" },
+    { id: 6, name: "E-Commerce", path: "/e-commerce" },
+    { id: 7, name: "Temple", path: "/temple" },
+    { id: 8, name: "Pandit", path: "/pandit" },
+    { id: 9, name: "Yoga", path: "/yoga" },
+  ];
 
-const getServicePath = (service) => {
-  if (service.path) return service.path;
-  const name = (service.name || "").toLowerCase().trim();
-  if (name.includes("e-com") || name.includes("ecom")) return "/e-commerce";
-  if (name.includes("online") || name.includes("pooja") || name.includes("puja")) return "/onlinepooja";
-  if (name.includes("prasad")) return "/prasaddelivery";
-  if (name.includes("member")) return "/membership";
-  if (name.includes("astro")) return "/astrology";
-  if (name.includes("muhurat")) return "/muhurat";
-  if (name.includes("temple")) return "/temple";
-  if (name.includes("pandit")) return "/pandit";
-  if (name.includes("yoga")) return "/yoga";
-  return `/${name.replace(/\s+/g, "")}`;
-};
+  const getServicePath = (service) => {
+    if (service.path) return service.path;
+    const name = (service.name || "").toLowerCase().trim();
+    if (name.includes("e-com") || name.includes("ecom")) return "/e-commerce";
+    if (name.includes("online") || name.includes("pooja") || name.includes("puja")) return "/onlinepooja";
+    if (name.includes("prasad")) return "/prasaddelivery";
+    if (name.includes("member")) return "/membership";
+    if (name.includes("astro")) return "/astrology";
+    if (name.includes("muhurat")) return "/muhurat";
+    if (name.includes("temple")) return "/temple";
+    if (name.includes("pandit")) return "/pandit";
+    if (name.includes("yoga")) return "/yoga";
+    return `/${name.replace(/\s+/g, "")}`;
+  };
 
   const fetchSerives = async () => {
     await getServices();
@@ -413,7 +413,7 @@ const getServicePath = (service) => {
   //     setIsCartModalOpen(false);
   //   }
   // };
- 
+
   const handleViewCartClick = () => {
     navigate("/cart");
   };
@@ -553,7 +553,7 @@ const getServicePath = (service) => {
           setProductCount(response.data.orderCount);
         }
       }
-    } catch {}
+    } catch { }
   };
 
   const fetchTempleBookings = async () => {
@@ -561,7 +561,7 @@ const getServicePath = (service) => {
       if (user1?.id) {
         await userfetchTempleBookings(user1.id);
       }
-    } catch {}
+    } catch { }
   };
 
   const userfetchPrasad = async () => {
@@ -569,7 +569,7 @@ const getServicePath = (service) => {
       if (user1?.id) {
         await userfetchPrasadBooking(user1.id);
       }
-    } catch {}
+    } catch { }
   };
 
   const fetchYoga = async () => {
@@ -577,7 +577,7 @@ const getServicePath = (service) => {
       if (user1?.id) {
         await userfetchYogaBooking(user1.id);
       }
-    } catch {}
+    } catch { }
   };
 
   const handleBalanceClick = () => {
@@ -636,588 +636,676 @@ const getServicePath = (service) => {
           ${!navVisible ? "nav-hidden" : "nav-visible"} 
           ${isNotHome ? "not-home" : ""}`}
       >
-      {/* Mobile Drawer Overlay Backdrop */}
-      <div
-        className={`menu-overlay ${isMenuOpen ? "active" : ""}`}
-        onClick={toggleMenu}
-        aria-hidden="true"
-      />
+        {/* Mobile Drawer Overlay Backdrop */}
+        <div
+          className={`menu-overlay ${isMenuOpen ? "active" : ""}`}
+          onClick={toggleMenu}
+          aria-hidden="true"
+        />
 
-      <div className="container">
-        <div className="logo">
-          <Link to="/">
-            <img src={mobileLogo} alt="Logo" />
-            <span className="logoName">
-              <strong>Prabhu Pooja</strong>
-            </span>
-          </Link>
-        </div>
-
-        <div className="mobileLogo">
-          <Link to="/">
-            <img src={mobileLogo} alt="Logo" />
-          </Link>
-        </div>
-        <div className={`menu ${isMenuOpen ? "open" : ""}`} ref={menuRef}>
-          <div className="head">
-            <div className="drawer-brand">
-              <Link to="/" onClick={handleLinkClick}>
-                <img src={mobileLogo} alt="Prabhu Pooja Logo" />
-                <span className="drawer-brand-name">Prabhu Pooja</span>
-              </Link>
-            </div>
-            <button
-              type="button"
-              className="close-menu-btn"
-              ref={closeMenuBtnRef}
-              onClick={toggleMenu}
-              aria-label="Close menu"
-            >
-              <IoClose size={22} />
-            </button>
+        <div className="container">
+          <div className="logo">
+            <Link to="/">
+              <img src={mobileLogo} alt="Logo" />
+              <span className="logoName">
+                <strong>Prabhu Pooja</strong>
+              </span>
+            </Link>
           </div>
 
-          {/* Clean Login & Register Buttons on Mobile Drawer */}
-          {!isLoggin ? (
-            <div className="drawer-auth-buttons-wrap">
+          <div className="mobileLogo">
+            <Link to="/">
+              <img src={mobileLogo} alt="Logo" />
+            </Link>
+          </div>
+          <div className={`menu ${isMenuOpen ? "open" : ""}`} ref={menuRef}>
+            <div className="head">
+              <div className="drawer-brand">
+                <Link to="/" onClick={handleLinkClick}>
+                  <img src={mobileLogo} alt="Prabhu Pooja Logo" />
+                  <span className="drawer-brand-name">Prabhu Pooja</span>
+                </Link>
+              </div>
               <button
                 type="button"
-                className="drawer-login-btn"
-                onClick={openLoginFromDrawer}
+                className="close-menu-btn"
+                ref={closeMenuBtnRef}
+                onClick={toggleMenu}
+                aria-label="Close menu"
               >
-                <FaSignInAlt /> Login
-              </button>
-              <button
-                type="button"
-                className="drawer-signup-btn"
-                onClick={openSignupFromDrawer}
-              >
-                <FaUserPlus /> Register
+                <IoClose size={22} />
               </button>
             </div>
-          ) : user1 ? (
-            <div className="drawer-logged-user-card">
-              <div
-                className="drawer-profile-top"
-                onClick={() =>
-                  handleNavigateFromDrawer("/editprofile", {
-                    activeTab: "profile",
-                  })
-                }
-              >
-                <div className="drawer-profile-avatar-wrap">
-                  <img
-                    src={user1?.image || userprofileimg}
-                    alt={user1?.name || "Devotee"}
-                    className="drawer-profile-avatar"
-                  />
-                  {isMember && (
-                    <span className="drawer-vip-badge" title="VIP Devotee">
-                      💎
-                    </span>
-                  )}
-                </div>
-                <div className="drawer-profile-info">
-                  <div className="drawer-profile-name-row">
-                    <h4 className="drawer-profile-name">
-                      {user1?.name ? user1.name : "Devotee"}
-                    </h4>
-                    <span className="drawer-edit-chip" title="Edit Profile">
-                      <FaEdit />
-                    </span>
-                  </div>
-                  <p className="drawer-profile-contact">
-                    {user1?.mobile || user1?.email || "Verified Devotee"}
-                  </p>
-                </div>
-              </div>
 
-              {/* Sacred Wallet Box */}
-              <div
-                className="drawer-wallet-pill"
-                onClick={() =>
-                  handleNavigateFromDrawer("/editprofile", {
-                    activeTab: "wallet",
-                  })
-                }
-              >
-                <div className="drawer-wallet-pill-left">
-                  <div className="drawer-wallet-icon">
-                    <FaWallet />
-                  </div>
-                  <div className="drawer-wallet-text">
-                    <span className="drawer-wallet-lbl">Pooja Wallet</span>
-                    <span className="drawer-wallet-val">
-                      ₹ {Number(user1?.balance || 0).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-                <span className="drawer-wallet-add-btn">+ Recharge</span>
+            {/* Clean Login & Register Buttons on Mobile Drawer */}
+            {!isLoggin ? (
+              <div className="drawer-auth-buttons-wrap">
+                <button
+                  type="button"
+                  className="drawer-login-btn"
+                  onClick={openLoginFromDrawer}
+                >
+                  <FaSignInAlt /> Login
+                </button>
+                <button
+                  type="button"
+                  className="drawer-signup-btn"
+                  onClick={openSignupFromDrawer}
+                >
+                  <FaUserPlus /> Register
+                </button>
               </div>
-
-              {/* Quick Devotee Shortcuts */}
-              <div className="drawer-user-shortcuts">
+            ) : user1 ? (
+              <div className="drawer-logged-user-card">
                 <div
-                  className="drawer-shortcut-item"
+                  className="drawer-profile-top"
                   onClick={() =>
                     handleNavigateFromDrawer("/editprofile", {
                       activeTab: "profile",
                     })
                   }
                 >
-                  <FaUser className="d-icon" />
-                  <span>My Profile & Dashboard</span>
+                  <div className="drawer-profile-avatar-wrap">
+                    <img
+                      src={user1?.image || userprofileimg}
+                      alt={user1?.name || "Devotee"}
+                      className="drawer-profile-avatar"
+                    />
+                    {isMember && (
+                      <span className="drawer-vip-badge" title="VIP Devotee">
+                        💎
+                      </span>
+                    )}
+                  </div>
+                  <div className="drawer-profile-info">
+                    <div className="drawer-profile-name-row">
+                      <h4 className="drawer-profile-name">
+                        {user1?.name ? user1.name : "Devotee"}
+                      </h4>
+                      <span className="drawer-edit-chip" title="Edit Profile">
+                        <FaEdit />
+                      </span>
+                    </div>
+                    <p className="drawer-profile-contact">
+                      {user1?.mobile || user1?.email || "Verified Devotee"}
+                    </p>
+                  </div>
                 </div>
+
+                {/* Sacred Wallet Box */}
                 <div
-                  className="drawer-shortcut-item"
-                  onClick={() => handleNavigateFromDrawer("/poojabooking")}
+                  className="drawer-wallet-pill"
+                  onClick={() =>
+                    handleNavigateFromDrawer("/editprofile", {
+                      activeTab: "wallet",
+                    })
+                  }
                 >
-                  <FaPrayingHands className="d-icon" />
-                  <span>My Pooja Bookings</span>
+                  <div className="drawer-wallet-pill-left">
+                    <div className="drawer-wallet-icon">
+                      <FaWallet />
+                    </div>
+                    <div className="drawer-wallet-text">
+                      <span className="drawer-wallet-lbl">Pooja Wallet</span>
+                      <span className="drawer-wallet-val">
+                        ₹ {Number(user1?.balance || 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="drawer-wallet-add-btn">+ Recharge</span>
                 </div>
-                <div
-                  className="drawer-shortcut-item"
-                  onClick={() => handleNavigateFromDrawer("/myorders")}
-                >
-                  <FaBoxOpen className="d-icon" />
-                  <span>My Store Orders</span>
-                </div>
-                <div
-                  className="drawer-shortcut-item"
-                  onClick={() => handleNavigateFromDrawer("/membership")}
-                >
-                  <FaGem className="d-icon" />
-                  <span>Devotee Membership</span>
-                </div>
-                <div
-                  className="drawer-shortcut-item drawer-shortcut-logout"
-                  onClick={handleProfileLogoutFromDrawer}
-                >
-                  <MdLogout className="d-icon logout-col" />
-                  <span>Logout Account</span>
+
+                {/* Quick Devotee Shortcuts */}
+                <div className="drawer-user-shortcuts">
+                  <div
+                    className="drawer-shortcut-item"
+                    onClick={() =>
+                      handleNavigateFromDrawer("/editprofile", {
+                        activeTab: "profile",
+                      })
+                    }
+                  >
+                    <FaUser className="d-icon" />
+                    <span>My Profile & Dashboard</span>
+                  </div>
+                  <div
+                    className="drawer-shortcut-item"
+                    onClick={() => handleNavigateFromDrawer("/poojabooking")}
+                  >
+                    <FaPrayingHands className="d-icon" />
+                    <span>My Pooja Bookings</span>
+                  </div>
+                  <div
+                    className="drawer-shortcut-item"
+                    onClick={() => handleNavigateFromDrawer("/myorders")}
+                  >
+                    <FaBoxOpen className="d-icon" />
+                    <span>My Store Orders</span>
+                  </div>
+                  <div
+                    className="drawer-shortcut-item"
+                    onClick={() => handleNavigateFromDrawer("/membership")}
+                  >
+                    <FaGem className="d-icon" />
+                    <span>Devotee Membership</span>
+                  </div>
+                  <div
+                    className="drawer-shortcut-item drawer-shortcut-logout"
+                    onClick={handleProfileLogoutFromDrawer}
+                  >
+                    <MdLogout className="d-icon logout-col" />
+                    <span>Logout Account</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
 
-          <ul>
-            {(() => {
-              const currentPath = location.pathname;
-              const isHomeActive = currentPath === "/";
-              const isServicesActive =
-                currentPath.startsWith("/astrology") ||
-                currentPath.startsWith("/muhurat") ||
-                currentPath.startsWith("/yoga");
-              const isOnlinePoojaActive =
-                currentPath.startsWith("/onlinepooja") ||
-                (onlinePoojaName &&
-                  onlinePoojaName.some((p) =>
-                    currentPath.includes(formatURL(p.name))
-                  ));
-              const isStoreActive =
-                currentPath.startsWith("/e-commerce") ||
-                currentPath.startsWith("/productdetails") ||
-                currentPath.startsWith("/buynowform");
-              const isBlogActive =
-                currentPath.startsWith("/blog") ||
-                currentPath.startsWith("/blogs");
-              const isBrandInfoActive = [
-                "/ourteam",
-                "/about",
-                "/enquiryform",
-                "/testimonial",
-                "/faq",
-                "/disclaimer",
-              ].includes(currentPath);
+            <ul>
+              {(() => {
+                const currentPath = location.pathname;
+                const isHomeActive = currentPath === "/";
+                const isServicesActive =
+                  currentPath.startsWith("/astrology") ||
+                  currentPath.startsWith("/muhurat") ||
+                  currentPath.startsWith("/yoga");
+                const isOnlinePoojaActive =
+                  currentPath.startsWith("/onlinepooja") ||
+                  (onlinePoojaName &&
+                    onlinePoojaName.some((p) =>
+                      currentPath.includes(formatURL(p.name))
+                    ));
+                const isStoreActive =
+                  currentPath.startsWith("/e-commerce") ||
+                  currentPath.startsWith("/productdetails") ||
+                  currentPath.startsWith("/buynowform");
+                const isBlogActive =
+                  currentPath.startsWith("/blog") ||
+                  currentPath.startsWith("/blogs");
+                const isBrandInfoActive = [
+                  "/ourteam",
+                  "/about",
+                  "/enquiryform",
+                  "/testimonial",
+                  "/faq",
+                  "/disclaimer",
+                ].includes(currentPath);
 
-              return (
-                <>
-                  <li>
-                    <Link
-                      to="/"
-                      onClick={handleLinkClick}
-                      className={isHomeActive ? "active" : ""}
+                return (
+                  <>
+                    <li>
+                      <Link
+                        to="/"
+                        onClick={handleLinkClick}
+                        className={isHomeActive ? "active" : ""}
+                      >
+                        Home
+                      </Link>
+                    </li>
+
+                    <li
+                      className={`dropdown ${isServicesActive ? "nav-active" : ""
+                        } ${isDropdownOpen ? "active" : ""}`}
                     >
-                      Home
-                    </Link>
-                  </li>
+                      <Link
+                        to="/onlinepooja"
+                        onClick={handleLinkClick}
+                        className={isServicesActive ? "active" : ""}
+                      >
+                        Services
+                      </Link>
+                      <i
+                        className="fa-solid fa-chevron-down"
+                        onClick={handleDropdownToggle}
+                      ></i>
 
-                  <li
-                    className={`dropdown ${
-                      isServicesActive ? "nav-active" : ""
-                    } ${isDropdownOpen ? "active" : ""}`}
-                  >
-                    <Link
-                      to="/onlinepooja"
-                      onClick={handleLinkClick}
-                      className={isServicesActive ? "active" : ""}
-                    >
-                      Services
-                    </Link>
-                    <i
-                      className="fa-solid fa-chevron-down"
-                      onClick={handleDropdownToggle}
-                    ></i>
-
-                    <ul
-                      className={`sub-menu ${isDropdownOpen ? "active" : ""}`}
-                    >
-                      {(services && services.length > 0
-                        ? services.map((s, idx) => ({
+                      <ul
+                        className={`sub-menu ${isDropdownOpen ? "active" : ""}`}
+                      >
+                        {(services && services.length > 0
+                          ? services.map((s, idx) => ({
                             id: s.id || idx + 1,
                             name: s.name,
                             path: getServicePath(s),
                           }))
-                        : defaultServices
-                      ).map((service, index) => (
-                        <li key={service.id || index}>
-                          <Link to={service.path} onClick={handleLinkClick}>
-                            <span>{service.name}</span>
+                          : defaultServices
+                        ).map((service, index) => (
+                          <li key={service.id || index}>
+                            <Link to={service.path} onClick={handleLinkClick}>
+                              <span>{service.name}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+
+                    <li
+                      className={`dropdown ${isOnlinePoojaActive ? "nav-active" : ""
+                        } ${isSecondDropdownOpen ? "active" : ""}`}
+                    >
+                      <Link
+                        to="/onlinepooja"
+                        onClick={handleLinkClick}
+                        className={isOnlinePoojaActive ? "active" : ""}
+                      >
+                        Online Pooja
+                      </Link>
+                      <i
+                        className="fa-solid fa-chevron-down"
+                        onClick={handleSecondDropdownToggle}
+                      ></i>
+                      <ul
+                        className={`sub-menu ${isSecondDropdownOpen ? "active" : ""
+                          }`}
+                      >
+                        {onlinePoojaName &&
+                          onlinePoojaName?.map((pooja) => {
+                            const encryptedId = encryptId(pooja.id);
+                            return (
+                              <li key={pooja.id}>
+                                <Link
+                                  to={`/${formatURL(pooja.name)}/${encryptedId}`}
+                                  onClick={handleLinkClick}
+                                >
+                                  <span>{pooja.name}</span>
+                                </Link>
+                              </li>
+                            );
+                          })}
+                      </ul>
+                    </li>
+
+                    <li>
+                      <Link
+                        to="/e-commerce"
+                        onClick={handleLinkClick}
+                        className={`nav-store-link ${isStoreActive ? "active" : ""
+                          }`}
+                      >
+                        Pooja Store
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link
+                        to="/blogs"
+                        onClick={handleLinkClick}
+                        className={isBlogActive ? "active" : ""}
+                      >
+                        Blog
+                      </Link>
+                    </li>
+
+                    <li
+                      className={`dropdown ${isBrandInfoActive ? "nav-active" : ""
+                        } ${isFourthDropdownOpen ? "active" : ""}`}
+                    >
+                      <Link
+                        to="/ourteam"
+                        onClick={handleLinkClick}
+                        className={isBrandInfoActive ? "active" : ""}
+                      >
+                        Brand Info
+                      </Link>
+                      <i
+                        className="fa-solid fa-chevron-down"
+                        onClick={handleFourthDropdownToggle}
+                      ></i>
+                      <ul
+                        className={`sub-menu ${isFourthDropdownOpen ? "active" : ""
+                          }`}
+                      >
+                        <li>
+                          <Link to="/ourteam" onClick={handleLinkClick}>
+                            <span>Our Team</span>
                           </Link>
                         </li>
-                      ))}
-                    </ul>
-                  </li>
+                        <li>
+                          <Link to="/about" onClick={handleLinkClick}>
+                            <span>About Us</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/enquiryform" onClick={handleLinkClick}>
+                            <span>Contact Us</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/testimonial" onClick={handleLinkClick}>
+                            <span>Testimonial</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/faq" onClick={handleLinkClick}>
+                            <span>FAQ</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/disclaimer" onClick={handleLinkClick}>
+                            <span>Disclaimer</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/" onClick={handleLinkClick}>
+                            <span>Events</span>
+                          </Link>
+                        </li>
+                      </ul>
+                    </li>
+                  </>
+                );
+              })()}
+            </ul>
 
-                  <li
-                    className={`dropdown ${
-                      isOnlinePoojaActive ? "nav-active" : ""
-                    } ${isSecondDropdownOpen ? "active" : ""}`}
+            {/* Mobile Drawer Devotee Care & Quick Actions */}
+            <div className="mobile-drawer-footer">
+              <div className="drawer-quick-card">
+                <div className="drawer-card-header">
+                  <span className="drawer-care-badge">🕉️ Devotee Care</span>
+                  <span className="drawer-live-chip">24/7 Helpline</span>
+                </div>
+                <p className="drawer-care-text">
+                  Need help with Pooja Sankalp, Temple Darshan, or Pandit Booking?
+                </p>
+                <div className="drawer-care-actions">
+                  <a
+                    href="https://wa.me/917225016699?text=Namaste,%20I%20need%20assistance%20regarding%20Prabhu%20Pooja%20services"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="drawer-wa-btn"
                   >
-                    <Link
-                      to="/onlinepooja"
-                      onClick={handleLinkClick}
-                      className={isOnlinePoojaActive ? "active" : ""}
-                    >
-                      Online Pooja
-                    </Link>
-                    <i
-                      className="fa-solid fa-chevron-down"
-                      onClick={handleSecondDropdownToggle}
-                    ></i>
-                    <ul
-                      className={`sub-menu ${
-                        isSecondDropdownOpen ? "active" : ""
-                      }`}
-                    >
-                      {onlinePoojaName &&
-                        onlinePoojaName?.map((pooja) => {
-                          const encryptedId = encryptId(pooja.id);
-                          return (
-                            <li key={pooja.id}>
-                              <Link
-                                to={`/${formatURL(pooja.name)}/${encryptedId}`}
-                                onClick={handleLinkClick}
-                              >
-                                <span>{pooja.name}</span>
-                              </Link>
-                            </li>
-                          );
-                        })}
-                    </ul>
-                  </li>
-
-                  <li>
-                    <Link
-                      to="/e-commerce"
-                      onClick={handleLinkClick}
-                      className={`nav-store-link ${
-                        isStoreActive ? "active" : ""
-                      }`}
-                    >
-                      Pooja Store
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link
-                      to="/blogs"
-                      onClick={handleLinkClick}
-                      className={isBlogActive ? "active" : ""}
-                    >
-                      Blog
-                    </Link>
-                  </li>
-
-                  <li
-                    className={`dropdown ${
-                      isBrandInfoActive ? "nav-active" : ""
-                    } ${isFourthDropdownOpen ? "active" : ""}`}
-                  >
-                    <Link
-                      to="/ourteam"
-                      onClick={handleLinkClick}
-                      className={isBrandInfoActive ? "active" : ""}
-                    >
-                      Brand Info
-                    </Link>
-                    <i
-                      className="fa-solid fa-chevron-down"
-                      onClick={handleFourthDropdownToggle}
-                    ></i>
-                    <ul
-                      className={`sub-menu ${
-                        isFourthDropdownOpen ? "active" : ""
-                      }`}
-                    >
-                      <li>
-                        <Link to="/ourteam" onClick={handleLinkClick}>
-                          <span>Our Team</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/about" onClick={handleLinkClick}>
-                          <span>About Us</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/enquiryform" onClick={handleLinkClick}>
-                          <span>Contact Us</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/testimonial" onClick={handleLinkClick}>
-                          <span>Testimonial</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/faq" onClick={handleLinkClick}>
-                          <span>FAQ</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/disclaimer" onClick={handleLinkClick}>
-                          <span>Disclaimer</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/" onClick={handleLinkClick}>
-                          <span>Events</span>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                </>
-              );
-            })()}
-          </ul>
-
-          {/* Mobile Drawer Devotee Care & Quick Actions */}
-          <div className="mobile-drawer-footer">
-            <div className="drawer-quick-card">
-              <div className="drawer-card-header">
-                <span className="drawer-care-badge">🕉️ Devotee Care</span>
-                <span className="drawer-live-chip">24/7 Helpline</span>
+                    <FaWhatsapp /> WhatsApp Care
+                  </a>
+                  <a href="tel:+917225016699" className="drawer-call-btn">
+                    <FaPhoneVolume /> Call Us
+                  </a>
+                </div>
               </div>
-              <p className="drawer-care-text">
-                Need help with Pooja Sankalp, Temple Darshan, or Pandit Booking?
-              </p>
-              <div className="drawer-care-actions">
-                <a
-                  href="https://wa.me/917225016699?text=Namaste,%20I%20need%20assistance%20regarding%20Prabhu%20Pooja%20services"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="drawer-wa-btn"
-                >
-                  <FaWhatsapp /> WhatsApp Care
-                </a>
-                <a href="tel:+917225016699" className="drawer-call-btn">
-                  <FaPhoneVolume /> Call Us
-                </a>
+
+              <div className="drawer-holy-tagline">
+                <span>✨ प्रभु पूजा — आपकी भक्ति, हमारा संकल्प</span>
               </div>
             </div>
+          </div>
 
-            <div className="drawer-holy-tagline">
-              <span>✨ प्रभु पूजा — आपकी भक्ति, हमारा संकल्प</span>
+          <div className="header-right">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={() => handleViewCartClick()}
+            >
+              <i className="fa-solid fa-cart-plus"></i>
+              {cartItems?.length > 0 && (
+                <span className="cart-item-count">{cartItems.length}</span>
+              )}
+            </button>
+
+            {isLoggin && (
+              <span className="notificationIcon" onClick={toggleNotificaton}>
+                <span className="notificationUnreadCount">
+                  {notificationsCount}
+                </span>
+                <IoMdNotifications size={26} />
+              </span>
+            )}
+            {notificationModel && (
+              <div className="notificationContainer">
+                <h4>Notifications</h4>
+                <div className="notificationMessages">
+                  {notifications?.length === 0 ? (
+                    <div className="notificationItem">
+                      You're all caught up! No new notifications.
+                    </div>
+                  ) : (
+                    notifications.map((item, index) => (
+                      <div
+                        key={index}
+                        className="notificationItem"
+                        onClick={() => handleIsReadNotification(item.id)}
+                      >
+                        <div className="notificationItem1">
+                          <p>
+                            <strong>{item.title}:</strong> {item.message}
+                          </p>
+                          <span>{moment(item.time).fromNow()}</span>
+                        </div>
+                        {item.isUnread === 1 && (
+                          <span className="newNotify">new</span>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {isLoggin ? (
+              <div className="profile-menu" ref={profileMenuRef}>
+                <img
+                  src={user1?.image || userprofileimg}
+                  alt="User"
+                  className="userimg"
+                  onClick={handleProfileToggle}
+                />
+                {profileMenuOpen && (
+                  <div className="profile-dropdown">
+                    <div
+                      className="profile-dropdown-header"
+                      onClick={() => handleItemClick(handleEditProfile)}
+                      title="Open My Profile & Dashboard"
+                    >
+                      <div className="profile-avatar-wrapper">
+                        <img
+                          src={user1?.image || userprofileimg}
+                          alt={user1?.name || "User"}
+                          className="user-dropdown-avatar"
+                        />
+                        {isMember && (
+                          <span className="member-badge-star" title="VIP Devotee">
+                            💎
+                          </span>
+                        )}
+                      </div>
+                      <div className="profile-user-info">
+                        <div className="profile-name-row">
+                          <h4 className="user-dropdown-name">
+                            {user1?.name ? user1.name : "Devotee"}
+                          </h4>
+                          <span
+                            className="edit-profile-icon-btn"
+                            title="Edit Profile"
+                          >
+                            <FaEdit />
+                          </span>
+                        </div>
+                        <p className="user-dropdown-meta">
+                          {user1?.mobile || "Verified Devotee"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Sacred Wallet Box */}
+                    <div
+                      className="profile-wallet-card"
+                      onClick={() => handleItemClick(() => navigate("/editprofile", { state: { activeTab: "wallet" } }))}
+                    >
+                      <div className="wallet-card-left">
+                        <div className="wallet-icon-box">
+                          <FaWallet />
+                        </div>
+                        <div className="wallet-info">
+                          <span className="wallet-label">Pooja Wallet</span>
+                          <span className="wallet-amount">
+                            ₹ {Number(user1?.balance || 0).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                      <button className="wallet-recharge-btn" type="button">
+                        + Recharge
+                      </button>
+                    </div>
+
+                    {/* Quick Profile Menu Links */}
+                    <div className="profile-quick-menu-links">
+                      <div
+                        className="profile-menu-item"
+                        onClick={() => handleItemClick(() => navigate("/editprofile", { state: { activeTab: "profile" } }))}
+                      >
+                        <FaEdit className="p-item-icon" />
+                        <span>My Profile & Dashboard</span>
+                      </div>
+                    </div>
+
+                    {/* Logout Button */}
+                    <div
+                      className="profile-logout-btn"
+                      onClick={handleProfileLogout}
+                    >
+                      <MdLogout className="logout-icon-svg" />
+                      <span>Logout Account</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <button className="login-btn" onClick={openPopup}>
+                  Login
+                </button>
+              </>
+            )}
+
+            {!isLoggin && (
+              <Link
+                to="https://play.google.com/store/apps/details?id=com.prabhupooja"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button className="download-btn">Get App</button>
+              </Link>
+            )}
+
+            {/* <GoogleTranslate /> */}
+
+            <button
+              type="button"
+              className="open-menu-btn"
+              ref={openMenuBtnRef}
+              onClick={toggleMenu}
+            >
+              <HiOutlineMenuAlt1 size={25} />
+            </button>
+          </div>
+        </div>
+
+        {/* ✨ Continuous Sacred Running Ticker / Marquee Bar for shop.prabhupooja.com */}
+        <div className="sacred-running-ticker">
+          <div className="ticker-badge">
+            <span className="ticker-pulse-dot" />
+            <span className="ticker-badge-text">🛍️ Pooja Store</span>
+          </div>
+          <div className="ticker-track-wrap">
+            <div className="ticker-track">
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>✨ <strong>Exclusive Pooja Store:</strong> 100% Pure & Energized Pooja Samagri, Sacred Idols, Rudraksha & Yantras</span>
+                <span className="ticker-cta-chip">Visit shop.prabhupooja.com ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>🚚 <strong>Pan-India Express Delivery:</strong> Doorstep delivery on all authentic temple & puja essentials</span>
+                <span className="ticker-cta-chip">Explore Megastore ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>🪔 <strong>Special Festive Deals:</strong> Flat 20% OFF on Sanctified Puja Thalis & Brass Diyas</span>
+                <span className="ticker-cta-chip">Shop Now ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>🕉️ <strong>Prabhu Pooja Official Store:</strong> Tap here to shop verified devotional products</span>
+                <span className="ticker-cta-chip">shop.prabhupooja.com ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
+
+              {/* Duplicate track content for seamless continuous marquee loop */}
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>✨ <strong>Exclusive Pooja Store:</strong> 100% Pure & Energized Pooja Samagri, Sacred Idols, Rudraksha & Yantras</span>
+                <span className="ticker-cta-chip">Visit shop.prabhupooja.com ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>🚚 <strong>Pan-India Express Delivery:</strong> Doorstep delivery on all authentic temple & puja essentials</span>
+                <span className="ticker-cta-chip">Explore Megastore ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>🪔 <strong>Special Festive Deals:</strong> Flat 20% OFF on Sanctified Puja Thalis & Brass Diyas</span>
+                <span className="ticker-cta-chip">Shop Now ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
+              <a
+                href="https://shop.prabhupooja.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-item"
+              >
+                <span>🕉️ <strong>Prabhu Pooja Official Store:</strong> Tap here to shop verified devotional products</span>
+                <span className="ticker-cta-chip">shop.prabhupooja.com ↗</span>
+              </a>
+              <span className="ticker-separator">✦</span>
             </div>
           </div>
         </div>
 
-        <div className="header-right">
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={()=>handleViewCartClick()}
-          >
-            <i className="fa-solid fa-cart-plus"></i>
-            {cartItems?.length > 0 && (
-              <span className="cart-item-count">{cartItems.length}</span>
-            )}
-          </button>
+        {isLoginPopup && (
+          <Login
+            onCloseLogin={closePopup}
+            onOpenOtp={openOtpPopup}
+            setLoginInput={setLoginInput}
+            onOpenSignup={openSingPopup}
+          />
+        )}
+        {isOtpPopup && (
+          <OtpPopup closeOtpPopup={closeOtpPopup} inputOTP={loginInput} />
+        )}
 
-          {isLoggin && (
-            <span className="notificationIcon" onClick={toggleNotificaton}>
-              <span className="notificationUnreadCount">
-                {notificationsCount}
-              </span>
-              <IoMdNotifications size={26} />
-            </span>
-          )}
-          {notificationModel && (
-            <div className="notificationContainer">
-              <h4>Notifications</h4>
-              <div className="notificationMessages">
-                {notifications?.length === 0 ? (
-                  <div className="notificationItem">
-                    You're all caught up! No new notifications.
-                  </div>
-                ) : (
-                  notifications.map((item, index) => (
-                    <div
-                      key={index}
-                      className="notificationItem"
-                      onClick={() => handleIsReadNotification(item.id)}
-                    >
-                      <div className="notificationItem1">
-                        <p>
-                          <strong>{item.title}:</strong> {item.message}
-                        </p>
-                        <span>{moment(item.time).fromNow()}</span>
-                      </div>
-                      {item.isUnread === 1 && (
-                        <span className="newNotify">new</span>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          {isLoggin ? (
-            <div className="profile-menu" ref={profileMenuRef}>
-              <img
-                src={user1?.image || userprofileimg}
-                alt="User"
-                className="userimg"
-                onClick={handleProfileToggle}
-              />
-              {profileMenuOpen && (
-                <div className="profile-dropdown">
-                  <div
-                    className="profile-dropdown-header"
-                    onClick={() => handleItemClick(handleEditProfile)}
-                    title="Open My Profile & Dashboard"
-                  >
-                    <div className="profile-avatar-wrapper">
-                      <img
-                        src={user1?.image || userprofileimg}
-                        alt={user1?.name || "User"}
-                        className="user-dropdown-avatar"
-                      />
-                      {isMember && (
-                        <span className="member-badge-star" title="VIP Devotee">
-                          💎
-                        </span>
-                      )}
-                    </div>
-                    <div className="profile-user-info">
-                      <div className="profile-name-row">
-                        <h4 className="user-dropdown-name">
-                          {user1?.name ? user1.name : "Devotee"}
-                        </h4>
-                        <span
-                          className="edit-profile-icon-btn"
-                          title="Edit Profile"
-                        >
-                          <FaEdit />
-                        </span>
-                      </div>
-                      <p className="user-dropdown-meta">
-                        {user1?.mobile || "Verified Devotee"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Sacred Wallet Box */}
-                  <div
-                    className="profile-wallet-card"
-                    onClick={() => handleItemClick(() => navigate("/editprofile", { state: { activeTab: "wallet" } }))}
-                  >
-                    <div className="wallet-card-left">
-                      <div className="wallet-icon-box">
-                        <FaWallet />
-                      </div>
-                      <div className="wallet-info">
-                        <span className="wallet-label">Pooja Wallet</span>
-                        <span className="wallet-amount">
-                          ₹ {Number(user1?.balance || 0).toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                    <button className="wallet-recharge-btn" type="button">
-                      + Recharge
-                    </button>
-                  </div>
-
-                  {/* Quick Profile Menu Links */}
-                  <div className="profile-quick-menu-links">
-                    <div
-                      className="profile-menu-item"
-                      onClick={() => handleItemClick(() => navigate("/editprofile", { state: { activeTab: "profile" } }))}
-                    >
-                      <FaEdit className="p-item-icon" />
-                      <span>My Profile & Dashboard</span>
-                    </div>
-                  </div>
-
-                  {/* Logout Button */}
-                  <div
-                    className="profile-logout-btn"
-                    onClick={handleProfileLogout}
-                  >
-                    <MdLogout className="logout-icon-svg" />
-                    <span>Logout Account</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              <button className="login-btn" onClick={openPopup}>
-                Login
-              </button>
-            </>
-          )}
-
-          {!isLoggin && (
-            <Link
-              to="https://play.google.com/store/apps/details?id=com.prabhupooja"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <button className="download-btn">Get App</button>
-            </Link>
-          )}
-
-          {/* <GoogleTranslate /> */}
-
-          <button
-            type="button"
-            className="open-menu-btn"
-            ref={openMenuBtnRef}
-            onClick={toggleMenu}
-          >
-            <HiOutlineMenuAlt1 size={25} />
-          </button>
-        </div>
-      </div>
-
-      {isLoginPopup && (
-        <Login
-          onCloseLogin={closePopup}
-          onOpenOtp={openOtpPopup}
-          setLoginInput={setLoginInput}
-          onOpenSignup={openSingPopup}
-        />
-      )}
-      {isOtpPopup && (
-        <OtpPopup closeOtpPopup={closeOtpPopup} inputOTP={loginInput} />
-      )}
-
-      {isSingupPopup && (
-        <Signup closeSingClose={closeSingPopup} onOpenLogin={openPopup} />
-      )}
+        {isSingupPopup && (
+          <Signup closeSingClose={closeSingPopup} onOpenLogin={openPopup} />
+        )}
       </header>
       <div className="header-spacer" aria-hidden="true" />
     </>

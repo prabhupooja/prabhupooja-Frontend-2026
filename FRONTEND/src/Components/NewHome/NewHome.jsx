@@ -26,7 +26,7 @@ import jobimg from "../../Components/Assets/34.png";
 import ganeshBannerHindi from "../Assets/ganesh_banner_hindi.jpg";
 import ganeshBannerEnglish from "../Assets/ganesh_banner_english.png";
 
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import CryptoJS from "crypto-js";
 import Swal from "sweetalert2";
@@ -39,17 +39,17 @@ const calculateProductDiscount = (product) => {
   if (!product) return null;
   const original = Number(product.price || product.mrp || 0);
   const current = Number(product.offerPrice || product.discount_price || product.selling_price || original);
-  
+
   if (original > 0 && current > 0 && original > current) {
     const pct = Math.round(((original - current) / original) * 100);
     if (pct > 0 && pct < 100) return `${pct}% OFF`;
   }
-  
+
   if (product.discount) {
     const rawNum = parseInt(String(product.discount).replace(/\D/g, ""), 10);
     if (rawNum > 0 && rawNum < 100) return `${rawNum}% OFF`;
   }
-  
+
   return null;
 };
 
@@ -505,25 +505,25 @@ const NewHome = () => {
 
   const handleAddToCart = async (productId) => {
     setAddCartloading(productId);
-      try {
-        const quantity = quantities[productId] || 1;
-        const response = await addToCart({
-          user_id: user1?.id,
-          product:productId,
-          quantity: quantity,
-        });
-        getCartItems(user1?.id);
-        Swal.fire(
-          response.success ? "Success" : "Failed",
-          response.success ? "Product added to cart" : "Could not add to cart",
-          response.success ? "success" : "error"
-        );
-      } catch {
-        Swal.fire("Error", "Something went wrong", "error");
-        setAddCartloading(null);
-      } finally {
-        setAddCartloading(null);
-      }
+    try {
+      const quantity = quantities[productId] || 1;
+      const response = await addToCart({
+        user_id: user1?.id,
+        product: productId,
+        quantity: quantity,
+      });
+      getCartItems(user1?.id);
+      Swal.fire(
+        response.success ? "Success" : "Failed",
+        response.success ? "Product added to cart" : "Could not add to cart",
+        response.success ? "success" : "error"
+      );
+    } catch {
+      Swal.fire("Error", "Something went wrong", "error");
+      setAddCartloading(null);
+    } finally {
+      setAddCartloading(null);
+    }
   };
 
   return (
@@ -545,8 +545,8 @@ const NewHome = () => {
                 ? rawImg.startsWith("http://") || rawImg.startsWith("https://") || rawImg.startsWith("data:") || rawImg.startsWith("blob:")
                   ? rawImg
                   : rawImg.startsWith("/")
-                  ? `${process.env.REACT_APP_BASE_URL || ""}${rawImg}`
-                  : `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
+                    ? `${process.env.REACT_APP_BASE_URL || ""}${rawImg}`
+                    : `${process.env.REACT_APP_BASE_URL || ""}/${rawImg}`
                 : rawImg;
 
             const targetUrl = slide?.redirect_url || slide?.link || slide?.url;
@@ -588,8 +588,8 @@ const NewHome = () => {
           })}
         </Swiper>
       </div>
-      <Bhagwatkatha/>
-      <Events/>
+      <Bhagwatkatha />
+      <Events />
       <div className="fp-section">
         <div className="fp-header">
           <h2>
@@ -626,7 +626,7 @@ const NewHome = () => {
                 </div>
                 <div className="fp-card-content">
                   <p className="fp-category">{product.style || "Sacred Pooja Item"}</p>
-                  <h3 
+                  <h3
                     className="fp-title"
                     onClick={() =>
                       navigate(`/productdetails/${encryptId(product.id)}`)
@@ -912,7 +912,7 @@ const NewHome = () => {
             return (
               <div className="fp-card" key={product.id}>
                 {discountLabel && <span className="fp-discount">{discountLabel}</span>}
-                <div 
+                <div
                   className="fp-img"
                   onClick={() =>
                     navigate(`/productdetails/${encryptId(product.id)}`)
@@ -925,7 +925,7 @@ const NewHome = () => {
                 </div>
                 <div className="fp-card-content">
                   <span className="fp-category">{product.style || "Pooja Decor"}</span>
-                  <h3 
+                  <h3
                     className="fp-title"
                     onClick={() =>
                       navigate(`/productdetails/${encryptId(product.id)}`)
