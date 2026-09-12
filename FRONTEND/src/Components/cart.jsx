@@ -9,6 +9,7 @@ import { TailSpin } from "react-loader-spinner";
 import { IoCartOutline, IoTrashOutline, IoShieldCheckmarkOutline } from "react-icons/io5";
 import { BiShoppingBag } from "react-icons/bi";
 import { FaTruck, FaArrowRight } from "react-icons/fa";
+import { normalizeImageUrl } from "../utils/imageHelper";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -145,10 +146,18 @@ const Cart = () => {
 
   const handleCheckout = () => {
     const productId = cartItems?.map((item) => item.productId || item.product?.id || item.id);
-    const quantity = cartItems?.map((item) => item.quantity || 1);
-    const image = cartItems?.map((item) => item.image?.[0] || item.product?.image?.[0] || prasadimg);
+    const quantity = cartItems?.map((item) => Number(item.quantity) || 1);
+    const image = cartItems?.map((item) =>
+      normalizeImageUrl(
+        item.image ||
+        item.product?.image ||
+        item.product?.images ||
+        item.images,
+        prasadimg
+      )
+    );
     const name = cartItems?.map((item) => item.productName || item.product?.productName || "Spiritual Prasad");
-    const marchentId = cartItems?.map((item) => item.merchantId || item.product?.merchantId);
+    const marchentId = cartItems?.map((item) => item.merchantId || item.product?.merchantId || 1);
 
     const totalPrice = productDataPrice + deliveryCharges;
 
@@ -217,7 +226,10 @@ const Cart = () => {
               {cartItems.map((item, index) => {
                 const product = item.product || {};
                 const currentId = item.productId || product.id || item.id || index;
-                const itemImg = item.image?.[0] || product.image?.[0] || prasadimg;
+                const itemImg = normalizeImageUrl(
+                  item.image || product.image || product.images || item.images,
+                  prasadimg
+                );
                 const itemName = item.productName || product.productName || item.name || "Pooja Product";
                 const unitPrice = Number(item.offerPrice || product.offerPrice || product.price || item.price || 0);
                 const originalPrice = Number(product.price || product.mrp || (unitPrice > 0 ? unitPrice * 1.25 : 0));

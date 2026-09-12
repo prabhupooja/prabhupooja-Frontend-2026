@@ -18,6 +18,7 @@ import useAuthStore from "../../Store/UserStore/userAuthStore";
 import useHomeStore from "../../Store/dataStore/homeStore";
 import useEcommerceBannerStore from "../../Store/ecommerceBannerStore/ecommerceBannerStore";
 import DynamicPromoBanner from "./DynamicPromoBanner";
+import api from "../Axios/api";
 import { TailSpin } from "react-loader-spinner";
 import CryptoJS from "crypto-js";
 import {
@@ -373,7 +374,8 @@ const EcommerceNew2 = () => {
 
   const lastProductRef = useRef(null);
 
-  const { addToCart, getCartItems } = useUserCardStore();
+  const { addToCart, getCartItems, cartItems, deleteFromCart, setCartItems } =
+    useUserCardStore();
   const { user1 } = useAuthStore();
   const {
     products = [],
@@ -381,6 +383,32 @@ const EcommerceNew2 = () => {
     getFilterProducts,
     isLoading,
   } = useHomeStore();
+
+  const totalCartCount = useMemo(() => {
+    return (cartItems || []).reduce(
+      (sum, item) => sum + Number(item.quantity || 1),
+      0
+    );
+  }, [cartItems]);
+
+  const totalCartAmount = useMemo(() => {
+    return (cartItems || []).reduce((sum, item) => {
+      const price = Number(
+        item.product?.offerPrice ||
+          item.product?.price ||
+          item.offerPrice ||
+          item.price ||
+          0
+      );
+      return sum + price * Number(item.quantity || 1);
+    }, 0);
+  }, [cartItems]);
+
+  useEffect(() => {
+    if (user1?.id) {
+      getCartItems(user1.id);
+    }
+  }, [user1, getCartItems]);
 
   // Debounced search handler
   const debounceSearch = useCallback(
@@ -550,12 +578,10 @@ const EcommerceNew2 = () => {
       });
       getCartItems(user1?.id);
       Swal.fire({
-        icon: response.success ? "success" : "error",
-        title: response.success ? "Added to Cart!" : "Could Not Add",
-        text: response.success
-          ? `"${product.productName}" added to your sacred cart.`
-          : "Please try again.",
-        timer: 1800,
+        icon: response?.success !== false ? "success" : "error",
+        title: response?.success !== false ? "Added to Cart!" : "Could Not Add",
+        text: `"${product.productName}" added to your sacred cart.`,
+        timer: 1400,
         showConfirmButton: false,
       });
     } catch {
@@ -563,11 +589,133 @@ const EcommerceNew2 = () => {
         icon: "error",
         title: "Error",
         text: "Something went wrong while adding product.",
-        timer: 2000,
+        timer: 1800,
         showConfirmButton: false,
       });
     } finally {
       setLoading(null);
+    }
+  };
+
+  // ➕ Increment Cart Quantity (+ button)
+  const handleIncrementCart = async (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLoading(product.id);
+
+    const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+    const isInGuestCart = guestCart.some(
+      (item) => (item.productId || item.product?.id || item.id) === product.id
+    );
+
+    if (isInGuestCart || !user1) {
+      const currentCart = guestCart.length > 0 ? guestCart : cartItems || [];
+      const updatedCart = currentCart.map((item) =>
+        (item.productId || item.product?.id || item.id) === product.id
+          ? { ...item, quantity: (Number(item.quantity) || 1) + 1 }
+          : item
+      );
+      localStorage.setItem("guestCart", JSON.stringify(updatedCart));
+      setCartItems(updatedCart);
+      setLoading(null);
+    } else if (user1) {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await api.post(
+          "/cart/update-quantity",
+          {
+            user_id: user1.id,
+            productId: product.id,
+            action: "increment",
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data?.success) {
+          const updatedItems = (cartItems || []).map((item) =>
+            (item.productId || item.product?.id || item.id) === product.id
+              ? { ...item, quantity: response.data.quantity }
+              : item
+          );
+          setCartItems(updatedItems);
+        } else {
+          await addToCart({ user_id: user1.id, product: product, quantity: 1 });
+          getCartItems(user1.id);
+        }
+      } catch (err) {
+        console.error("Error increasing quantity:", err);
+        try {
+          await addToCart({ user_id: user1.id, product: product, quantity: 1 });
+          getCartItems(user1.id);
+        } catch {}
+      } finally {
+        setLoading(null);
+      }
+    }
+  };
+
+  // ➖ Decrement Cart Quantity (- button)
+  const handleDecrementCart = async (e, product, currentQty) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLoading(product.id);
+
+    // If 1 or less, remove item from cart
+    if (currentQty <= 1) {
+      try {
+        await deleteFromCart(product.id);
+        if (user1?.id) {
+          getCartItems(user1.id);
+        }
+      } catch (err) {
+        console.error("Error removing item:", err);
+      } finally {
+        setLoading(null);
+      }
+      return;
+    }
+
+    const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+    const isInGuestCart = guestCart.some(
+      (item) => (item.productId || item.product?.id || item.id) === product.id
+    );
+
+    if (isInGuestCart || !user1) {
+      const currentCart = guestCart.length > 0 ? guestCart : cartItems || [];
+      const updatedCart = currentCart.map((item) =>
+        (item.productId || item.product?.id || item.id) === product.id
+          ? { ...item, quantity: Math.max(1, (Number(item.quantity) || 1) - 1) }
+          : item
+      );
+      localStorage.setItem("guestCart", JSON.stringify(updatedCart));
+      setCartItems(updatedCart);
+      setLoading(null);
+    } else if (user1) {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await api.post(
+          "/cart/update-quantity",
+          {
+            user_id: user1.id,
+            productId: product.id,
+            action: "decrement",
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data?.success) {
+          const updatedItems = (cartItems || []).map((item) =>
+            (item.productId || item.product?.id || item.id) === product.id
+              ? { ...item, quantity: response.data.quantity }
+              : item
+          );
+          setCartItems(updatedItems);
+        }
+      } catch (err) {
+        console.error("Error decreasing quantity:", err);
+      } finally {
+        setLoading(null);
+      }
     }
   };
 
@@ -1009,6 +1157,13 @@ const EcommerceNew2 = () => {
                       )
                     : 0;
 
+                  const cartItem = (cartItems || []).find(
+                    (item) =>
+                      (item.productId || item.product?.id || item.id) ===
+                      product.id
+                  );
+                  const inCartQty = Number(cartItem?.quantity || 0);
+
                   return (
                     <div
                       className="ecom-product-card"
@@ -1075,23 +1230,79 @@ const EcommerceNew2 = () => {
                           )}
                         </div>
 
-                        {/* Action CTA Button */}
-                        <button
-                          className="card-add-btn"
-                          onClick={(e) => handleAddToCart(e, product)}
-                          disabled={loading === product.id}
-                        >
-                          {loading === product.id ? (
-                            <>
-                              <TailSpin height="16" width="16" color="#fff" />
-                              Adding...
-                            </>
-                          ) : (
-                            <>
-                              <FaShoppingCart /> Add to Cart
-                            </>
-                          )}
-                        </button>
+                        {/* Action CTA Button or Interactive Stepper with Go to Cart */}
+                        {inCartQty > 0 ? (
+                          <div className="card-stepper-and-cart-row">
+                            <div
+                              className="card-qty-stepper"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                            >
+                              <button
+                                type="button"
+                                className="qty-stepper-btn"
+                                onClick={(e) =>
+                                  handleDecrementCart(e, product, inCartQty)
+                                }
+                                disabled={loading === product.id}
+                                title="Decrease Quantity"
+                              >
+                                −
+                              </button>
+                              <span className="qty-stepper-value">
+                                {loading === product.id ? (
+                                  <TailSpin
+                                    height="14"
+                                    width="14"
+                                    color="#ea580c"
+                                  />
+                                ) : (
+                                  inCartQty
+                                )}
+                              </span>
+                              <button
+                                type="button"
+                                className="qty-stepper-btn"
+                                onClick={(e) => handleIncrementCart(e, product)}
+                                disabled={loading === product.id}
+                                title="Increase Quantity"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <button
+                              type="button"
+                              className="card-quick-view-cart-btn"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navigate("/cart");
+                              }}
+                              title="Go to Cart"
+                            >
+                              Cart <FaArrowRight size={10} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            className="card-add-btn"
+                            onClick={(e) => handleAddToCart(e, product)}
+                            disabled={loading === product.id}
+                          >
+                            {loading === product.id ? (
+                              <>
+                                <TailSpin height="16" width="16" color="#fff" />
+                                Adding...
+                              </>
+                            ) : (
+                              <>
+                                <FaShoppingCart /> Add to Cart
+                              </>
+                            )}
+                          </button>
+                        )}
                       </div>
                     </div>
                   );
@@ -1109,6 +1320,31 @@ const EcommerceNew2 = () => {
           </main>
         </div>
       </div>
+
+      {/* 🛍️ Floating Sticky Bottom Cart Bar */}
+      {totalCartCount > 0 && (
+        <div
+          className="floating-cart-bar"
+          onClick={() => navigate("/cart")}
+          title="Proceed to Sacred Cart"
+        >
+          <div className="floating-cart-left">
+            <div className="floating-cart-badge">
+              <FaShoppingCart />
+              <span>
+                {totalCartCount} {totalCartCount === 1 ? "Item" : "Items"}
+              </span>
+            </div>
+            <div className="floating-cart-price">
+              ₹{totalCartAmount.toLocaleString("en-IN")}
+            </div>
+          </div>
+          <div className="floating-cart-right">
+            <span>View Cart</span>
+            <FaArrowRight size={12} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

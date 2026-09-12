@@ -30,28 +30,39 @@ html, body {
 
 .whatsapp-icon {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 56px;
-  height: 56px;
+  bottom: 24px;
+  right: 20px;
+  width: 54px;
+  height: 54px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #25d366;
   border-radius: 50%;
   padding: 0;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);
   color: white;
-  z-index: 1000;
+  z-index: 999;
   transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
-  font-size: 24px;
+  font-size: 26px;
   animation: whatsapp-bubble 2.5s ease-in-out infinite;
 }
 
 .whatsapp-icon:hover {
   background-color: #128c7e;
-  transform: scale(1.06);
-  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
+  transform: scale(1.08);
+  box-shadow: 0 12px 24px rgba(18, 140, 126, 0.4);
+}
+
+@media (max-width: 640px) {
+  .whatsapp-icon {
+    width: 46px;
+    height: 46px;
+    font-size: 22px;
+    bottom: 18px;
+    right: 14px;
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.35);
+  }
 }
 
 @keyframes whatsapp-bubble {
@@ -61,7 +72,7 @@ html, body {
   }
   30%,
   60% {
-    transform: translateY(-6px);
+    transform: translateY(-5px);
   }
 }
 

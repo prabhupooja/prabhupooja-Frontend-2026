@@ -846,7 +846,7 @@ const OrderTracking = () => {
           )}
 
           {/* Courier Name & Tracking Number Banner (Shipped Orders) */}
-          {(trackingData?.courier_name || trackingData?.tracking_number) && (
+          {(trackingData?.courier_name || trackingData?.courier || trackingData?.tracking_number || trackingData?.trackingNumber) && (
             <div
               style={{
                 background: "#eff6ff",
@@ -865,8 +865,8 @@ const OrderTracking = () => {
                   Dispatched via Express Courier
                 </span>
                 <p style={{ margin: "2px 0 0", color: "#1e3a8a", fontWeight: "700", fontSize: "14px" }}>
-                  {trackingData.courier_name || "Express Courier"}
-                  {trackingData.tracking_number ? ` — Tracking AWB: ${trackingData.tracking_number}` : ""}
+                  {(trackingData?.courier_name || trackingData?.courier || "Express Courier")}
+                  {(trackingData?.tracking_number || trackingData?.trackingNumber) ? ` — Tracking AWB: ${trackingData?.tracking_number || trackingData?.trackingNumber}` : ""}
                 </p>
               </div>
             </div>

@@ -7,24 +7,39 @@ import useUserStore from "../../Store/UserStore/userStore";
 import { FaRegCalendarTimes, FaShoppingBag, FaBoxOpen, FaTruck, FaChevronRight, FaUndoAlt, FaEye } from "react-icons/fa";
 import ReturnRequestModal from "../OrderTracking/ReturnRequestModal";
 import ReturnStatusModal from "../OrderTracking/ReturnStatusModal";
+import { normalizeImageUrl, DEFAULT_FALLBACK_IMAGE } from "../../utils/imageHelper";
 
 // Helper function to safely parse image urls from API
 const parseImages = (imgs) => {
   if (!imgs) return [];
-  if (Array.isArray(imgs)) return imgs.filter(Boolean);
-  if (typeof imgs === "string") {
-    try {
-      const parsed = JSON.parse(imgs);
-      if (Array.isArray(parsed)) return parsed.filter(Boolean);
-      if (typeof parsed === "string") return [parsed];
-    } catch (e) {
-      if (imgs.includes(",")) {
-        return imgs.split(",").map((s) => s.trim()).filter(Boolean);
+  let rawList = [];
+
+  if (Array.isArray(imgs)) {
+    rawList = imgs;
+  } else if (typeof imgs === "string") {
+    const trimmed = imgs.trim();
+    if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) rawList = parsed;
+        else if (typeof parsed === "string") rawList = [parsed];
+        else rawList = [trimmed];
+      } catch (e) {
+        rawList = [trimmed];
       }
-      return [imgs.trim()].filter(Boolean);
+    } else if (trimmed.includes(",")) {
+      rawList = trimmed.split(",");
+    } else if (trimmed) {
+      rawList = [trimmed];
     }
   }
-  return [];
+
+  const cleanList = rawList
+    .flat(Infinity)
+    .map((item) => normalizeImageUrl(item, ""))
+    .filter((url) => url && url.length > 4 && url !== "[" && url !== "]");
+
+  return cleanList;
 };
 
 // Helper function to safely parse quantities
@@ -185,7 +200,8 @@ function EcommerceBookingPage() {
                           alt={`Order ${order.orderId}`}
                           className="order-image"
                           onError={(e) => {
-                            e.target.src = "https://images.unsplash.com/photo-1609803384069-1cac597d3df4?w=120";
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_FALLBACK_IMAGE;
                           }}
                         />
                         {quantitiesList[imgIndex] !== undefined && (
@@ -196,9 +212,21 @@ function EcommerceBookingPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="no-image-placeholder">
-                      <FaBoxOpen size={28} color="#9ca3af" />
-                      <span>{order.productName || "Spiritual Item"}</span>
+                    <div
+                      className="image-wrapper"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigate(order.orderId, order);
+                      }}
+                    >
+                      <img
+                        src={DEFAULT_FALLBACK_IMAGE}
+                        alt={`Order ${order.orderId}`}
+                        className="order-image"
+                      />
+                      <div className="quantity-badge">
+                        ×{quantitiesList[0] || 1}
+                      </div>
                     </div>
                   )}
                 </div>

@@ -9,6 +9,7 @@ import CryptoJS from "crypto-js";
 import { TailSpin } from "react-loader-spinner";
 import ReturnRequestModal from "../OrderTracking/ReturnRequestModal";
 import ReturnStatusModal from "../OrderTracking/ReturnStatusModal";
+import { normalizeImageUrl, DEFAULT_FALLBACK_IMAGE } from "../../utils/imageHelper";
 
 function Bookingdetailspage() {
   const { id } = useParams();
@@ -42,6 +43,50 @@ function Bookingdetailspage() {
   const [rating, setRating] = useState(0);
   const ratingLabels = ["Very Bad", "Bad", "Ok-Ok", "Good", "Very Good"];
 
+  // 🛡️ Helper: Normalize any product data shape from API
+  const normalizeProduct = (item, orderFallback = null) => {
+    if (!item && !orderFallback) return null;
+    const p = Array.isArray(item) ? item[0] : item || {};
+
+    const name =
+      p.productName ||
+      p.productTitle ||
+      p.name ||
+      p.title ||
+      orderFallback?.productName ||
+      orderFallback?.product_name ||
+      "Sacred Devotional Item";
+
+    const price = Number(
+      p.productOfferPrice ??
+      p.offerPrice ??
+      p.price ??
+      orderFallback?.productOfferPrice ??
+      orderFallback?.offerPrice ??
+      orderFallback?.price ??
+      orderFallback?.totalPrice ??
+      0
+    );
+
+    const rawImg =
+      p.productImage ||
+      p.image ||
+      p.images ||
+      orderFallback?.images ||
+      orderFallback?.image;
+
+    const image = normalizeImageUrl(rawImg, DEFAULT_FALLBACK_IMAGE);
+
+    return {
+      ...p,
+      productId: p.productId || p.id || orderFallback?.productId || id || 1,
+      merchantId: p.merchantId || orderFallback?.merchantId || 1,
+      productName: name,
+      productOfferPrice: price,
+      productImage: image,
+    };
+  };
+
   const encryptId = (ID) => {
     const encrypted = CryptoJS.AES.encrypt(
       ID.toString(),
@@ -50,12 +95,13 @@ function Bookingdetailspage() {
     return encodeURIComponent(encrypted);
   };
 
+  const handleRating = (rawItem, selectedStar = 5) => {
+    const item = rawItem || (products && products.length > 0 ? products[0] : orderData);
+    const p = normalizeProduct(item, orderData);
+    const merchantId = encryptId(p?.merchantId || orderData?.merchantId || 1);
+    const productId = encryptId(p?.productId || orderData?.productId || id);
 
-  const handleRating = (value) => {
-  let merchantId=encryptId(value[0][0].merchantId)
-  let productId=encryptId(value[0][0].productId)
-
-    navigate(`/productreview/?Id1=${merchantId}&Id2=${productId}`);
+    navigate(`/productreview?Id1=${merchantId}&Id2=${productId}&rating=${selectedStar}`);
   };
 
   const handleCancelButtonClick = () => {
@@ -101,7 +147,6 @@ function Bookingdetailspage() {
 
   const handleCancelOrderWithReason = () => {
     const finalReason = customReason || cancelReason;
-    // console.log(`Order cancelled because: ${finalReason}`);
     setShowPopup(false);
     handleCancelOrder();
   };
@@ -115,18 +160,21 @@ function Bookingdetailspage() {
   const fetchOrdersbyId = async () => {
     try {
       const response = await userOrdersFetchByOrderId(id);
-      if (response.data.success) {
-        setOrderData(response?.data?.orders || { orderId: id, totalPrice: totalPrice });
-        setPaymentMethod(response?.data?.orders?.paymentMethod);
-        const fetchedProducts = response.data.products;
-        if (Array.isArray(fetchedProducts)) {
-          setProducts(fetchedProducts);
+      const raw = response?.data || response;
+      if (raw?.success || raw?.orders || raw?.data) {
+        const ord = raw?.orders || raw?.data?.orders || raw?.data || {};
+        setOrderData(ord);
+        setPaymentMethod(ord?.paymentMethod || ord?.payment_method || "UPI");
 
-          setQuantity(quantities);
-          setInvoiceUrl(response?.data?.pathUrl);
-        } else {
-          setError("Invalid product data received");
+        let fetchedProducts = raw?.products || raw?.data?.products || [];
+        if (!Array.isArray(fetchedProducts) || fetchedProducts.length === 0) {
+          if (ord?.productName || ord?.images || ord?.totalPrice) {
+            fetchedProducts = [ord];
+          }
         }
+        setProducts(fetchedProducts);
+        setQuantity(quantities);
+        setInvoiceUrl(raw?.pathUrl || raw?.data?.pathUrl);
       } else {
         setError("Failed to fetch order details");
       }
@@ -140,40 +188,45 @@ function Bookingdetailspage() {
     await orderCancel(id, { cancelReason: customReason || cancelReason });
   };
 
-  const totalPrice = products.reduce((sum, product, index) => {
-    if (product && product[0]) {
-      return sum + product[0].productOfferPrice * (quantity?.[index] || 0);
-    }
-    return sum;
-  }, 0);
+  const activeProductList =
+    products && products.length > 0
+      ? products
+      : orderData
+      ? [orderData]
+      : [];
+
+  const totalActiveQuantity = activeProductList.reduce(
+    (sum, _, idx) =>
+      sum + Number(quantities?.[idx] ?? orderData?.quantity ?? 1),
+    0
+  );
+
+  const calculatedItemsTotal = activeProductList.reduce(
+    (sum, item, index) => {
+      const p = normalizeProduct(item, orderData);
+      if (!p) return sum;
+      const q = Number(quantities?.[index] ?? orderData?.quantity ?? 1);
+      return sum + p.productOfferPrice * q;
+    },
+    0
+  );
+
+  const totalPrice = Number(
+    orderData?.totalPrice ||
+    orderData?.total_price ||
+    orderData?.amount ||
+    calculatedItemsTotal ||
+    0
+  );
+
+  const deliveryFee =
+    totalPrice > calculatedItemsTotal
+      ? totalPrice - calculatedItemsTotal
+      : 0;
 
   const handleTrackOrder = () => {
     navigate(`/track-order/${id}`);
   };
-
-
-    
-
-
-  if (isLoading) {
-     return (
-       <>
-         <div
-           style={{
-             display: "flex",
-             justifyContent: "center",
-             alignItems: "center",
-             height: "5vh",
-             marginTop: "50px",
-           }}
-         >
-           <TailSpin height="50" width="50" color="orange" />
-         </div>
-         <p className="loading_text">Loading...</p>
-       </>
-     );
-   }
- 
 
   const generateDirectTaxInvoice = () => {
     const orderRefId = !isNaN(Number(id)) ? Number(id) + 1000 : id;
@@ -195,7 +248,7 @@ function Bookingdetailspage() {
       const prod = Array.isArray(item) ? item[0] : item;
       const title = prod?.productName || prod?.productTitle || prod?.title || "Sacred Devotional Item";
       const price = Number(prod?.productOfferPrice || prod?.offerPrice || prod?.price || 0);
-      const qty = Number(quantity?.[idx] || 1);
+      const qty = Number(quantities?.[idx] || 1);
       return `
         <tr>
           <td style="padding: 10px 12px; border: 1px solid #cbd5e1; text-align: center;">${idx + 1}</td>
@@ -467,6 +520,42 @@ function Bookingdetailspage() {
     }
   };
 
+  if (isLoading) {
+     return (
+       <>
+         <div
+           style={{
+             display: "flex",
+             justifyContent: "center",
+             alignItems: "center",
+             height: "80vh",
+             flexDirection: "column",
+           }}
+         >
+           <TailSpin
+             visible={true}
+             height="60"
+             width="60"
+             color="#ea580c"
+             ariaLabel="tail-spin-loading"
+             radius="1"
+           />
+           <p style={{ marginTop: "16px", color: "#6b7280", fontWeight: "600" }}>
+             Loading Sacred Order Details...
+           </p>
+         </div>
+       </>
+     );
+  }
+
+  if (error) {
+    return (
+      <div className="order-detail-page">
+        <p className="error">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="order-detail-page">
       <h1 className="page-title">Order Details</h1>
@@ -476,29 +565,58 @@ function Bookingdetailspage() {
         {/* Product List */}
         <div className="product-list-container">
           <div className="product-list">
-            {products.map(
-              (product, index) =>
-                product &&
-                product[0] && (
-                  <div key={product[0].productId} className="product-card">
-                    <img
-                      src={product[0].productImage[0]}
-                      alt={product[0].productName}
-                      className="product-image"
-                    />
-                    <div className="product-info">
-                      <h2 className="product-name">{product[0].productName}</h2>
-                      <p className="product-price">
-                        Price:{" "}
-                        <span>&#8377;{product[0].productOfferPrice}</span>
-                      </p>
-                      <p className="product-quantity">
-                        Quantity: <span>{quantity?.[index] || 0}</span>
-                      </p>
-                    </div>
+            {activeProductList.map((rawProduct, index) => {
+              const product = normalizeProduct(rawProduct, orderData);
+              if (!product) return null;
+              const itemQty = Number(
+                quantities?.[index] ?? orderData?.quantity ?? 1
+              );
+
+              return (
+                <div key={product.productId || index} className="product-card">
+                  <img
+                    src={product.productImage}
+                    alt={product.productName}
+                    className="product-image"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = DEFAULT_FALLBACK_IMAGE;
+                    }}
+                  />
+                  <div className="product-info">
+                    <h2 className="product-name">{product.productName}</h2>
+                    <p className="product-price">
+                      Price:{" "}
+                      <span>&#8377;{product.productOfferPrice}</span>
+                    </p>
+                    <p className="product-quantity">
+                      Quantity: <span>{itemQty}</span>
+                    </p>
+                    <button
+                      type="button"
+                      className="item-rate-btn"
+                      onClick={() => handleRating(product, 5)}
+                      style={{
+                        marginTop: "10px",
+                        padding: "6px 14px",
+                        backgroundColor: "#fff7ed",
+                        color: "#ea580c",
+                        border: "1.5px solid #fed7aa",
+                        borderRadius: "6px",
+                        fontSize: "13px",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <FaStar color="#ea580c" size={14} /> Rate this Product
+                    </button>
                   </div>
-                )
-            )}
+                </div>
+              );
+            })}
           </div>
           {!isCancelled && (
             <div className="orderTrack-button">
@@ -559,41 +677,57 @@ function Bookingdetailspage() {
             <h2>Bill Summary</h2>
             <p>
               Order Date:{" "}
-              {orderDate ? new Date(orderDate).toLocaleDateString() : "N/A"}
+              {orderDate
+                ? new Date(orderDate).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : "Recent"}
             </p>
             <ul>
-              {products.map(
-                (product, index) =>
-                  product &&
-                  product[0] && (
-                    <li key={product[0].productId}>
-                      <span>{product[0].productName}</span>
-                      <span>
-                        &#8377;{product[0].productOfferPrice} x{" "}
-                        {quantity?.[index] || 0} =
-                        <strong>
-                          {" "}
-                          &#8377;
-                          {product[0].productOfferPrice *
-                            (quantity?.[index] || 0)}
-                        </strong>
-                      </span>
-                    </li>
-                  )
-              )}
+              {activeProductList.map((rawProduct, index) => {
+                const product = normalizeProduct(rawProduct, orderData);
+                if (!product) return null;
+                const itemQty = Number(
+                  quantities?.[index] ?? orderData?.quantity ?? 1
+                );
+                const itemTotal = product.productOfferPrice * itemQty;
+
+                return (
+                  <li key={product.productId || index}>
+                    <span>{product.productName}</span>
+                    <span>
+                      &#8377;{product.productOfferPrice} x {itemQty} =
+                      <strong> &#8377;{itemTotal.toFixed(2)}</strong>
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
+
+            {deliveryFee > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "6px 0",
+                  fontSize: "14px",
+                  color: "#6b7280",
+                }}
+              >
+                <span>Delivery & Handling:</span>
+                <span>+ ₹{deliveryFee.toFixed(2)}</span>
+              </div>
+            )}
+
             <p className="total-highlight">
-              Total Quantity:{" "}
-              <span>
-                {Array.isArray(quantity)
-                  ? quantity.reduce((sum, qty) => sum + qty, 0)
-                  : 0}
-              </span>
+              Total Quantity: <span>{totalActiveQuantity}</span>
             </p>
             <p className="total-highlight">
-              Total Price: <span>&#8377;{totalPrice.toFixed(2)}</span>
+              Total Price: <span>&#8377;{Number(totalPrice || 0).toFixed(2)}</span>
             </p>
-            <div className="bill-footer">Thank you for shopping with us!</div>
+            <div className="bill-footer">Thank you for shopping with us! 🙏</div>
 
             <div className="invoiceContainer" onClick={handleDownload}>
               <span>Download Your Invoice</span>
@@ -610,10 +744,18 @@ function Bookingdetailspage() {
                 orderData?.order_status ||
                 ""
               ).toLowerCase();
-              const isDelivered = statusStr.includes("deliver") || statusStr.includes("complete");
+              const isDelivered =
+                statusStr.includes("deliver") || statusStr.includes("complete");
 
               return (
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    marginTop: "12px",
+                  }}
+                >
                   {isDelivered && (
                     <button
                       type="button"
@@ -629,7 +771,7 @@ function Bookingdetailspage() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        gap: "6px"
+                        gap: "6px",
                       }}
                     >
                       <FaUndoAlt /> Request Return / Replacement
@@ -650,7 +792,7 @@ function Bookingdetailspage() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      gap: "6px"
+                      gap: "6px",
                     }}
                   >
                     <FaEye /> Check Return & Refund Status
@@ -661,24 +803,32 @@ function Bookingdetailspage() {
 
             <div className="rating-containermain">
               <h3 className="rating-title">How was your product?</h3>
-            
-                <div className="stars-row">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <div
-                      key={star}
-                      className="star-wrapper"
-                      onClick={() => handleRating(products)}
-                    >
-                      {rating >= star ? (
-                        <FaStar size={28} color="#FFD700" />
-                      ) : (
-                        <FaRegStar size={28} color="#ccc" />
-                      )}
-                      <div className="star-label">{ratingLabels[star - 1]}</div>
-                    </div>
-                  ))}
-                </div>
-           
+              <p style={{ fontSize: "13px", color: "#6b7280", marginTop: "-6px", marginBottom: "12px" }}>
+                Tap stars below to share your spiritual experience
+              </p>
+              <div className="stars-row">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <div
+                    key={star}
+                    className="star-wrapper"
+                    onClick={() =>
+                      handleRating(
+                        activeProductList.length > 0
+                          ? activeProductList[0]
+                          : orderData,
+                        star
+                      )
+                    }
+                  >
+                    {rating >= star ? (
+                      <FaStar size={28} color="#FFD700" />
+                    ) : (
+                      <FaRegStar size={28} color="#f59e0b" />
+                    )}
+                    <div className="star-label">{ratingLabels[star - 1]}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

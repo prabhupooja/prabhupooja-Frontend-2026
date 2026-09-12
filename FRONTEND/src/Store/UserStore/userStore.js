@@ -295,6 +295,18 @@ const useUserStore = create((set) => ({
     }
   },
 
+  deleteProductReview: async (reviewId) => {
+    try {
+      const response = await api.delete(
+        `/products/deleteReview/${reviewId}`,
+        useUserStore.getState().getAuthHeaders()
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   submitReturnOrder: async (payload) => {
     set({ isLoading: true });
     try {

@@ -360,76 +360,102 @@
 }
 
 @media (max-width: 768px) {
+  .order-detail-page {
+    margin: 20px auto;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
   .order-content {
     flex-direction: column;
     gap: 20px;
   }
 
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    justify-content: center;
+  }
+
   .product-card {
-    width: 180px;
+    max-width: 100%;
+    width: 100%;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .product-image {
-    width: 180px;
+    width: 100%;
+    max-width: 200px;
+    height: 140px;
+    object-fit: contain;
+  }
+
+  .bill-summary {
+    padding: 24px 20px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-detail-page {
+    margin: 10px 8px;
+    padding: 12px 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .product-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .product-card {
+    padding: 12px;
+  }
+
+  .product-image {
+    max-width: 160px;
     height: 120px;
   }
 
   .bill-summary {
-    padding: 40px;
-    max-width: 100%;
+    padding: 18px 14px;
+    border-radius: 10px;
   }
 
-  .page-title {
-    font-size: 24px;
+  .bill-summary h2 {
+    font-size: 18px;
+    margin-bottom: 14px;
   }
 
-  .product-name {
-    font-size: 12px;
-  }
-
-  .product-price,
-  .product-quantity {
-    font-size: 12px;
-  }
-
-  .total-highlight {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 576px) {
-  .order-detail-page {
-    padding: 15px;
-  }
-
-  .product-card {
-    width: 200px;
-  }
-
-  .product-image {
-    width: 160px;
-    height: 100px;
-  }
-
-  .bill-summary {
-    padding: 30px;
-  }
-
-  .page-title {
-    font-size: 20px;
-  }
-
-  .product-name {
-    font-size: 10px;
-  }
-
-  .product-price,
-  .product-quantity {
-    font-size: 10px;
+  .bill-summary p,
+  .bill-summary li {
+    font-size: 13px;
+    margin-bottom: 8px;
   }
 
   .total-highlight {
-    font-size: 14px;
+    font-size: 15px;
+    margin-top: 14px;
+    padding-top: 10px;
+  }
+
+  .stars-row {
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .star-label {
+    font-size: 10.5px;
+    width: 50px;
   }
 }
 

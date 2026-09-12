@@ -9,6 +9,8 @@ import { BiBadgeCheck } from "react-icons/bi";
 import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
+import { FaShoppingCart, FaArrowRight } from "react-icons/fa";
+import { TailSpin } from "react-loader-spinner";
 import testimonialImg from "../Assets/customerreview.jpeg";
 import testimonialImg1 from "../Assets/customerreview1.jpeg";
 import testimonialImg2 from "../Assets/customerreview2.jpeg";
@@ -284,7 +286,22 @@ const NewHome = () => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   const { isLoggin, userGet, user1, setIsLoginPopup } = useAuthStore();
-  const { addToCart, getCartItems } = useUserCardStore();
+  const { addToCart, getCartItems, cartItems, deleteFromCart, setCartItems } =
+    useUserCardStore();
+
+  const totalCartCount = (cartItems || []).reduce(
+    (sum, item) => sum + (Number(item.quantity) || 1),
+    0
+  );
+  const totalCartAmount = (cartItems || []).reduce((sum, item) => {
+    const price =
+      Number(item.product?.offerPrice) ||
+      Number(item.product?.price) ||
+      Number(item.offerPrice) ||
+      Number(item.price) ||
+      0;
+    return sum + price * (Number(item.quantity) || 1);
+  }, 0);
 
   const [newsletterLoading, setNewsletterLoading] = useState(false);
 
@@ -316,18 +333,12 @@ const NewHome = () => {
   };
 
   useEffect(() => {
-    if (isLoggin) {
-      const fetchUser = async () => {
-        try {
-          await userGet();
-        } catch (error) {
-          console.error("Error fetching user:", error);
-        }
-      };
-
-      fetchUser();
+    if (user1?.id) {
+      getCartItems(user1.id);
+    } else {
+      getCartItems();
     }
-  }, [isLoggin]);
+  }, [user1]);
 
   useEffect(() => {
     if (isLoggin) {
@@ -489,40 +500,172 @@ const NewHome = () => {
     }
   };
 
-  const handleIncrement = (id) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 1) + 1,
-    }));
-  };
-
-  const handleDecrement = (id) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: prev[id] > 1 ? prev[id] - 1 : 1,
-    }));
-  };
-
-  const handleAddToCart = async (productId) => {
-    setAddCartloading(productId);
+  // Add to cart handler with feedback
+  const handleAddToCart = async (e, product) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setAddCartloading(product.id);
     try {
-      const quantity = quantities[productId] || 1;
       const response = await addToCart({
         user_id: user1?.id,
-        product: productId,
-        quantity: quantity,
+        product: product,
+        quantity: 1,
       });
       getCartItems(user1?.id);
-      Swal.fire(
-        response.success ? "Success" : "Failed",
-        response.success ? "Product added to cart" : "Could not add to cart",
-        response.success ? "success" : "error"
-      );
+      Swal.fire({
+        icon: response?.success !== false ? "success" : "error",
+        title: response?.success !== false ? "Added to Cart!" : "Could Not Add",
+        text: `"${product.productName}" added to your sacred cart.`,
+        timer: 1400,
+        showConfirmButton: false,
+      });
     } catch {
-      Swal.fire("Error", "Something went wrong", "error");
-      setAddCartloading(null);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Something went wrong while adding product.",
+        timer: 1800,
+        showConfirmButton: false,
+      });
     } finally {
       setAddCartloading(null);
+    }
+  };
+
+  // ➕ Increment Cart Quantity (+ button)
+  const handleIncrementCart = async (e, product) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setAddCartloading(product.id);
+
+    const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+    const isInGuestCart = guestCart.some(
+      (item) => (item.productId || item.product?.id || item.id) === product.id
+    );
+
+    if (isInGuestCart || !user1) {
+      const currentCart = guestCart.length > 0 ? guestCart : cartItems || [];
+      const updatedCart = currentCart.map((item) =>
+        (item.productId || item.product?.id || item.id) === product.id
+          ? { ...item, quantity: (Number(item.quantity) || 1) + 1 }
+          : item
+      );
+      localStorage.setItem("guestCart", JSON.stringify(updatedCart));
+      setCartItems(updatedCart);
+      setAddCartloading(null);
+    } else if (user1) {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await api.post(
+          "/cart/update-quantity",
+          {
+            user_id: user1.id,
+            productId: product.id,
+            action: "increment",
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data?.success) {
+          const updatedItems = (cartItems || []).map((item) =>
+            (item.productId || item.product?.id || item.id) === product.id
+              ? { ...item, quantity: response.data.quantity }
+              : item
+          );
+          setCartItems(updatedItems);
+        } else {
+          await addToCart({ user_id: user1.id, product: product, quantity: 1 });
+          getCartItems(user1.id);
+        }
+      } catch (err) {
+        console.error("Error increasing quantity:", err);
+        try {
+          await addToCart({ user_id: user1.id, product: product, quantity: 1 });
+          getCartItems(user1.id);
+        } catch {}
+      } finally {
+        setAddCartloading(null);
+      }
+    }
+  };
+
+  // ➖ Decrement Cart Quantity (- button)
+  const handleDecrementCart = async (e, product, currentQty) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setAddCartloading(product.id);
+
+    // If 1 or less, remove item from cart
+    if (currentQty <= 1) {
+      try {
+        await deleteFromCart(product.id);
+        if (user1?.id) {
+          getCartItems(user1.id);
+        }
+      } catch (err) {
+        console.error("Error removing item:", err);
+      } finally {
+        setAddCartloading(null);
+      }
+      return;
+    }
+
+    const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+    const isInGuestCart = guestCart.some(
+      (item) => (item.productId || item.product?.id || item.id) === product.id
+    );
+
+    if (isInGuestCart || !user1) {
+      const currentCart = guestCart.length > 0 ? guestCart : cartItems || [];
+      const updatedCart = currentCart
+        .map((item) =>
+          (item.productId || item.product?.id || item.id) === product.id
+            ? { ...item, quantity: Math.max(0, (Number(item.quantity) || 1) - 1) }
+            : item
+        )
+        .filter((item) => item.quantity > 0);
+      localStorage.setItem("guestCart", JSON.stringify(updatedCart));
+      setCartItems(updatedCart);
+      setAddCartloading(null);
+    } else if (user1) {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await api.post(
+          "/cart/update-quantity",
+          {
+            user_id: user1.id,
+            productId: product.id,
+            action: "decrement",
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data?.success) {
+          const updatedItems = (cartItems || []).map((item) =>
+            (item.productId || item.product?.id || item.id) === product.id
+              ? { ...item, quantity: response.data.quantity }
+              : item
+          );
+          setCartItems(updatedItems);
+        } else {
+          await deleteFromCart(product.id);
+          getCartItems(user1.id);
+        }
+      } catch (err) {
+        console.error("Error decreasing quantity:", err);
+        try {
+          await deleteFromCart(product.id);
+          getCartItems(user1.id);
+        } catch {}
+      } finally {
+        setAddCartloading(null);
+      }
     }
   };
 
@@ -610,6 +753,13 @@ const NewHome = () => {
         <div className="fp-grid">
           {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
             const discountLabel = calculateProductDiscount(product);
+            const cartItem = (cartItems || []).find(
+              (item) =>
+                (item.productId || item.product?.id || item.id) === product.id
+            );
+            const inCartQty = Number(cartItem?.quantity || 0);
+            const isCardLoading = addCartloading === product.id;
+
             return (
               <div key={product.id} className="fp-card">
                 {discountLabel && <span className="fp-discount">{discountLabel}</span>}
@@ -643,24 +793,79 @@ const NewHome = () => {
                     )}
                   </div>
                   <div className="fp-footer">
-                    <div className="fp-quantity">
-                      <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
-                      <span>{quantities[product.id] || 1}</span>
-                      <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
-                    </div>
-                    <button
-                      className="fp-cart-btn"
-                      onClick={() => handleAddToCart(product)}
-                      disabled={addCartloading === product.id}
-                    >
-                      {addCartloading === product.id ? (
-                        "Adding..."
-                      ) : (
-                        <>
-                          <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
-                        </>
-                      )}
-                    </button>
+                    {inCartQty > 0 ? (
+                      <div className="card-stepper-and-cart-row">
+                        <div
+                          className="card-qty-stepper"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          <button
+                            type="button"
+                            className="qty-stepper-btn"
+                            onClick={(e) =>
+                              handleDecrementCart(e, product, inCartQty)
+                            }
+                            disabled={isCardLoading}
+                            title="Decrease Quantity"
+                          >
+                            −
+                          </button>
+                          <span className="qty-stepper-value">
+                            {isCardLoading ? (
+                              <TailSpin
+                                height="14"
+                                width="14"
+                                color="#ea580c"
+                              />
+                            ) : (
+                              inCartQty
+                            )}
+                          </span>
+                          <button
+                            type="button"
+                            className="qty-stepper-btn"
+                            onClick={(e) => handleIncrementCart(e, product)}
+                            disabled={isCardLoading}
+                            title="Increase Quantity"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          className="card-quick-view-cart-btn"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate("/cart");
+                          }}
+                          title="Go to Cart"
+                        >
+                          Cart <FaArrowRight size={10} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="fp-cart-btn"
+                        onClick={(e) => handleAddToCart(e, product)}
+                        disabled={isCardLoading}
+                      >
+                        {isCardLoading ? (
+                          <>
+                            <TailSpin height="16" width="16" color="#fff" />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <FaShoppingCart className="cart-btn-icon" /> Add to Cart
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -909,6 +1114,13 @@ const NewHome = () => {
         <div className="fp-grid">
           {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
             const discountLabel = calculateProductDiscount(product);
+            const cartItem = (cartItems || []).find(
+              (item) =>
+                (item.productId || item.product?.id || item.id) === product.id
+            );
+            const inCartQty = Number(cartItem?.quantity || 0);
+            const isCardLoading = addCartloading === product.id;
+
             return (
               <div className="fp-card" key={product.id}>
                 {discountLabel && <span className="fp-discount">{discountLabel}</span>}
@@ -942,24 +1154,79 @@ const NewHome = () => {
                     )}
                   </div>
                   <div className="fp-footer">
-                    <div className="fp-quantity">
-                      <button type="button" onClick={() => handleDecrement(product.id)}>−</button>
-                      <span>{quantities[product.id] || 1}</span>
-                      <button type="button" onClick={() => handleIncrement(product.id)}>+</button>
-                    </div>
-                    <button
-                      className="fp-cart-btn"
-                      onClick={() => handleAddToCart(product)}
-                      disabled={addCartloading === product.id}
-                    >
-                      {addCartloading === product.id ? (
-                        "Adding..."
-                      ) : (
-                        <>
-                          <AiOutlineShoppingCart className="cart-btn-icon" /> Add to Cart
-                        </>
-                      )}
-                    </button>
+                    {inCartQty > 0 ? (
+                      <div className="card-stepper-and-cart-row">
+                        <div
+                          className="card-qty-stepper"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          <button
+                            type="button"
+                            className="qty-stepper-btn"
+                            onClick={(e) =>
+                              handleDecrementCart(e, product, inCartQty)
+                            }
+                            disabled={isCardLoading}
+                            title="Decrease Quantity"
+                          >
+                            −
+                          </button>
+                          <span className="qty-stepper-value">
+                            {isCardLoading ? (
+                              <TailSpin
+                                height="14"
+                                width="14"
+                                color="#ea580c"
+                              />
+                            ) : (
+                              inCartQty
+                            )}
+                          </span>
+                          <button
+                            type="button"
+                            className="qty-stepper-btn"
+                            onClick={(e) => handleIncrementCart(e, product)}
+                            disabled={isCardLoading}
+                            title="Increase Quantity"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          className="card-quick-view-cart-btn"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate("/cart");
+                          }}
+                          title="Go to Cart"
+                        >
+                          Cart <FaArrowRight size={10} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="fp-cart-btn"
+                        onClick={(e) => handleAddToCart(e, product)}
+                        disabled={isCardLoading}
+                      >
+                        {isCardLoading ? (
+                          <>
+                            <TailSpin height="16" width="16" color="#fff" />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <FaShoppingCart className="cart-btn-icon" /> Add to Cart
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1221,6 +1488,31 @@ const NewHome = () => {
           </div>
         </div>
       </section>
+
+      {/* 🛍️ Floating Sticky Bottom Cart Bar */}
+      {totalCartCount > 0 && (
+        <div
+          className="floating-cart-bar"
+          onClick={() => navigate("/cart")}
+          title="Proceed to Sacred Cart"
+        >
+          <div className="floating-cart-left">
+            <div className="floating-cart-badge">
+              <FaShoppingCart />
+              <span>
+                {totalCartCount} {totalCartCount === 1 ? "Item" : "Items"}
+              </span>
+            </div>
+            <div className="floating-cart-price">
+              ₹{totalCartAmount.toLocaleString("en-IN")}
+            </div>
+          </div>
+          <div className="floating-cart-right">
+            <span>View Cart</span>
+            <FaArrowRight />
+          </div>
+        </div>
+      )}
     </>
   );
 };

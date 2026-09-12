@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "../../styles/checkout.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../Axios/api";
@@ -12,18 +12,80 @@ import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
+import { normalizeImageUrl, DEFAULT_FALLBACK_IMAGE } from "../../utils/imageHelper";
+
+const safeJsonParse = (val, fallback = null) => {
+  if (val === null || val === undefined) return fallback;
+  if (typeof val === "object") return val;
+  try {
+    return JSON.parse(val);
+  } catch {
+    return val;
+  }
+};
 
 const Checkout = () => {
   const token = localStorage.getItem("token");
-  const { search } = useLocation();
-  const queryParams = new URLSearchParams(search);
-  const productId = JSON.parse(queryParams.get("productId"));
-  const quantity = JSON.parse(queryParams.get("quantity"));
-  const totalPrice = queryParams.get("totalPrice");
-  const booking = queryParams.get("booking");
-  const images = JSON.parse(queryParams.get("images"));
-  const productName = JSON.parse(queryParams.get("productName"));
-  const marchentId = JSON.parse(queryParams.get("marchentId"));
+  const location = useLocation();
+  const stateData = location.state || {};
+  const queryParams = new URLSearchParams(location.search);
+
+  // Read from queryParams -> location.state -> localStorage
+  let storedCheckout = {};
+  try {
+    storedCheckout = JSON.parse(localStorage.getItem("checkOutProduct")) || {};
+  } catch (e) {
+    storedCheckout = {};
+  }
+
+  const rawProductId = queryParams.get("productId")
+    ? safeJsonParse(queryParams.get("productId"))
+    : (stateData.productId || storedCheckout.productId);
+
+  const rawQuantity = queryParams.get("quantity")
+    ? safeJsonParse(queryParams.get("quantity"))
+    : (stateData.quantity || storedCheckout.quantity || 1);
+
+  const rawTotalPrice =
+    queryParams.get("totalPrice") ||
+    stateData.totalPrice ||
+    storedCheckout.totalPrice ||
+    0;
+
+  const booking =
+    queryParams.get("booking") ||
+    stateData.booking ||
+    storedCheckout.booking ||
+    "cart";
+
+  const rawImages = queryParams.get("images")
+    ? safeJsonParse(queryParams.get("images"))
+    : (stateData.images || storedCheckout.images);
+
+  const rawProductName = queryParams.get("productName")
+    ? safeJsonParse(queryParams.get("productName"))
+    : (stateData.productName || storedCheckout.productName || "Sacred Pooja Item");
+
+  const rawMarchentId = queryParams.get("marchentId")
+    ? safeJsonParse(queryParams.get("marchentId"))
+    : (stateData.marchentId || storedCheckout.marchentId || 1);
+
+  const productId = rawProductId;
+  const quantity = rawQuantity;
+  const totalPrice = Number(rawTotalPrice) || 0;
+  const productName = rawProductName;
+  const marchentId = rawMarchentId;
+
+  // Normalized clean array of image URLs
+  const normalizedImages = useMemo(() => {
+    if (!rawImages) return [DEFAULT_FALLBACK_IMAGE];
+    if (Array.isArray(rawImages)) {
+      const flat = rawImages.flat(Infinity).map((u) => normalizeImageUrl(u));
+      const clean = flat.filter((u) => u && u.length > 4 && u !== "[" && u !== "]");
+      return clean.length > 0 ? clean : [DEFAULT_FALLBACK_IMAGE];
+    }
+    return [normalizeImageUrl(rawImages)];
+  }, [rawImages]);
 
   const { getValidCoupon } = useHomeStore();
   const [paymentMethod, setPaymentMethod] = useState("UPI");
@@ -169,7 +231,7 @@ const Checkout = () => {
             quantity,
             totalPrice: offeredPrice,
             booking,
-            images,
+            images: normalizedImages,
             paymentMethod: "COD",
             status: "unpaid",
             marchentId,
@@ -270,7 +332,7 @@ const Checkout = () => {
                     quantity,
                     totalPrice: offeredPrice,
                     booking,
-                    images,
+                    images: normalizedImages,
                     paymentMethod: "UPI",
                     status: "paid",
                     marchentId,
@@ -915,43 +977,47 @@ const Checkout = () => {
           <div className="checkout-right">
             <h2>Product Details</h2>
             <div className="checkout-summary">
-              {images &&
-                (Array.isArray(images) ? (
-                  images.map((url, index) => (
+              {normalizedImages && normalizedImages.length > 0 ? (
+                normalizedImages.map((url, index) => {
+                  const currentName = Array.isArray(productName)
+                    ? productName[index] || "Sacred Pooja Item"
+                    : productName || "Sacred Pooja Item";
+
+                  const currentQty = Array.isArray(quantity)
+                    ? quantity[index] || 1
+                    : quantity || 1;
+
+                  return (
                     <div className="checkout-item" key={index}>
                       <img
                         src={url}
-                        alt={`product-${index}`}
+                        alt={currentName}
                         className="checkout-img"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = DEFAULT_FALLBACK_IMAGE;
+                        }}
                       />
                       <div className="checkout-details">
-                        {productName && (
-                          <h3 className="product-name">
-                            {Array.isArray(productName)
-                              ? productName[index]
-                              : productName}
-                          </h3>
-                        )}
-                        {Array.isArray(quantity) && quantity[index] && (
-                          <p>Quantity: {quantity[index]}</p>
-                        )}
+                        <h3 className="product-name">{currentName}</h3>
+                        <p>Quantity: {currentQty}</p>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="checkout-item">
-                    <img src={images} alt="product" className="checkout-img" />
-                    <div className="checkout-details">
-                      {productName && (
-                        <h3 className="product-name">{productName}</h3>
-                      )}
-                      <p>Quantity: {quantity}</p>
-                      <p>
-                        <strong>Total Price:</strong> ₹{totalPrice}
-                      </p>
-                    </div>
+                  );
+                })
+              ) : (
+                <div className="checkout-item">
+                  <img
+                    src={DEFAULT_FALLBACK_IMAGE}
+                    alt="Spiritual Item"
+                    className="checkout-img"
+                  />
+                  <div className="checkout-details">
+                    <h3 className="product-name">{productName || "Spiritual Offering"}</h3>
+                    <p>Quantity: {Array.isArray(quantity) ? quantity[0] || 1 : quantity || 1}</p>
                   </div>
-                ))}
+                </div>
+              )}
 
               <div className="checkout-total">
                 <p>

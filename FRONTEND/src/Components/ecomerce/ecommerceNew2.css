@@ -1215,7 +1215,6 @@
   border-radius: 4px;
 }
 
-/* Card CTA button */
 .card-add-btn {
   width: 100%;
   background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
@@ -1248,6 +1247,199 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* 🛒 Interactive Quantity Stepper (+ 1 -) */
+.card-qty-stepper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1.5px solid #ea580c;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 35px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.12);
+  transition: all 0.2s ease;
+}
+
+.qty-stepper-btn {
+  width: 36px;
+  height: 100%;
+  background: #fff7ed;
+  color: #ea580c;
+  border: none;
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  padding: 0;
+  line-height: 1;
+}
+
+.qty-stepper-btn:hover:not(:disabled) {
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.qty-stepper-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.qty-stepper-value {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ea580c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  user-select: none;
+}
+
+.card-stepper-and-cart-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.card-stepper-and-cart-row .card-qty-stepper {
+  flex: 1;
+}
+
+.card-quick-view-cart-btn {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1.5px solid #fed7aa;
+  border-radius: 6px;
+  height: 35px;
+  padding: 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.card-quick-view-cart-btn:hover {
+  background: #ea580c;
+  color: #ffffff;
+  border-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+/* 🛍️ Floating Bottom Sticky Cart Bar */
+.floating-cart-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 460px;
+  background: linear-gradient(135deg, #ea580c 0%, #9a3412 100%);
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px rgba(234, 88, 12, 0.45);
+  cursor: pointer;
+  z-index: 9999;
+  animation: floatUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.floating-cart-bar:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 14px 30px rgba(234, 88, 12, 0.55);
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.floating-cart-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.floating-cart-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.floating-cart-price {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.floating-cart-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #ffffff;
+  color: #ea580c;
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: transform 0.15s;
+}
+
+.floating-cart-bar:hover .floating-cart-right {
+  transform: scale(1.04);
+}
+
+@media (max-width: 480px) {
+  .floating-cart-bar {
+    bottom: 18px;
+    padding: 10px 14px;
+    max-width: calc(100% - 24px);
+  }
+  .floating-cart-price {
+    font-size: 13.5px;
+  }
+  .floating-cart-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  .floating-cart-right {
+    font-size: 11.5px;
+    padding: 5px 10px;
+  }
+}
+
+
 
 /* ==========================================================================
    LOADING & EMPTY STATES

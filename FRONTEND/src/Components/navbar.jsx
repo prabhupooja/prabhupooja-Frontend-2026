@@ -755,7 +755,7 @@ function Navbar() {
                   <span className="drawer-wallet-add-btn">+ Recharge</span>
                 </div>
 
-                {/* Quick Devotee Shortcuts */}
+                {/* Clean Devotee Action Shortcuts */}
                 <div className="drawer-user-shortcuts">
                   <div
                     className="drawer-shortcut-item"
@@ -769,32 +769,11 @@ function Navbar() {
                     <span>My Profile & Dashboard</span>
                   </div>
                   <div
-                    className="drawer-shortcut-item"
-                    onClick={() => handleNavigateFromDrawer("/poojabooking")}
-                  >
-                    <FaPrayingHands className="d-icon" />
-                    <span>My Pooja Bookings</span>
-                  </div>
-                  <div
-                    className="drawer-shortcut-item"
-                    onClick={() => handleNavigateFromDrawer("/myorders")}
-                  >
-                    <FaBoxOpen className="d-icon" />
-                    <span>My Store Orders</span>
-                  </div>
-                  <div
-                    className="drawer-shortcut-item"
-                    onClick={() => handleNavigateFromDrawer("/membership")}
-                  >
-                    <FaGem className="d-icon" />
-                    <span>Devotee Membership</span>
-                  </div>
-                  <div
                     className="drawer-shortcut-item drawer-shortcut-logout"
                     onClick={handleProfileLogoutFromDrawer}
                   >
                     <MdLogout className="d-icon logout-col" />
-                    <span>Logout Account</span>
+                    <span>Logout</span>
                   </div>
                 </div>
               </div>

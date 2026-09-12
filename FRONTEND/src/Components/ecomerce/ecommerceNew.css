@@ -1,3 +1,20 @@
+* {
+  box-sizing: border-box;
+}
+
+.ecom-wrapper {
+  width: 100%;
+  max-width: 100%;
+  padding: 2rem;
+  overflow-x: hidden;
+}
+
+.ecomContainer {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 .ecom-wrapper {
   padding: 2rem;
 }
@@ -98,8 +115,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .ecom-card {
@@ -110,6 +131,8 @@
   transition: transform 0.2s ease;
   width: 100%;
   max-width: 260px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .ecom-card:hover {
@@ -126,6 +149,7 @@
   padding: 1rem;
   text-align: center;
 }
+
 .ecom-card-body h4 {
   font-size: 15px;
   font-weight: 500;
@@ -189,64 +213,91 @@
 }
 
 @media (max-width: 800px) {
+
   .ecom-wrapper {
+    width: 100%;
+    max-width: 100%;
     padding: 1rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
+
+  .ecomContainer {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .ecom-header {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .ecom-filters {
+    width: 100%;
+    max-width: 100%;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
+    gap: 8px;
     margin-bottom: 2rem;
+    box-sizing: border-box;
+  }
+
+  .filter-buttons {
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 5px;
-    width: 100%;
-    position: relative;
   }
-  
+
   .filter-buttons button {
     padding: 0.5rem 1rem;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    cursor: pointer;
+    max-width: 100%;
+    box-sizing: border-box;
   }
-  
+
   .filter-buttons .active {
-    background-color: #ff9800;
+    background-color: #cd5702;
     color: #fff;
   }
-  
+
   .ecom-search-input {
+    width: 100%;
+    max-width: 100%;
     padding: 0.6rem 1rem;
     border: 1px solid #ccc;
     border-radius: 25px;
-    width: 50%;
+    box-sizing: border-box;
   }
-  
+
   .ecom-popup {
     position: absolute;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    padding: 1rem;
-    z-index: 10;
-    overflow-y: auto;
-    right: 250px;
-    top:60px;
-    width: 200px;
+    left: 0;
+    right: auto;
+    top: 120px;
+    width: min(200px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
   }
-  
+
   .ecom-popup ul {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
+
   .ecom-popup li {
     padding: 0.5rem;
     cursor: pointer;
+    overflow-wrap: anywhere;
   }
 
-  .ecom-clear-filter-btn{
+  .ecom-clear-filter-btn {
     background: transparent;
     border: none;
     font-size: 16px;
@@ -254,128 +305,181 @@
     color: red;
     margin-left: 10px;
   }
-  
+
   .ecom-popup li:hover {
     background-color: #eee;
   }
-  
+
   .ecom-close {
     float: right;
     cursor: pointer;
     font-size: 20px;
     color: #f44336;
   }
-  
+
   .ecom-product-grid {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
     gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
-  
+
   .ecom-card {
     background: #fff;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease;
-    width: 300px;
-    max-width: 300px;
+
+    width: 100%;
+    max-width: 400px;
+    min-width: 0;
+
+    box-sizing: border-box;
   }
-  
+
   .ecom-card:hover {
     transform: translateY(-5px);
   }
-  
+
   .ecom-card-img {
+    display: block;
     width: 100%;
-    height: 200px;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
+    box-sizing: border-box;
   }
-  
+
   .ecom-card-body {
+    width: 100%;
+    max-width: 100%;
     padding: 1rem;
     text-align: center;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
   }
-  .ecom-card-body h4{
-    font-size: 16px;
+
+  .ecom-card-body h4 {
+    font-size: 18px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
-  
+
   .ecom-price {
     margin: 0.5rem 0;
+    font-size: 18px;
     font-weight: bold;
+    overflow-wrap: anywhere;
   }
-  
+
   .ecom-original {
     text-decoration: line-through;
     color: #999;
     margin-right: 0.5rem;
   }
-  
+
   .ecom-offer {
     color: #077207;
   }
-  
+
   .ecom-buttons {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
+
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
-  
+
   .ecom-btn {
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 1.2rem;
+    max-width: 100%;
     border-radius: 20px;
     font-size: 14px;
     cursor: pointer;
     text-decoration: none;
+    box-sizing: border-box;
   }
-  
+
   .ecom-btn.primary {
     background: #cd5702;
     color: #fff;
+    font-weight: 500;
   }
-  
+
   .ecom-btn.secondary {
     background: transparent;
     color: #000;
     border: 1px solid #cd5702;
+    font-weight: 500;
   }
-  
+
   .ecom-loader {
     display: flex;
     flex-direction: column;
-  }
-  .ecom-card-img {
-    height: auto;
-  }
-  .ecom-search-input {
+    align-items: center;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
-  .ecom-popup {
-    left: 0;
-    top: 120px;
-  }
-  .ecom-product-grid {
-    /* padding: 100px; */
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-  .ecom-card {
-    max-width: 400px;
-  }
-  .ecom-card-body h4 {
-    font-size: 20px;
-  }
-  .ecom-price {
+
+  .ecom-no-results {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    padding: 40px 0;
     font-size: 18px;
+    color: #777;
+    box-sizing: border-box;
   }
+}
+
+
+/* Extra small mobile screens */
+@media (max-width: 480px) {
+
+  .ecom-wrapper {
+    padding: 12px;
+  }
+
+  .ecom-product-grid {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    gap: 12px;
+  }
+
+  .ecom-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ecom-card-body {
+    padding: 12px;
+  }
+
+  .ecom-card-body h4 {
+    font-size: 16px;
+  }
+
+  .ecom-price {
+    font-size: 16px;
+  }
+
   .ecom-btn {
-    padding: 0.4rem 1.5rem;
-  }
-  .ecom-btn.secondary {
-    font-weight: 500;
-  }
-  .ecom-btn.primary {
-    font-weight: 500;
+    width: 100%;
+    max-width: 100%;
   }
 }

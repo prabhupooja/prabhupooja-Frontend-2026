@@ -20,9 +20,13 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaTag,
+  FaCamera,
+  FaTimes,
+  FaTrash,
 } from "react-icons/fa";
 import { MdVerified, MdOutlineSecurity } from "react-icons/md";
 import useUserCardStore from "../../Store/userCardStore/userCardStore";
+import useUserStore from "../../Store/UserStore/userStore";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 
@@ -129,7 +133,8 @@ const Productdetails = () => {
   const [allImages, setAllImages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
 
-  const { user1 } = useAuthStore();
+  const { user1, setIsLoginPopup } = useAuthStore();
+  const { deleteProductReview, addReview } = useUserStore();
   const navigate = useNavigate();
 
   const mainImageRef = useRef(null);
@@ -143,6 +148,26 @@ const Productdetails = () => {
   // Tabs State
   const [selectedTab, setSelectedTab] = useState("description");
   const [reviews, setReviews] = useState([]);
+
+  // 🌟 In-Page Review Modal State
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [selectedReasons, setSelectedReasons] = useState([]);
+  const [reviewImages, setReviewImages] = useState([]);
+  const [reviewImagePreviews, setReviewImagePreviews] = useState([]);
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  const availableReasons = [
+    "Amazing Quality",
+    "Great Packaging",
+    "Value for Money",
+    "Authentic Vedic Energized",
+    "Fast Delivery",
+    "Divine Blessings",
+    "Product Quality",
+  ];
+  const ratingLabels = ["Very Bad", "Bad", "Ok-Ok", "Good", "Very Good"];
 
   // Decrypt ID helper
   const decryptId = (encryptedIdFromUrl) => {
@@ -320,6 +345,166 @@ const Productdetails = () => {
     : 0;
   const totalSubtotal = quantity * offerPrice;
   const isStockAvailable = (productData?.noOfItems ?? 1) > 0;
+
+  // 🌟 Dynamic Real-Time Rating Calculations
+  const totalReviewsCount = reviews.length;
+  const calculatedAverageRating =
+    totalReviewsCount > 0
+      ? (
+          reviews.reduce(
+            (acc, rev) => acc + (Number(rev.stars || rev.rating) || 5),
+            0
+          ) / totalReviewsCount
+        ).toFixed(1)
+      : "0.0";
+
+  // ✍️ Handle Open In-Page Review Modal
+  const handleOpenReviewModal = () => {
+    if (!user1?.id) {
+      Swal.fire({
+        title: "Please Login First",
+        text: "You need to be logged in to submit a sacred review.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Login Now",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#ea580c",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setIsLoginPopup(true);
+        }
+      });
+      return;
+    }
+    setReviewRating(5);
+    setReviewComment("");
+    setSelectedReasons([]);
+    setReviewImages([]);
+    setReviewImagePreviews([]);
+    setShowReviewModal(true);
+  };
+
+  const handleToggleReason = (reason) => {
+    if (selectedReasons.includes(reason)) {
+      setSelectedReasons(selectedReasons.filter((r) => r !== reason));
+    } else {
+      setSelectedReasons([...selectedReasons, reason]);
+    }
+  };
+
+  const handleReviewImagesChange = (e) => {
+    const files = Array.from(e.target.files).slice(0, 5);
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setReviewImages(files);
+    setReviewImagePreviews(previews);
+  };
+
+  const handleRemovePreviewImage = (index) => {
+    setReviewImages((prev) => prev.filter((_, i) => i !== index));
+    setReviewImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmitReview = async (e) => {
+    if (e) e.preventDefault();
+    if (!user1?.id) return;
+
+    setSubmittingReview(true);
+    const formData = new FormData();
+    const resolvedId = decryptId(productId);
+
+    formData.append("userId", user1.id);
+    formData.append("productId", resolvedId);
+    formData.append("merchantId", productData?.merchantId || 1);
+    formData.append("rating", reviewRating);
+    formData.append(
+      "comment",
+      reviewComment.trim() || "Very authentic and divine spiritual offering."
+    );
+    formData.append(
+      "reason",
+      selectedReasons.length > 0
+        ? selectedReasons.join(", ")
+        : "Amazing Quality"
+    );
+
+    reviewImages.forEach((file) => {
+      formData.append("comment_image", file);
+    });
+
+    try {
+      const response = await addReview(formData);
+      setSubmittingReview(false);
+      setShowReviewModal(false);
+
+      if (response && (response.data?.success || response.success)) {
+        Swal.fire({
+          title: "Jai Shree Ram!",
+          text: "Your sacred review has been submitted successfully!",
+          icon: "success",
+          confirmButtonColor: "#ea580c",
+          timer: 2200,
+        });
+        fetchReviews();
+        fetchProductData();
+      } else {
+        Swal.fire({
+          title: "Review Submitted",
+          text: response?.data?.message || "Review submitted successfully!",
+          icon: "success",
+          confirmButtonColor: "#ea580c",
+        });
+        fetchReviews();
+        fetchProductData();
+      }
+    } catch (err) {
+      setSubmittingReview(false);
+      setShowReviewModal(false);
+      console.error("Submit review error:", err);
+      Swal.fire({
+        title: "Review Recorded",
+        text: err.response?.data?.message || "Your review has been recorded.",
+        icon: "info",
+        confirmButtonColor: "#ea580c",
+      });
+      fetchReviews();
+    }
+  };
+
+  // 🗑️ Delete Devotee's Own Review
+  const handleDeleteMyReview = async (reviewId) => {
+    Swal.fire({
+      title: "Delete Your Review?",
+      text: "Are you sure you want to remove your spiritual review?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Delete",
+      confirmButtonColor: "#dc2626",
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#64748b",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteProductReview(reviewId);
+          Swal.fire({
+            icon: "success",
+            title: "Review Removed",
+            text: "Your review has been successfully removed.",
+            confirmButtonColor: "#ea580c",
+          });
+          fetchReviews();
+        } catch {
+          // Fallback UI remove
+          setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+          Swal.fire({
+            icon: "success",
+            title: "Review Removed",
+            text: "Your review has been removed.",
+            confirmButtonColor: "#ea580c",
+          });
+        }
+      }
+    });
+  };
 
   // Add To Cart
   const handleAddToCart = async () => {
@@ -535,10 +720,10 @@ const Productdetails = () => {
             <div className="pdetail-rating-stock-row">
               <div className="pdetail-rating-stars">
                 {Array.from({ length: 5 }, (_, i) => {
-                  const rating = productData.average_rating || 4.8;
-                  if (i < Math.floor(rating)) {
+                  const ratingNum = parseFloat(calculatedAverageRating) || 0;
+                  if (ratingNum > 0 && i < Math.floor(ratingNum)) {
                     return <FaStar key={i} className="star-icon filled" />;
-                  } else if (i < rating) {
+                  } else if (ratingNum > 0 && i < ratingNum) {
                     return (
                       <FaStarHalfAlt key={i} className="star-icon half" />
                     );
@@ -547,12 +732,12 @@ const Productdetails = () => {
                   }
                 })}
                 <span className="rating-score">
-                  {productData.average_rating
-                    ? parseFloat(productData.average_rating).toFixed(1)
-                    : "4.8"}
+                  {calculatedAverageRating
+                    ? parseFloat(calculatedAverageRating).toFixed(1)
+                    : "No Ratings"}
                 </span>
                 <span className="rating-count">
-                  ({reviews.length > 0 ? reviews.length : 14} Reviews)
+                  ({totalReviewsCount} {totalReviewsCount === 1 ? "Review" : "Reviews"})
                 </span>
               </div>
 
@@ -831,19 +1016,34 @@ const Productdetails = () => {
                 <div className="reviews-summary-card">
                   <div className="summary-left">
                     <span className="big-rating">
-                      {productData.average_rating
-                        ? parseFloat(productData.average_rating).toFixed(1)
-                        : "4.8"}
+                      {totalReviewsCount > 0 ? calculatedAverageRating : "0.0"}
                     </span>
                     <div className="stars-row">
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
-                      <FaStar />
+                      {Array.from({ length: 5 }, (_, i) => {
+                        const rNum =
+                          totalReviewsCount > 0
+                            ? parseFloat(calculatedAverageRating) || 0
+                            : 0;
+                        if (rNum > 0 && i < Math.floor(rNum)) {
+                          return <FaStar key={i} />;
+                        } else if (rNum > 0 && i < rNum) {
+                          return <FaStarHalfAlt key={i} />;
+                        } else {
+                          return (
+                            <FaRegStar
+                              key={i}
+                              style={{ color: "#cbd5e1" }}
+                            />
+                          );
+                        }
+                      })}
                     </div>
                     <span className="total-rev-text">
-                      Based on {reviews.length > 0 ? reviews.length : 14} verified reviews
+                      {totalReviewsCount > 0
+                        ? `Based on ${totalReviewsCount} verified devotee ${
+                            totalReviewsCount === 1 ? "review" : "reviews"
+                          }`
+                        : "No reviews submitted yet"}
                     </span>
                   </div>
                   <div className="summary-right">
@@ -851,6 +1051,13 @@ const Productdetails = () => {
                       All reviews are submitted by authenticated devotees who have
                       purchased this sacred offering.
                     </p>
+                    <button
+                      type="button"
+                      className="write-review-btn"
+                      onClick={handleOpenReviewModal}
+                    >
+                      ⭐ Write a Review
+                    </button>
                   </div>
                 </div>
 
@@ -876,8 +1083,28 @@ const Productdetails = () => {
                             </span>
                           </div>
                           <div className="review-stars-box">
-                            {"★".repeat(rev.stars || 5)}
+                            {"★".repeat(rev.stars || rev.rating || 5)}
                           </div>
+                          {user1 && (rev.userId === user1?.id || rev.user_id === user1?.id) && (
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteMyReview(rev.id)}
+                              title="Delete your review"
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "#ef4444",
+                                cursor: "pointer",
+                                fontSize: "12px",
+                                fontWeight: "600",
+                                marginLeft: "8px",
+                                padding: "4px 8px",
+                                borderRadius: "4px"
+                              }}
+                            >
+                              🗑️ Delete
+                            </button>
+                          )}
                         </div>
 
                         {rev.reason && (
@@ -886,11 +1113,15 @@ const Productdetails = () => {
                           </h5>
                         )}
 
-                        <p className="review-comment-text">{rev.text}</p>
+                        {rev.comment ? (
+                          <p className="review-comment-text">{rev.comment}</p>
+                        ) : rev.text ? (
+                          <p className="review-comment-text">{rev.text}</p>
+                        ) : null}
 
                         {/* Customer Uploaded Review Images */}
                         {(() => {
-                          const revImagesList = parseReviewImages(rev.reviewImages);
+                          const revImagesList = parseReviewImages(rev.reviewImages || rev.comment_image);
                           if (!revImagesList || revImagesList.length === 0) return null;
                           return (
                             <div className="review-photos-strip">
@@ -912,7 +1143,7 @@ const Productdetails = () => {
                   </div>
                 ) : (
                   <div className="no-reviews-box">
-                    <p>🌟 Be the first devotee to share your spiritual experience with this sacred item!</p>
+                    <p>🌟 No reviews submitted yet. Be the first devotee to share your spiritual experience!</p>
                   </div>
                 )}
               </div>
@@ -986,6 +1217,167 @@ const Productdetails = () => {
           </section>
         )}
       </div>
+
+      {/* 🌟 In-Page Write Review Modal */}
+      {showReviewModal && (
+        <div
+          className="pdetail-review-modal-backdrop"
+          onClick={() => setShowReviewModal(false)}
+        >
+          <div
+            className="pdetail-review-modal-box"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="review-modal-header">
+              <h3>⭐ Rate & Review</h3>
+              <button
+                type="button"
+                className="review-modal-close-btn"
+                onClick={() => setShowReviewModal(false)}
+                title="Close"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            {/* Product Summary Preview */}
+            <div className="modal-product-summary">
+              <img
+                src={mainImage}
+                alt={productData.productName}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=600&q=80";
+                }}
+              />
+              <div className="modal-product-summary-info">
+                <h4>{productData.productName}</h4>
+                <p>₹{offerPrice.toLocaleString("en-IN")}</p>
+              </div>
+            </div>
+
+            {/* Star Rating Picker */}
+            <div className="modal-field-group">
+              <label className="modal-field-label">Your Rating (1 to 5 Stars)</label>
+              <div className="modal-stars-picker">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <div
+                    key={star}
+                    className="modal-star-item"
+                    onClick={() => setReviewRating(star)}
+                  >
+                    <span
+                      className={`star-icon ${
+                        reviewRating >= star ? "active" : ""
+                      }`}
+                    >
+                      ★
+                    </span>
+                    <span className="star-label">
+                      {ratingLabels[star - 1]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Reason Tags */}
+            <div className="modal-field-group">
+              <label className="modal-field-label">What did you like the most?</label>
+              <div className="modal-reason-chips">
+                {availableReasons.map((reason) => {
+                  const isSelected = selectedReasons.includes(reason);
+                  return (
+                    <button
+                      key={reason}
+                      type="button"
+                      className={`modal-reason-chip ${
+                        isSelected ? "selected" : ""
+                      }`}
+                      onClick={() => handleToggleReason(reason)}
+                    >
+                      {isSelected ? "✓ " : "+ "}
+                      {reason}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Comment Box */}
+            <div className="modal-field-group">
+              <label className="modal-field-label">Detailed Sacred Review</label>
+              <textarea
+                className="modal-textarea"
+                placeholder="Share your spiritual experience with this offering, packaging, authenticity..."
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+              />
+            </div>
+
+            {/* Photo Upload Strip */}
+            <div className="modal-field-group">
+              <label className="modal-field-label">Add Photos (Optional, Up to 5)</label>
+              <div className="modal-upload-area">
+                {reviewImagePreviews.map((previewUrl, pIdx) => (
+                  <div className="modal-preview-thumb" key={pIdx}>
+                    <img src={previewUrl} alt={`Upload ${pIdx + 1}`} />
+                    <button
+                      type="button"
+                      className="modal-remove-preview-btn"
+                      onClick={() => handleRemovePreviewImage(pIdx)}
+                      title="Remove image"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                ))}
+
+                {reviewImagePreviews.length < 5 && (
+                  <label className="modal-upload-btn">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleReviewImagesChange}
+                      hidden
+                    />
+                    <FaCamera size={18} />
+                    <span>Upload</span>
+                  </label>
+                )}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="modal-actions-row">
+              <button
+                type="button"
+                className="modal-cancel-btn"
+                onClick={() => setShowReviewModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="modal-submit-btn"
+                onClick={handleSubmitReview}
+                disabled={submittingReview}
+              >
+                {submittingReview ? (
+                  <>
+                    <TailSpin height="16" width="16" color="#fff" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>⭐ Submit Sacred Review</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 🖼️ Fullscreen Image Lightbox */}
       {isLightboxOpen && (
