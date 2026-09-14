@@ -464,7 +464,7 @@
 }
 
 .specs-card-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--pd-text-main);
   margin-bottom: 12px;
@@ -475,24 +475,35 @@
 .specs-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px 20px;
+  column-gap: 24px;
+  row-gap: 8px;
 }
 
 .spec-item {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  align-items: baseline;
   gap: 8px;
-  font-size: 13.5px;
+  font-size: 13px;
+  line-height: 1.45;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(226, 232, 240, 0.7);
+}
+
+.spec-item:nth-last-child(-n+2) {
+  border-bottom: none;
 }
 
 .spec-label {
   color: var(--pd-text-muted);
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .spec-val {
   color: var(--pd-text-main);
   font-weight: 600;
+  word-break: break-word;
 }
 
 .code-val {
@@ -500,11 +511,13 @@
   background: #f1f5f9;
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 11.5px;
+  letter-spacing: 0.3px;
 }
 
 .highlight-val {
-  color: var(--pd-primary-dark);
+  color: #b45309;
+  font-weight: 600;
 }
 
 /* Purchase Section */
@@ -758,30 +771,42 @@
 .bullet-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   background: #f8fafc;
   border: 1px solid var(--pd-border-light);
   padding: 12px 16px;
   border-radius: var(--pd-radius-sm);
   font-size: 13.5px;
   color: #334155;
-  line-height: 1.5;
+  line-height: 1.55;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bullet-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .bullet-item.benefit {
-  background: #fffbeb;
-  border-color: #fef3c7;
+  background: #fffdf5;
+  border-color: #fef08a;
+  box-shadow: 0 1px 3px rgba(234, 179, 8, 0.06);
+}
+
+.bullet-item.benefit:hover {
+  border-color: #fde047;
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.14);
 }
 
 .bullet-icon {
   color: var(--pd-primary);
   font-size: 14px;
-  margin-top: 3px;
+  margin-top: 2px;
   flex-shrink: 0;
 }
 
 .bullet-icon.gold {
-  color: var(--pd-gold-dark);
+  color: #d97706;
 }
 
 .care-block {
@@ -1371,14 +1396,15 @@
 
   .specs-grid {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 6px;
   }
 
   .spec-item {
     font-size: 12.5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    align-items: baseline;
+    gap: 6px;
     border-bottom: 1px dashed #f1f5f9;
     padding-bottom: 4px;
   }

@@ -120,6 +120,88 @@ export const parseReviewImages = (imgData) => {
   return [];
 };
 
+// 🛡️ Helper: Check if specification value is invalid / empty / "NA"
+export const isInvalidSpecValue = (val) => {
+  if (val === undefined || val === null) return true;
+  const s = String(val).trim().toLowerCase();
+  return (
+    s === "" ||
+    s === "na" ||
+    s === "n/a" ||
+    s === "n.a." ||
+    s === "not available" ||
+    s === "not specified" ||
+    s === "null" ||
+    s === "undefined" ||
+    s === "none" ||
+    s === "-" ||
+    s === "no"
+  );
+};
+
+// 🛡️ Helper: Intelligently parse bullet points, merge broken sentence fragments, and strip empty checkmark cards
+export const parseSmartBulletPoints = (raw) => {
+  if (!raw) return [];
+  let rawItems = [];
+
+  if (Array.isArray(raw)) {
+    rawItems = raw;
+  } else if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if ((trimmed.startsWith("[") && trimmed.endsWith("]")) || (trimmed.startsWith("{") && trimmed.endsWith("}"))) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) rawItems = parsed;
+        else rawItems = trimmed.split(/\r?\n/);
+      } catch {
+        rawItems = trimmed.split(/\r?\n/);
+      }
+    } else {
+      rawItems = trimmed.split(/\r?\n/);
+    }
+  }
+
+  const cleanedSentences = [];
+  let buffer = "";
+
+  rawItems.forEach((item) => {
+    if (item === undefined || item === null) return;
+    let line = String(item).trim();
+
+    // Strip leading bullets, ticks, dashes, asterisks, numbering, icons: •, -, *, ✔, ✓, ✦, 1., etc.
+    line = line.replace(/^[\s•\-\*✔✓✦\u2022\u2714\u2713\d+\.\)\:\;]+/, "").trim();
+    // Replace inner multiple spaces/tabs
+    line = line.replace(/[\t\r\n]+/g, " ").replace(/\s{2,}/g, " ").trim();
+
+    // Ignore completely empty, single character, or pure tick/bullet leftovers
+    if (!line || line.length < 2 || /^[\s•\-\*✔✓✦\u2022\u2714\u2713]+$/.test(line)) return;
+
+    // Detect if this line is a continuation fragment of the previous sentence
+    const isFragmentContinuation =
+      buffer.length > 0 &&
+      (!/[.!?]$/.test(buffer) ||
+        /^(and|or|with|to|in|of|for|touch|spaces|decor|décor|intentions|prosperity|corners|positive|growth|abundance|meditation|clean|place|stable|away|energy|vibrations|harmony)\b/i.test(line) ||
+        /^[a-z]/.test(line));
+
+    if (isFragmentContinuation) {
+      buffer += (buffer.endsWith("-") ? "" : " ") + line;
+    } else {
+      if (buffer) {
+        cleanedSentences.push(buffer);
+      }
+      buffer = line;
+    }
+  });
+
+  if (buffer) {
+    cleanedSentences.push(buffer);
+  }
+
+  return cleanedSentences
+    .map((text) => text.trim())
+    .filter((text) => text && text.length > 3 && !/^[\s•\-\*✔✓✦\u2022\u2714\u2713]+$/.test(text));
+};
+
 const Productdetails = () => {
   const { productId } = useParams();
   const [productData, setProductData] = useState({});
@@ -832,61 +914,61 @@ const Productdetails = () => {
             <div className="pdetail-specs-card">
               <h3 className="specs-card-title">Sacred Specifications</h3>
               <div className="specs-grid">
-                {productData.material && (
+                {!isInvalidSpecValue(productData.material) && (
                   <div className="spec-item">
                     <span className="spec-label">Material:</span>
                     <span className="spec-val">{productData.material}</span>
                   </div>
                 )}
-                {productData.colour && (
+                {!isInvalidSpecValue(productData.colour) && (
                   <div className="spec-item">
                     <span className="spec-label">Colour:</span>
                     <span className="spec-val">{productData.colour}</span>
                   </div>
                 )}
-                {productData.theme && (
+                {!isInvalidSpecValue(productData.theme) && (
                   <div className="spec-item">
                     <span className="spec-label">Theme:</span>
                     <span className="spec-val">{productData.theme}</span>
                   </div>
                 )}
-                {productData.style && (
+                {!isInvalidSpecValue(productData.style) && (
                   <div className="spec-item">
                     <span className="spec-label">Style:</span>
                     <span className="spec-val">{productData.style}</span>
                   </div>
                 )}
-                {productData.specialFeature && (
+                {!isInvalidSpecValue(productData.specialFeature) && (
                   <div className="spec-item">
                     <span className="spec-label">Special Feature:</span>
                     <span className="spec-val">{productData.specialFeature}</span>
                   </div>
                 )}
-                {productData.brand && (
+                {!isInvalidSpecValue(productData.brand) && (
                   <div className="spec-item">
                     <span className="spec-label">Brand:</span>
                     <span className="spec-val">{productData.brand}</span>
                   </div>
                 )}
-                {productData.Height && (
+                {!isInvalidSpecValue(productData.Height) && (
                   <div className="spec-item">
                     <span className="spec-label">Height:</span>
                     <span className="spec-val">{productData.Height}</span>
                   </div>
                 )}
-                {productData.Dimension && (
+                {!isInvalidSpecValue(productData.Dimension) && (
                   <div className="spec-item">
                     <span className="spec-label">Base Dimension:</span>
                     <span className="spec-val">{productData.Dimension}</span>
                   </div>
                 )}
-                {productData.Weight && (
+                {!isInvalidSpecValue(productData.Weight) && (
                   <div className="spec-item">
                     <span className="spec-label">Weight:</span>
                     <span className="spec-val">{productData.Weight}</span>
                   </div>
                 )}
-                {productData.ProductCode && (
+                {!isInvalidSpecValue(productData.ProductCode) && (
                   <div className="spec-item">
                     <span className="spec-label">Product Code:</span>
                     <span className="spec-val code-val">
@@ -1033,58 +1115,43 @@ const Productdetails = () => {
                 )}
 
                 {/* Highlights Card */}
-                {productData.ProductHighlights && (
+                {productData.ProductHighlights && parseSmartBulletPoints(productData.ProductHighlights).length > 0 && (
                   <div className="desc-section-block">
                     <h3 className="section-block-title">Key Highlights</h3>
                     <div className="bullet-points-grid">
-                      {(Array.isArray(productData.ProductHighlights)
-                        ? productData.ProductHighlights
-                        : productData.ProductHighlights.split("\n")
-                      )
-                        .filter(Boolean)
-                        .map((point, i) => (
-                          <div className="bullet-item" key={i}>
-                            <FaCheck className="bullet-icon" />
-                            <span>{point}</span>
-                          </div>
-                        ))}
+                      {parseSmartBulletPoints(productData.ProductHighlights).map((point, i) => (
+                        <div className="bullet-item" key={i}>
+                          <FaCheck className="bullet-icon" />
+                          <span>{point}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
 
                 {/* Sacred Benefits */}
-                {productData.Benefits && (
+                {productData.Benefits && parseSmartBulletPoints(productData.Benefits).length > 0 && (
                   <div className="desc-section-block">
                     <h3 className="section-block-title">Spiritual & Vastu Benefits</h3>
                     <div className="bullet-points-grid">
-                      {(Array.isArray(productData.Benefits)
-                        ? productData.Benefits
-                        : productData.Benefits.split("\n")
-                      )
-                        .filter(Boolean)
-                        .map((point, i) => (
-                          <div className="bullet-item benefit" key={i}>
-                            <FaCheck className="bullet-icon gold" />
-                            <span>{point}</span>
-                          </div>
-                        ))}
+                      {parseSmartBulletPoints(productData.Benefits).map((point, i) => (
+                        <div className="bullet-item benefit" key={i}>
+                          <FaCheck className="bullet-icon gold" />
+                          <span>{point}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
 
                 {/* Usage & Care */}
-                {productData.UsageAndCareInstructions && (
+                {productData.UsageAndCareInstructions && parseSmartBulletPoints(productData.UsageAndCareInstructions).length > 0 && (
                   <div className="desc-section-block care-block">
                     <h3 className="section-block-title">Usage & Sacred Care</h3>
                     <ul className="care-list">
-                      {(Array.isArray(productData.UsageAndCareInstructions)
-                        ? productData.UsageAndCareInstructions
-                        : productData.UsageAndCareInstructions.split("\n")
-                      )
-                        .filter(Boolean)
-                        .map((point, i) => (
-                          <li key={i}>{point}</li>
-                        ))}
+                      {parseSmartBulletPoints(productData.UsageAndCareInstructions).map((point, i) => (
+                        <li key={i}>{point}</li>
+                      ))}
                     </ul>
                   </div>
                 )}
