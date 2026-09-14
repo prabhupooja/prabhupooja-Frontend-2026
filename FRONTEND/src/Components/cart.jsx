@@ -13,10 +13,8 @@ import { normalizeImageUrl } from "../utils/imageHelper";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { loading, deleteFromCart, cartItems, getCartItems, setCartItems } = useUserCardStore();
+  const { loading, deleteFromCart, cartItems, cartSummary, getCartItems, setCartItems } = useUserCardStore();
   const { user1, error } = useAuthStore();
-  const [productDataPrice, setProductDataPrice] = useState(0);
-  const [deliveryCharges, setDeliveryCharges] = useState(0);
 
   useEffect(() => {
     if (!user1) {
@@ -26,19 +24,6 @@ const Cart = () => {
       getCartItems(user1.id);
     }
   }, [user1, getCartItems, setCartItems]);
-
-  // Calculate total price & delivery charges
-  useEffect(() => {
-    const totalPrice = (cartItems || []).reduce((total, item) => {
-      const price = Number(item.offerPrice || item.product?.offerPrice || item.price || item.product?.price || 0);
-      const quantity = Number(item.quantity || 1);
-      return total + price * quantity;
-    }, 0);
-
-    setProductDataPrice(totalPrice);
-    // Free delivery above 499
-    setDeliveryCharges(totalPrice > 0 && totalPrice < 499 ? 50 : 0);
-  }, [cartItems]);
 
   const handleRemoveItem = async (id) => {
     if (user1) {
@@ -159,11 +144,15 @@ const Cart = () => {
     const name = cartItems?.map((item) => item.productName || item.product?.productName || "Spiritual Prasad");
     const marchentId = cartItems?.map((item) => item.merchantId || item.product?.merchantId || 1);
 
-    const totalPrice = productDataPrice + deliveryCharges;
+    const subtotal = cartSummary?.subtotal || 0;
+    const deliveryFee = cartSummary?.deliveryCharge || 0;
+    const totalPrice = cartSummary?.grandTotal || (subtotal + deliveryFee);
 
     const queryParams = new URLSearchParams({
       productId: JSON.stringify(productId),
       quantity: JSON.stringify(quantity),
+      subtotal: subtotal.toString(),
+      deliveryCharge: deliveryFee.toString(),
       totalPrice: totalPrice.toString(),
       booking: "cart",
       images: JSON.stringify(image),
@@ -174,6 +163,8 @@ const Cart = () => {
     const checkOutProduct = {
       productId,
       quantity,
+      subtotal,
+      deliveryCharge: deliveryFee,
       totalPrice,
       booking: "cart",
       images: image,
@@ -197,6 +188,8 @@ const Cart = () => {
   if (error) {
     return <div className="cart-error-message"><p>{error}</p></div>;
   }
+
+  const currentSummary = cartSummary || { subtotal: 0, deliveryCharge: 0, grandTotal: 0 };
 
   return (
     <div className="cart-page-wrapper">
@@ -246,9 +239,9 @@ const Cart = () => {
                       <p className="item-subinfo">Pure & Energized Vedic Quality</p>
                       
                       <div className="item-price-row">
-                        <span className="current-price">₹{unitPrice.toLocaleString()}</span>
+                        <span className="current-price">₹{unitPrice.toLocaleString("en-IN")}</span>
                         {originalPrice > unitPrice && (
-                          <span className="original-price">₹{Math.round(originalPrice).toLocaleString()}</span>
+                          <span className="original-price">₹{Math.round(originalPrice).toLocaleString("en-IN")}</span>
                         )}
                         {originalPrice > unitPrice && (
                           <span className="discount-tag">
@@ -283,7 +276,7 @@ const Cart = () => {
 
                     {/* Item Total & Remove */}
                     <div className="cart-item-action-col">
-                      <div className="item-total-price">₹{(unitPrice * qty).toLocaleString()}</div>
+                      <div className="item-total-price">₹{(unitPrice * qty).toLocaleString("en-IN")}</div>
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(currentId)}
@@ -300,37 +293,36 @@ const Cart = () => {
 
             {/* Right: Order Summary Sidebar */}
             <div className="cart-summary-sidebar">
-              <div className="summary-card">
-                <h3 className="summary-title">Order Summary</h3>
-
-                <div className="summary-row">
-                  <span>Price ({cartItems.length} items):</span>
-                  <span>₹{productDataPrice.toLocaleString()}</span>
+              {/* Order Summary on Cart / Checkout Page */}
+              <div className="order-summary-box card p-3 summary-card">
+                <h5>Order Summary</h5>
+                <div className="d-flex justify-content-between my-1 summary-row">
+                  <span>Items Subtotal:</span>
+                  <span>₹{currentSummary.subtotal.toLocaleString("en-IN")}</span>
                 </div>
-
-                <div className="summary-row">
-                  <span>Delivery Charges:</span>
+                <div className="d-flex justify-content-between my-1 summary-row">
+                  <span>Delivery Fee:</span>
                   <span>
-                    {deliveryCharges === 0 ? (
-                      <span className="free-delivery-badge">FREE</span>
+                    {Number(currentSummary.deliveryCharge) === 0 ? (
+                      <strong className="text-success free-delivery-badge">FREE</strong>
                     ) : (
-                      `₹${deliveryCharges}`
+                      `₹${Number(currentSummary.deliveryCharge).toFixed(2)}`
                     )}
                   </span>
                 </div>
 
-                {deliveryCharges > 0 && (
+                {currentSummary.deliveryCharge > 0 && (
                   <div className="delivery-tip-banner">
                     <FaTruck style={{ marginRight: "6px" }} />
-                    Add ₹{(499 - productDataPrice).toLocaleString()} more for FREE Delivery!
+                    Add ₹{(499 - currentSummary.subtotal > 0 ? (499 - currentSummary.subtotal).toLocaleString("en-IN") : "0")} more for FREE Delivery!
                   </div>
                 )}
 
-                <div className="summary-divider" />
+                <hr className="summary-divider" />
 
-                <div className="summary-row total-row">
-                  <span>Total Payable:</span>
-                  <span className="grand-total">₹{(productDataPrice + deliveryCharges).toLocaleString()}</span>
+                <div className="d-flex justify-content-between font-weight-bold h5 summary-row total-row">
+                  <span>Total Amount:</span>
+                  <span className="grand-total">₹{currentSummary.grandTotal.toLocaleString("en-IN")}</span>
                 </div>
 
                 <p className="tax-inclusive-text">Inclusive of all taxes & Vedic Sankalp</p>
@@ -339,7 +331,7 @@ const Cart = () => {
                   type="button"
                   onClick={handleCheckout}
                   className="btn-proceed-checkout"
-                  disabled={productDataPrice <= 0}
+                  disabled={currentSummary.subtotal <= 0}
                 >
                   <span>Proceed to Checkout</span>
                   <FaArrowRight />

@@ -12,11 +12,11 @@
   background-repeat: no-repeat;
   position: relative;
   z-index: 1;
-  margin-bottom: 80px;
+  margin-bottom: 50px;
 }
 
 .sub_header_delivery .subheader_inner_delivery {
-  padding: 200px 0px 180px;
+  padding: 160px 0px 140px;
 }
 
 .subheader_inner_delivery {
@@ -26,25 +26,34 @@
 }
 
 .subheader_text_delivery h1 {
-  font-size: 70px;
-  margin-bottom: 0;
-  font-weight: 700;
+  font-size: 52px;
+  margin-bottom: 8px;
+  font-weight: 800;
   color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
   text-align: left;
 }
 
+.delivery-hero-sub {
+  color: #fed7aa;
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 0;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
 .sub_header_delivery .breadcrumb {
-  padding: 20px 28px;
+  padding: 14px 28px;
   margin: 0;
   background-color: #fff;
   justify-content: center;
   align-items: center;
   border-radius: 50px;
   position: absolute;
-  bottom: -32px;
+  bottom: -24px;
   left: 50%;
   transform: translateX(-50%);
-  box-shadow: 0px 10px 20px 0px rgb(53 82 99 / 9%);
+  box-shadow: 0px 10px 25px 0px rgba(0, 0, 0, 0.1);
 }
 
 .breadcrumb {
@@ -73,7 +82,7 @@
 }
 
 .sub_header_delivery .breadcrumb .breadcrumb-item.active {
-  color: #fc6805;
+  color: #ea580c;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 14px;
@@ -85,80 +94,238 @@
   padding-left: 15px;
 }
 
-.prasad_section {
-  padding: 0px 0px;
+/* 🌟 Sacred Features Assurance Bar */
+.prasad-features-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  padding: 20px 24px;
   margin-bottom: 40px;
+  box-shadow: 0 4px 20px rgba(234, 88, 12, 0.06);
 }
 
-.prasad_section .tp-box-prasad {
-  box-shadow: 0 0 10px #ccc;
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 5px;
+.p-feat-item {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.prasad_section .tp-box-prasad .tp-img img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-.prasad_section .tp-box-prasad .tp-box-content {
-  margin-top: -10px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.prasad_section .tp-box-prasad .tp-box-content h6 {
-  min-height: 30px;
-  line-height: 1.4;
-  overflow: hidden;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.prasad_section .tp-box-prasad .tp-box-content .price-booknow .price-grp p {
-  font-size: 1rem !important;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px !important;
-  color: #343d3c;
-  transition: all 0.4s ease;
-  margin-bottom: -5px;
-}
-
-.prasad_section .tp-box-prasad .tp-box-content .price-booknow {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 14px;
 }
 
-@media only screen and (max-width: 480px) {
+.p-feat-icon {
+  font-size: 2rem;
+  color: #ea580c;
+  flex-shrink: 0;
+}
+
+.p-feat-item strong {
+  display: block;
+  font-size: 0.98rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.p-feat-item span {
+  display: block;
+  font-size: 0.84rem;
+  color: #64748b;
+}
+
+/* 🛍️ Modern Prasad Cards Grid */
+.prasad-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+  margin-bottom: 50px;
+}
+
+.prasad-custom-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.prasad-custom-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(234, 88, 12, 0.12);
+  border-color: #fdba74;
+}
+
+.prasad-card-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background: #fff7ed;
+  overflow: hidden;
+}
+
+.prasad-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.prasad-custom-card:hover .prasad-card-img {
+  transform: scale(1.05);
+}
+
+.prasad-card-badge-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.temple-verified-tag {
+  background: rgba(22, 163, 74, 0.92);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.prasad-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.prasad-rating-row {
+  margin-bottom: 8px;
+}
+
+.prasad-star-rating {
+  font-size: 0.8rem;
+  color: #b45309;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.prasad-star-rating .star-icon {
+  color: #f59e0b;
+}
+
+.prasad-card-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.prasad-card-title a {
+  color: #0f172a;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.prasad-card-title a:hover {
+  color: #ea580c;
+}
+
+.prasad-card-desc {
+  font-size: 0.86rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.prasad-card-delivery-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.prasad-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.prasad-price-box {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.prasad-current-price {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #ea580c;
+}
+
+.prasad-original-price {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.prasad-book-cta-btn {
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  color: #ffffff;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+}
+
+.prasad-book-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+  color: #ffffff;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .prasad-features-bar {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
   .sub_header_delivery .subheader_inner_delivery {
     padding: 75px 0px 60px !important;
   }
   .subheader_text_delivery h1 {
-    font-size: 20px !important;
+    font-size: 28px !important;
+  }
+  .delivery-hero-sub {
+    font-size: 0.9rem;
   }
   .sub_header_delivery .breadcrumb {
-    padding: 10px 5px !important;
-    margin: 0;
-    bottom: -22px !important;
-    left: 50%;
-  }
-  .sub_header_delivery .breadcrumb .breadcrumb-item {
-    padding-left: 10px;
-  }
-  .sub_header_delivery .breadcrumb li a {
-    font-size: 12px !important;
-  }
-  .sub_header_delivery .breadcrumb .breadcrumb-item.active {
-    font-size: 12px !important;
+    padding: 10px 18px !important;
+    bottom: -18px !important;
   }
 }

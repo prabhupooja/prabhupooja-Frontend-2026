@@ -482,7 +482,46 @@
   .checkout-right {
     margin-top: 20px;
   }
-  
 }
+
+/* 📦 Order Summary Box */
+.order-summary-box {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 18px 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.order-summary-box h5 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 14px;
+}
+
+.order-summary-box .d-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-summary-box .my-1 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.order-summary-box hr {
+  margin: 14px 0;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
+.order-summary-box .h5 {
+  font-size: 1.25rem;
+  color: #ff7a00;
+}
+
 
 

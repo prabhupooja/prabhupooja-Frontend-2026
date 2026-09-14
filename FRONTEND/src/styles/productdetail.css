@@ -1870,3 +1870,99 @@
   cursor: not-allowed;
 }
 
+/* 🚚 Delivery Badge Styles */
+.delivery-badge-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 10px 0 6px 0;
+}
+
+.delivery-badge-free {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f0fdf4 !important;
+  color: #16a34a !important;
+  border: 1px solid #bbf7d0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.08);
+}
+
+.delivery-badge-paid {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f8fafc;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+/* 📊 Quantity & Price Breakdown Box in Product Details */
+.pdetail-qty-stepper-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qty-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.pdetail-summary-breakdown {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #fed7aa;
+  background: linear-gradient(135deg, #fffbf7 0%, #fff7ed 100%);
+  border-radius: 12px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.06);
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.breakdown-row.total-row {
+  border-top: 1px dashed #fed7aa;
+  padding-top: 6px;
+  margin-top: 2px;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.pdetail-grand-total {
+  font-size: 1.25rem;
+  color: #ea580c;
+  font-weight: 800;
+}
+
+.pdetail-delivery-tip {
+  display: flex;
+  align-items: center;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.84rem;
+  color: #c2410c;
+  margin-top: 10px;
+}
+
+
+

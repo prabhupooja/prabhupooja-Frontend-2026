@@ -1230,6 +1230,15 @@ const EcommerceNew2 = () => {
                           )}
                         </div>
 
+                        {/* Delivery Fee Info */}
+                        <div className="product-card-delivery-info" style={{ fontSize: "0.78rem", color: "#64748b", margin: "4px 0 8px 0", display: "flex", alignItems: "center", gap: "4px" }}>
+                          {product.delivery_charge === 0 || product.delivery_charge === '0.00' || product.delivery_charge === '0' || product.delivery_charge === 0.0 ? (
+                            <span style={{ color: "#16a34a", fontWeight: "700" }}>🚚 FREE Delivery</span>
+                          ) : (
+                            <span>🚚 Delivery: ₹{product.delivery_charge ? Number(product.delivery_charge).toFixed(2) : (offerPrice >= 499 ? '0.00' : '40.00')}</span>
+                          )}
+                        </div>
+
                         {/* Action CTA Button or Interactive Stepper with Go to Cart */}
                         {inCartQty > 0 ? (
                           <div className="card-stepper-and-cart-row">

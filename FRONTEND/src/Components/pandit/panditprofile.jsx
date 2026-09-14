@@ -309,14 +309,20 @@ const PanditProfile = () => {
             <div className="profile-image-column">
               <img
                 src={
-                  panditData.profileImage
-                    ? panditData.profileImage
+                  panditData.profileImage && panditData.profileImage !== "null" && panditData.profileImage !== "undefined"
+                    ? (panditData.profileImage.startsWith("http")
+                        ? panditData.profileImage
+                        : `${process.env.REACT_APP_BACKEND_URL || ""}/uploads/${panditData.profileImage}`)
                     : panditImage
                 }
                 alt={panditData.name || "Astrologer"}
                 width={300}
                 height={300}
                 className="profile-image"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = panditImage;
+                }}
               />
             </div>
             <div className="profile-details-column">

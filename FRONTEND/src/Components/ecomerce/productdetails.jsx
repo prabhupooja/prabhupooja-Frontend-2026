@@ -346,6 +346,16 @@ const Productdetails = () => {
   const totalSubtotal = quantity * offerPrice;
   const isStockAvailable = (productData?.noOfItems ?? 1) > 0;
 
+  // 🚚 Dynamic Delivery Fee & Free Threshold Calculations
+  const rawDelivery = productData?.delivery_charge;
+  const baseDeliveryCharge =
+    rawDelivery !== undefined && rawDelivery !== null && rawDelivery !== ""
+      ? Number(rawDelivery)
+      : 40;
+  const isFreeDelivery = baseDeliveryCharge === 0 || totalSubtotal >= 499;
+  const effectiveDeliveryFee = isFreeDelivery ? 0 : baseDeliveryCharge;
+  const finalPayableAmount = totalSubtotal + effectiveDeliveryFee;
+
   // 🌟 Dynamic Real-Time Rating Calculations
   const totalReviewsCount = reviews.length;
   const calculatedAverageRating =
@@ -540,15 +550,48 @@ const Productdetails = () => {
   // Buy Now
   const handleBuyNow = () => {
     if (!productData?.id) return;
-    navigate("/checkout", {
+    const itemDelivery = (productData.delivery_charge !== undefined && productData.delivery_charge !== null)
+      ? Number(productData.delivery_charge)
+      : (totalSubtotal >= 499 ? 0 : 40);
+    const finalTotal = totalSubtotal + itemDelivery;
+
+    const queryParams = new URLSearchParams({
+      productId: JSON.stringify([decryptId(productId) || productData.id]),
+      quantity: JSON.stringify([quantity]),
+      subtotal: totalSubtotal.toString(),
+      deliveryCharge: itemDelivery.toString(),
+      totalPrice: finalTotal.toString(),
+      booking: "normal",
+      images: JSON.stringify([allImages[0]]),
+      productName: JSON.stringify([productData.productName]),
+      marchentId: JSON.stringify([productData.merchantId || 1]),
+    });
+
+    const checkOutProduct = {
+      productId: [decryptId(productId) || productData.id],
+      quantity: [quantity],
+      subtotal: totalSubtotal,
+      deliveryCharge: itemDelivery,
+      totalPrice: finalTotal,
+      booking: "normal",
+      images: [allImages[0]],
+      productName: [productData.productName],
+      marchentId: [productData.merchantId || 1],
+    };
+
+    localStorage.setItem("checkOutProduct", JSON.stringify(checkOutProduct));
+
+    navigate(`/checkout?${queryParams.toString()}`, {
       state: {
-        productId: decryptId(productId),
+        productId: decryptId(productId) || productData.id,
         quantity,
-        totalPrice: totalSubtotal,
+        subtotal: totalSubtotal,
+        deliveryCharge: itemDelivery,
+        totalPrice: finalTotal,
         user: user1 || null,
         booking: "normal",
         images: allImages[0],
-        marchentId: productData?.merchantId,
+        marchentId: productData?.merchantId || 1,
         productName: productData?.productName,
       },
     });
@@ -768,6 +811,20 @@ const Productdetails = () => {
                   </span>
                 )}
               </div>
+
+              {/* Delivery Fee Badge on Product Detail Page */}
+              <div className="delivery-badge-wrapper my-2">
+                {isFreeDelivery ? (
+                  <span className="badge badge-success text-success bg-light p-2 font-weight-bold delivery-badge-free">
+                    🚚 FREE Delivery {totalSubtotal >= 499 && baseDeliveryCharge > 0 ? "• (Order over ₹499)" : ""}
+                  </span>
+                ) : (
+                  <span className="text-dark font-weight-bold delivery-badge-paid">
+                    🚚 Delivery: ₹{baseDeliveryCharge.toFixed(2)}
+                  </span>
+                )}
+              </div>
+
               <p className="price-tax-note">Inclusive of all Vedic rituals and taxes</p>
             </div>
 
@@ -849,31 +906,55 @@ const Productdetails = () => {
             {/* Quantity Selector & CTAs */}
             <div className="pdetail-purchase-section">
               <div className="quantity-and-total-row">
-                <div className="pdetail-qty-stepper">
-                  <button
-                    onClick={handleDecrement}
-                    disabled={quantity <= 1}
-                    className="qty-btn"
-                  >
-                    -
-                  </button>
-                  <span className="qty-value">{quantity}</span>
-                  <button
-                    onClick={handleIncrement}
-                    disabled={!isStockAvailable}
-                    className="qty-btn"
-                  >
-                    +
-                  </button>
+                <div className="pdetail-qty-stepper-box">
+                  <span className="qty-label">Quantity:</span>
+                  <div className="pdetail-qty-stepper">
+                    <button
+                      onClick={handleDecrement}
+                      disabled={quantity <= 1}
+                      className="qty-btn"
+                    >
+                      -
+                    </button>
+                    <span className="qty-value">{quantity}</span>
+                    <button
+                      onClick={handleIncrement}
+                      disabled={!isStockAvailable}
+                      className="qty-btn"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
-                <div className="subtotal-display">
-                  <span className="subtotal-label">Subtotal:</span>
-                  <span className="subtotal-amount">
-                    ₹{totalSubtotal.toLocaleString("en-IN")}
-                  </span>
+                <div className="pdetail-summary-breakdown">
+                  <div className="breakdown-row">
+                    <span>Subtotal:</span>
+                    <span>₹{totalSubtotal.toLocaleString("en-IN")}</span>
+                  </div>
+                  <div className="breakdown-row">
+                    <span>Delivery:</span>
+                    <span>
+                      {isFreeDelivery ? (
+                        <strong className="text-success">FREE</strong>
+                      ) : (
+                        `+₹${effectiveDeliveryFee.toFixed(2)}`
+                      )}
+                    </span>
+                  </div>
+                  <div className="breakdown-row total-row">
+                    <span>Total Payable:</span>
+                    <strong className="pdetail-grand-total">₹{finalPayableAmount.toLocaleString("en-IN")}</strong>
+                  </div>
                 </div>
               </div>
+
+              {!isFreeDelivery && totalSubtotal < 499 && (
+                <div className="pdetail-delivery-tip">
+                  <FaTruck style={{ marginRight: "6px", color: "#ea580c" }} />
+                  <span>Add <strong>₹{(499 - totalSubtotal).toLocaleString("en-IN")}</strong> more item(s) for <strong>FREE Delivery</strong>!</span>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="pdetail-action-btns-row">

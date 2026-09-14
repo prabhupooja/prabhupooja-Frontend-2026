@@ -22,8 +22,7 @@ const TempleDetail = lazy(() => import("./Components/temple/TempleDetail"));
 const Booknowform = lazy(() => import("./Components/temple/booknowform"));
 
 const Prasaddelivery = lazy(() => import("./Components/prasaddelivery/prasaddelivery"));
-const Khajranaprasad = lazy(() => import("./Components/khajranaprasadonline/khajranaprasad"));
-const Ujjainprasad = lazy(() => import("./Components/ujjainprasadonline/ujjainprasad"));
+const PrasadDetailMasterPage = lazy(() => import("./Components/prasaddelivery/PrasadDetailMasterPage"));
 const Prasadcheckout = lazy(() => import("./Components/prasaddelivery/prasadcheckout"));
 
 const Astrology = lazy(() => import("./Components/astrology/astrology"));
@@ -238,10 +237,14 @@ function App() {
             <Route path="/ujjaintemple" element={<TempleDetail />} />
             <Route path="/panchmukhishanihanumanmandir" element={<TempleDetail />} />
 
+            {/* Universal Dynamic Prasad Delivery Routes */}
             <Route path="/prasaddelivery" element={<Prasaddelivery />} />
-            <Route path="/prasad/:id" element={<Khajranaprasad />} />
-            <Route path="/prasad/1" element={<Khajranaprasad />} />
-            <Route path="/prasad/2" element={<Ujjainprasad />} />
+            <Route path="/prasad/:id" element={<PrasadDetailMasterPage />} />
+            <Route path="/prasad/:slug/:id" element={<PrasadDetailMasterPage />} />
+            <Route path="/prasad/1" element={<PrasadDetailMasterPage />} />
+            <Route path="/prasad/2" element={<PrasadDetailMasterPage />} />
+            <Route path="/khajranaprasad" element={<PrasadDetailMasterPage />} />
+            <Route path="/ujjainprasad" element={<PrasadDetailMasterPage />} />
             <Route path="/astrology" element={<Astrology />} />
             <Route path="/recharge" element={<Recharge />} />
             <Route path="/astrologyform" element={<Astrologyform />} />

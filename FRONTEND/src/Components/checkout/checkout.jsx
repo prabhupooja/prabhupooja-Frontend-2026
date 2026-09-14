@@ -46,6 +46,18 @@ const Checkout = () => {
     ? safeJsonParse(queryParams.get("quantity"))
     : (stateData.quantity || storedCheckout.quantity || 1);
 
+  const rawSubtotal =
+    queryParams.get("subtotal") ||
+    stateData.subtotal ||
+    storedCheckout.subtotal ||
+    null;
+
+  const rawDeliveryCharge =
+    queryParams.get("deliveryCharge") ||
+    stateData.deliveryCharge ||
+    storedCheckout.deliveryCharge ||
+    null;
+
   const rawTotalPrice =
     queryParams.get("totalPrice") ||
     stateData.totalPrice ||
@@ -72,9 +84,25 @@ const Checkout = () => {
 
   const productId = rawProductId;
   const quantity = rawQuantity;
-  const totalPrice = Number(rawTotalPrice) || 0;
+  const rawPriceNum = Number(rawTotalPrice) || 0;
+
+  const subtotal = rawSubtotal !== null
+    ? Number(rawSubtotal)
+    : (rawDeliveryCharge !== null ? Math.max(0, rawPriceNum - Number(rawDeliveryCharge)) : rawPriceNum);
+
+  const deliveryCharge = rawDeliveryCharge !== null
+    ? Number(rawDeliveryCharge)
+    : (rawPriceNum > 0 && rawPriceNum < 499 ? 40 : 0);
+
+  const totalPrice = rawPriceNum || (subtotal + deliveryCharge);
   const productName = rawProductName;
   const marchentId = rawMarchentId;
+
+  const cartSummary = {
+    subtotal,
+    deliveryCharge,
+    grandTotal: totalPrice,
+  };
 
   // Normalized clean array of image URLs
   const normalizedImages = useMemo(() => {
@@ -1019,34 +1047,34 @@ const Checkout = () => {
                 </div>
               )}
 
-              <div className="checkout-total">
-                <p>
-                  {Array.isArray(quantity) ? (
-                    <span>
-                      Total Quantity:{" "}
-                      {quantity.reduce((total, num) => total + Number(num), 0)}
-                    </span>
-                  ) : (
-                    <span>Quantity: {quantity}</span>
-                  )}
-                </p>
-                {coupanDiscount > 0 ? (
-                  <>
-                    <p>
-                      <strong>Total Price:</strong> <s>₹{totalPrice}</s>
-                    </p>
-                    <p>
-                      <strong>Discount:</strong> ₹{coupanDiscount}
-                    </p>
-                    <p>
-                      <strong>Final Price:</strong> ₹{offeredPrice}
-                    </p>
-                  </>
-                ) : (
-                  <p>
-                    <strong>Total Price:</strong> ₹{totalPrice}
-                  </p>
+              {/* Order Summary on Cart / Checkout Page */}
+              <div className="order-summary-box card p-3 mt-3">
+                <h5>Order Summary</h5>
+                <div className="d-flex justify-content-between my-1">
+                  <span>Items Subtotal:</span>
+                  <span>₹{cartSummary.subtotal.toLocaleString("en-IN")}</span>
+                </div>
+                <div className="d-flex justify-content-between my-1">
+                  <span>Delivery Fee:</span>
+                  <span>
+                    {Number(cartSummary.deliveryCharge) === 0 ? (
+                      <strong className="text-success">FREE</strong>
+                    ) : (
+                      `₹${Number(cartSummary.deliveryCharge).toFixed(2)}`
+                    )}
+                  </span>
+                </div>
+                {coupanDiscount > 0 && (
+                  <div className="d-flex justify-content-between my-1 text-success">
+                    <span>Coupon Discount:</span>
+                    <span>-₹{Number(coupanDiscount).toLocaleString("en-IN")}</span>
+                  </div>
                 )}
+                <hr />
+                <div className="d-flex justify-content-between font-weight-bold h5">
+                  <span>Total Amount:</span>
+                  <span>₹{offeredPrice.toLocaleString("en-IN")}</span>
+                </div>
               </div>
             </div>
 
