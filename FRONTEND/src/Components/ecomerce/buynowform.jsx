@@ -6,6 +6,8 @@ import useAuthStore from "../../Store/UserStore/userAuthStore";
 import CryptoJS from "crypto-js";
 import Swal from "sweetalert2";
 
+import { calculateDeliveryFee } from "../../utils/deliveryHelper";
+
 function BuyNowForm() {
   const { productId } = useParams();
   const navigate = useNavigate();
@@ -36,12 +38,13 @@ function BuyNowForm() {
     fetchProductData();
   }, []);
 
-
   const handleBuyNow = () => {
-    const totalPrice = quantity * productData.offerPrice || 0;
+    const calc = calculateDeliveryFee(productData, quantity);
+    const subtotal = calc.subtotal;
+    const deliveryCharge = calc.deliveryFee;
+    const totalPrice = calc.grandTotal;
 
     if (!user1) {
-      // navigate("/login");
       Swal.fire({
         title: "Login Required",
         text: "Please login!",
@@ -62,17 +65,20 @@ function BuyNowForm() {
         } catch (e) {}
       }
 
-      const productIdToSend = productData?._id || (productId ? decryptId(productId) : "");
+      const productIdToSend = productData?._id || productData?.id || (productId ? decryptId(productId) : "");
 
       navigate("/checkout", {
         state: {
           productId: productIdToSend,
           quantity: quantity,
+          subtotal: subtotal,
+          deliveryCharge: deliveryCharge,
           totalPrice: totalPrice,
           user: user1,
           booking: "normal",
           images: safeImage,
-          marchentId: productData?.merchantId,
+          marchentId: productData?.merchantId || 1,
+          productName: productData?.productName,
         },
       });
     }

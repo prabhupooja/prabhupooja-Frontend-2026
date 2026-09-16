@@ -11,8 +11,8 @@ import { GoHome } from "react-icons/go";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import { FiEdit } from "react-icons/fi";
-import { MdDeleteOutline } from "react-icons/md";
 import { normalizeImageUrl, DEFAULT_FALLBACK_IMAGE } from "../../utils/imageHelper";
+import { calculateDeliveryFee, fetchDeliverySettings } from "../../utils/deliveryHelper";
 
 const safeJsonParse = (val, fallback = null) => {
   if (val === null || val === undefined) return fallback;
@@ -82,6 +82,14 @@ const Checkout = () => {
     ? safeJsonParse(queryParams.get("marchentId"))
     : (stateData.marchentId || storedCheckout.marchentId || 1);
 
+  const [deliverySettings, setDeliverySettings] = useState(null);
+
+  useEffect(() => {
+    fetchDeliverySettings().then((s) => {
+      if (s) setDeliverySettings(s);
+    });
+  }, []);
+
   const productId = rawProductId;
   const quantity = rawQuantity;
   const rawPriceNum = Number(rawTotalPrice) || 0;
@@ -92,9 +100,9 @@ const Checkout = () => {
 
   const deliveryCharge = rawDeliveryCharge !== null
     ? Number(rawDeliveryCharge)
-    : (rawPriceNum > 0 && rawPriceNum < 499 ? 40 : 0);
+    : (subtotal > 0 ? calculateDeliveryFee([{ price: subtotal, quantity: 1 }], 1, deliverySettings).deliveryFee : 0);
 
-  const totalPrice = rawPriceNum || (subtotal + deliveryCharge);
+  const totalPrice = (subtotal + deliveryCharge) || rawPriceNum;
   const productName = rawProductName;
   const marchentId = rawMarchentId;
 

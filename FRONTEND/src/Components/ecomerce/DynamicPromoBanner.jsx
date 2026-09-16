@@ -169,6 +169,33 @@ const DynamicPromoBanner = ({ banner, onBannerClick }) => {
       <div className="banner-spiritual-ambient-light" aria-hidden="true" />
       <div className="banner-mandala-watermark" aria-hidden="true" />
 
+      {/* Floating Royal Scalloped Seal Offer Badge (Top-Right of Banner) */}
+      {isOfferValid && (
+        <div
+          className="banner-offer-seal-badge"
+          style={{ backgroundColor: theme.primaryColor || "#781005" }}
+        >
+          <div className="seal-inner-border">
+            {(offer.label || offer.title) && (
+              <span className="seal-offer-title">
+                {offer.label || offer.title}
+              </span>
+            )}
+            {offer.prefix && (
+              <span className="seal-offer-prefix">{offer.prefix}</span>
+            )}
+            {(offer.discount || offer.value) && (
+              <span className="seal-offer-value">
+                {offer.discount || offer.value}
+              </span>
+            )}
+            {offer.suffix && (
+              <span className="seal-offer-suffix">{offer.suffix}</span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ============================================================
           LEFT SECTION: DEDICATED IMAGE AREA (42%) WITH LARGE CURVED ARC
           ============================================================ */}
@@ -218,33 +245,6 @@ const DynamicPromoBanner = ({ banner, onBannerClick }) => {
         className="banner-content"
         style={{ color: theme.textColor || "#451a03" }}
       >
-        {/* Floating Royal Scalloped Seal Offer Badge (Top-Right) */}
-        {isOfferValid && (
-          <div
-            className="banner-offer-seal-badge"
-            style={{ backgroundColor: theme.primaryColor || "#781005" }}
-          >
-            <div className="seal-inner-border">
-              {(offer.label || offer.title) && (
-                <span className="seal-offer-title">
-                  {offer.label || offer.title}
-                </span>
-              )}
-              {offer.prefix && (
-                <span className="seal-offer-prefix">{offer.prefix}</span>
-              )}
-              {(offer.discount || offer.value) && (
-                <span className="seal-offer-value">
-                  {offer.discount || offer.value}
-                </span>
-              )}
-              {offer.suffix && (
-                <span className="seal-offer-suffix">{offer.suffix}</span>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* 1. Small Shloka / Eyebrow with Balanced Horizontal Gold Lines */}
         {eyebrow && (
           <div className="banner-shloka-heading">

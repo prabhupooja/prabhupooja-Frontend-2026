@@ -78,6 +78,7 @@
 
 import { create } from "zustand";
 import api from "../../Components/Axios/api";
+import { calculateDeliveryFee, fetchDeliverySettings } from "../../utils/deliveryHelper";
 
 const calculateCartSummary = (items, backendSummary = null) => {
   if (backendSummary && backendSummary.subtotal !== undefined) {
@@ -90,7 +91,7 @@ const calculateCartSummary = (items, backendSummary = null) => {
       backendSummary.freeDeliveryThreshold !== undefined &&
       backendSummary.freeDeliveryThreshold !== null
         ? Number(backendSummary.freeDeliveryThreshold)
-        : null;
+        : 1000;
 
     return {
       subtotal,
@@ -101,60 +102,13 @@ const calculateCartSummary = (items, backendSummary = null) => {
     };
   }
 
-  const subtotal = (items || []).reduce((total, item) => {
-    const price = Number(
-      item.offerPrice ||
-        item.product?.offerPrice ||
-        item.price ||
-        item.product?.price ||
-        0
-    );
-    const qty = Number(item.quantity || 1);
-    return total + price * qty;
-  }, 0);
-
-  let deliveryCharge = 0;
-  let freeDeliveryThreshold = null;
-
-  if (subtotal > 0 && Array.isArray(items) && items.length > 0) {
-    const charges = items.map((item) => {
-      const p = item.product || item;
-      const hasCharge =
-        p.delivery_charge !== undefined &&
-        p.delivery_charge !== null &&
-        p.delivery_charge !== "";
-      const charge = hasCharge ? Number(p.delivery_charge) : 40;
-      const rawFreeAbove =
-        p.free_delivery_above ?? p.free_delivery_threshold ?? 700;
-      const freeAbove =
-        rawFreeAbove !== undefined &&
-        rawFreeAbove !== null &&
-        rawFreeAbove !== ""
-          ? Number(rawFreeAbove)
-          : 700;
-      return { charge, freeAbove };
-    });
-
-    const maxCharge = Math.max(0, ...charges.map((c) => c.charge));
-    const thresholds = charges
-      .map((c) => c.freeAbove)
-      .filter((t) => t !== null && t > 0);
-    freeDeliveryThreshold = thresholds.length > 0 ? Math.min(...thresholds) : 700;
-
-    if (freeDeliveryThreshold && subtotal >= freeDeliveryThreshold) {
-      deliveryCharge = 0;
-    } else {
-      deliveryCharge = maxCharge;
-    }
-  }
-
-  const grandTotal = subtotal + deliveryCharge;
+  const calc = calculateDeliveryFee(items);
   return {
-    subtotal,
-    deliveryCharge,
-    grandTotal,
-    freeDeliveryThreshold,
-    isFreeDelivery: deliveryCharge === 0,
+    subtotal: calc.subtotal,
+    deliveryCharge: calc.deliveryFee,
+    grandTotal: calc.grandTotal,
+    freeDeliveryThreshold: calc.freeThreshold,
+    isFreeDelivery: calc.isFree,
   };
 };
 
@@ -178,6 +132,7 @@ const useUserCartStore = create((set, get) => ({
     const token = localStorage.getItem("token");
 
     try {
+      await fetchDeliverySettings();
       if (token) {
         const response = await api.get(`/cart/getcart/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },

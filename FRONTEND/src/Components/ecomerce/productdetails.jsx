@@ -29,6 +29,7 @@ import useUserCardStore from "../../Store/userCardStore/userCardStore";
 import useUserStore from "../../Store/UserStore/userStore";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
+import { calculateDeliveryFee, fetchDeliverySettings as getLiveDeliverySettings } from "../../utils/deliveryHelper";
 
 // 🛡️ Helper: Parse array of images safely from any format
 export const parseAllImages = (imgData) => {
@@ -309,19 +310,15 @@ const Productdetails = () => {
 
   const [universalSettings, setUniversalSettings] = useState({
     universal_delivery_charge: 40,
-    free_delivery_above: 700,
+    free_delivery_above: 1000,
     delivery_charge_active: true,
   });
 
   const fetchDeliverySettings = async () => {
     try {
-      const res = await api.get("/settings/delivery-charge");
-      if (res.data?.data) {
-        setUniversalSettings({
-          universal_delivery_charge: Number(res.data.data.universal_delivery_charge ?? 40),
-          free_delivery_above: Number(res.data.data.free_delivery_above ?? 700),
-          delivery_charge_active: res.data.data.delivery_charge_active !== false,
-        });
+      const settings = await getLiveDeliverySettings(true);
+      if (settings) {
+        setUniversalSettings(settings);
       }
     } catch (err) {
       console.warn("Could not fetch universal delivery settings:", err);
@@ -447,7 +444,6 @@ const Productdetails = () => {
   const discountPercent = hasDiscount
     ? Math.round(((originalPrice - offerPrice) / originalPrice) * 100)
     : 0;
-  const totalSubtotal = quantity * offerPrice;
 
   // 📦 Stock Management (Auto Low-Stock / Out-of-Stock Alert)
   const currentStock = Number(
@@ -463,33 +459,16 @@ const Productdetails = () => {
   const isStockAvailable = !isOutOfStock;
 
   // 🚚 Dynamic Delivery Fee & Free Threshold Calculations (Universal + Product Smart Engine)
-  const rawDelivery = productData?.delivery_charge;
-  const hasExplicitProductDelivery =
-    rawDelivery !== undefined && rawDelivery !== null && rawDelivery !== "";
-  const productDeliveryCharge = hasExplicitProductDelivery ? Number(rawDelivery) : null;
-
-  // If product doesn't have custom delivery charge, fallback to universal store settings (₹40)
-  const baseDeliveryCharge = hasExplicitProductDelivery
-    ? Math.max(0, productDeliveryCharge)
-    : Math.max(0, Number(universalSettings.universal_delivery_charge || 40));
-
-  const freeDeliveryAbove = Number(
-    productData?.free_delivery_above ??
-    productData?.free_delivery_threshold ??
-    universalSettings.free_delivery_above ??
-    700
-  );
-
-  // 1. Explicit free (0 set on product)
-  const isExplicitFree = hasExplicitProductDelivery && productDeliveryCharge === 0;
-  // 2. Threshold free (subtotal >= freeDeliveryAbove)
-  const isThresholdFree = freeDeliveryAbove > 0 && totalSubtotal >= freeDeliveryAbove;
-  // 3. System inactive
-  const isFreeDelivery = !universalSettings.delivery_charge_active || isExplicitFree || isThresholdFree;
-
-  const effectiveDeliveryFee = isFreeDelivery ? 0 : baseDeliveryCharge;
-  const finalPayableAmount = Math.max(0, totalSubtotal + effectiveDeliveryFee);
-  const remainingForFree = Math.max(0, (freeDeliveryAbove || 700) - totalSubtotal);
+  const deliveryCalc = calculateDeliveryFee(productData, quantity, universalSettings);
+  const totalSubtotal = deliveryCalc.subtotal;
+  const effectiveDeliveryFee = deliveryCalc.deliveryFee;
+  const isFreeDelivery = deliveryCalc.isFree;
+  const freeDeliveryAbove = deliveryCalc.freeThreshold;
+  const remainingForFree = deliveryCalc.remainingForFree;
+  const finalPayableAmount = deliveryCalc.grandTotal;
+  const baseDeliveryCharge = (productData?.delivery_charge !== null && productData?.delivery_charge !== undefined && productData?.delivery_charge !== "" && Number(productData.delivery_charge) > 0)
+    ? Number(productData.delivery_charge)
+    : Number(universalSettings.universal_delivery_charge || 40);
 
   // 📦 Package Inclusions parser
   const packageInclusions = React.useMemo(() => {
@@ -1002,9 +981,9 @@ const Productdetails = () => {
                 <div className="delivery-info-text-col">
                   <span className="delivery-title">
                     {isFreeDelivery ? (
-                      <strong className="text-green">FREE Delivery Across India</strong>
+                      <strong className="text-green">🟢 FREE Delivery on this order</strong>
                     ) : (
-                      <strong>Delivery Charge: ₹{baseDeliveryCharge.toFixed(2)}</strong>
+                      <strong>🚚 Delivery: ₹{effectiveDeliveryFee.toFixed(2)} (FREE on orders above ₹{freeDeliveryAbove})</strong>
                     )}
                   </span>
                   {productData?.estimated_delivery_days && (
@@ -1107,7 +1086,7 @@ const Productdetails = () => {
               {!isFreeDelivery && freeDeliveryAbove > 0 && remainingForFree > 0 && (
                 <div className="pdetail-delivery-tip">
                   <FaTruck style={{ marginRight: "6px", color: "#ea580c" }} />
-                  <span>Add <strong>₹{remainingForFree.toLocaleString("en-IN")}</strong> more item(s) for <strong>FREE Delivery</strong>!</span>
+                  <span>Add <strong>₹{remainingForFree.toLocaleString("en-IN")}</strong> more for <strong>FREE Delivery</strong>!</span>
                 </div>
               )}
 
