@@ -307,6 +307,27 @@ const Productdetails = () => {
     }
   };
 
+  const [universalSettings, setUniversalSettings] = useState({
+    universal_delivery_charge: 40,
+    free_delivery_above: 700,
+    delivery_charge_active: true,
+  });
+
+  const fetchDeliverySettings = async () => {
+    try {
+      const res = await api.get("/settings/delivery-charge");
+      if (res.data?.data) {
+        setUniversalSettings({
+          universal_delivery_charge: Number(res.data.data.universal_delivery_charge ?? 40),
+          free_delivery_above: Number(res.data.data.free_delivery_above ?? 700),
+          delivery_charge_active: res.data.data.delivery_charge_active !== false,
+        });
+      }
+    } catch (err) {
+      console.warn("Could not fetch universal delivery settings:", err);
+    }
+  };
+
   const fetchReviews = async () => {
     try {
       const resolvedId = decryptId(productId);
@@ -332,6 +353,7 @@ const Productdetails = () => {
       fetchProductData();
       fetchRelatedProducts();
       fetchReviews();
+      fetchDeliverySettings();
       window.scrollTo(0, 0);
     }
   }, [productId]);
@@ -411,14 +433,14 @@ const Productdetails = () => {
 
   // Quantity Stepper
   const handleIncrement = () => {
-    setQuantity((prev) => Math.min(prev + 1, productData.noOfItems || 10));
+    setQuantity((prev) => Math.min(prev + 1, productData.stock || productData.noOfItems || 10));
   };
 
   const handleDecrement = () => {
     setQuantity((prev) => Math.max(prev - 1, 1));
   };
 
-  // Calculations
+  // Calculations & Stock Management
   const originalPrice = Number(productData?.price) || 0;
   const offerPrice = Number(productData?.offerPrice) || originalPrice;
   const hasDiscount = originalPrice > offerPrice && offerPrice > 0;
@@ -426,17 +448,59 @@ const Productdetails = () => {
     ? Math.round(((originalPrice - offerPrice) / originalPrice) * 100)
     : 0;
   const totalSubtotal = quantity * offerPrice;
-  const isStockAvailable = (productData?.noOfItems ?? 1) > 0;
 
-  // 🚚 Dynamic Delivery Fee & Free Threshold Calculations
+  // 📦 Stock Management (Auto Low-Stock / Out-of-Stock Alert)
+  const currentStock = Number(
+    productData?.stock !== undefined && productData?.stock !== null
+      ? productData?.stock
+      : productData?.noOfItems !== undefined && productData?.noOfItems !== null
+      ? productData?.noOfItems
+      : 10
+  );
+  const lowStockThreshold = Number(productData?.low_stock_threshold || 5);
+  const isOutOfStock = currentStock <= 0;
+  const isLowStock = !isOutOfStock && currentStock <= lowStockThreshold;
+  const isStockAvailable = !isOutOfStock;
+
+  // 🚚 Dynamic Delivery Fee & Free Threshold Calculations (Universal + Product Smart Engine)
   const rawDelivery = productData?.delivery_charge;
-  const baseDeliveryCharge =
-    rawDelivery !== undefined && rawDelivery !== null && rawDelivery !== ""
-      ? Number(rawDelivery)
-      : 40;
-  const isFreeDelivery = baseDeliveryCharge === 0 || totalSubtotal >= 499;
+  const hasExplicitProductDelivery =
+    rawDelivery !== undefined && rawDelivery !== null && rawDelivery !== "";
+  const productDeliveryCharge = hasExplicitProductDelivery ? Number(rawDelivery) : null;
+
+  // If product doesn't have custom delivery charge, fallback to universal store settings (₹40)
+  const baseDeliveryCharge = hasExplicitProductDelivery
+    ? Math.max(0, productDeliveryCharge)
+    : Math.max(0, Number(universalSettings.universal_delivery_charge || 40));
+
+  const freeDeliveryAbove = Number(
+    productData?.free_delivery_above ??
+    productData?.free_delivery_threshold ??
+    universalSettings.free_delivery_above ??
+    700
+  );
+
+  // 1. Explicit free (0 set on product)
+  const isExplicitFree = hasExplicitProductDelivery && productDeliveryCharge === 0;
+  // 2. Threshold free (subtotal >= freeDeliveryAbove)
+  const isThresholdFree = freeDeliveryAbove > 0 && totalSubtotal >= freeDeliveryAbove;
+  // 3. System inactive
+  const isFreeDelivery = !universalSettings.delivery_charge_active || isExplicitFree || isThresholdFree;
+
   const effectiveDeliveryFee = isFreeDelivery ? 0 : baseDeliveryCharge;
-  const finalPayableAmount = totalSubtotal + effectiveDeliveryFee;
+  const finalPayableAmount = Math.max(0, totalSubtotal + effectiveDeliveryFee);
+  const remainingForFree = Math.max(0, (freeDeliveryAbove || 700) - totalSubtotal);
+
+  // 📦 Package Inclusions parser
+  const packageInclusions = React.useMemo(() => {
+    const raw =
+      productData?.packageIncludesList ||
+      productData?.package_includes ||
+      productData?.packageIncludes ||
+      productData?.included_items ||
+      productData?.whats_in_the_box;
+    return parseSmartBulletPoints(raw);
+  }, [productData]);
 
   // 🌟 Dynamic Real-Time Rating Calculations
   const totalReviewsCount = reviews.length;
@@ -632,9 +696,7 @@ const Productdetails = () => {
   // Buy Now
   const handleBuyNow = () => {
     if (!productData?.id) return;
-    const itemDelivery = (productData.delivery_charge !== undefined && productData.delivery_charge !== null)
-      ? Number(productData.delivery_charge)
-      : (totalSubtotal >= 499 ? 0 : 40);
+    const itemDelivery = effectiveDeliveryFee;
     const finalTotal = totalSubtotal + itemDelivery;
 
     const queryParams = new URLSearchParams({
@@ -826,17 +888,45 @@ const Productdetails = () => {
               </div>
               <div className="assurance-item">
                 <FaUndo className="assurance-icon" />
-                <span>Easy Returns</span>
+                <span>
+                  {productData.return_available || productData.replacement_available
+                    ? `${productData.replacement_period || 7} Days Replacement`
+                    : "Non-Returnable (Sanctified)"}
+                </span>
+              </div>
+            </div>
+
+            {/* Sacred Guarantee Box */}
+            <div className="pdetail-guarantee-box">
+              <MdOutlineSecurity className="guarantee-icon" />
+              <div>
+                <h4>PrabhuPooja Devotional Promise</h4>
+                <p>
+                  Every idol and sacred item is cleansed with sacred Gangajal and
+                  sanctified with authentic Vedic mantras prior to dispatch.
+                </p>
               </div>
             </div>
           </div>
 
           {/* 📋 RIGHT: PRODUCT INFO, SPECS & PURCHASE ACTIONS */}
           <div className="pdetail-info-col">
-            {/* Category / Collection Tag */}
-            <span className="pdetail-category-tag">
-              <FaTag /> {productData.style || productData.theme || productData.category || "Sacred Idols & Divine Artifacts"}
-            </span>
+            {/* Category / Collection Tag & Badges */}
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
+              <span className="pdetail-category-tag">
+                <FaTag /> {productData.style || productData.theme || productData.category || "Sacred Idols & Divine Artifacts"}
+              </span>
+              {Boolean(productData.is_bestseller) && (
+                <span style={{ background: "#fef3c7", color: "#b45309", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                  ⭐ Bestseller
+                </span>
+              )}
+              {Boolean(productData.is_featured) && (
+                <span style={{ background: "#ffedd5", color: "#c2410c", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                  🔥 Featured Product
+                </span>
+              )}
+            </div>
 
             {/* Title */}
             <h1 className="pdetail-product-title">{productData.productName}</h1>
@@ -866,13 +956,21 @@ const Productdetails = () => {
                 </span>
               </div>
 
-              <div
-                className={`stock-pill ${
-                  isStockAvailable ? "in-stock" : "out-of-stock"
-                }`}
-              >
-                <span className="stock-dot" />
-                {isStockAvailable ? "In Stock • Ready to Dispatch" : "Out of Stock"}
+              {/* Dynamic Stock Badge */}
+              <div className="stock-container">
+                {isOutOfStock ? (
+                  <div className="badge-out-of-stock">
+                    🔴 Out of Stock / Sold Out
+                  </div>
+                ) : isLowStock ? (
+                  <div className="badge-low-stock">
+                    ⚡ Hurry! Only {currentStock} left in stock - Order soon
+                  </div>
+                ) : (
+                  <div className="badge-in-stock">
+                    🟢 In Stock (Ready to Ship)
+                  </div>
+                )}
               </div>
             </div>
 
@@ -894,96 +992,71 @@ const Productdetails = () => {
                 )}
               </div>
 
-              {/* Delivery Fee Badge on Product Detail Page */}
-              <div className="delivery-badge-wrapper my-2">
-                {isFreeDelivery ? (
-                  <span className="badge badge-success text-success bg-light p-2 font-weight-bold delivery-badge-free">
-                    🚚 FREE Delivery {totalSubtotal >= 499 && baseDeliveryCharge > 0 ? "• (Order over ₹499)" : ""}
-                  </span>
-                ) : (
-                  <span className="text-dark font-weight-bold delivery-badge-paid">
-                    🚚 Delivery: ₹{baseDeliveryCharge.toFixed(2)}
-                  </span>
-                )}
-              </div>
-
               <p className="price-tax-note">Inclusive of all Vedic rituals and taxes</p>
             </div>
 
-            {/* Key Specifications Grid */}
-            <div className="pdetail-specs-card">
-              <h3 className="specs-card-title">Sacred Specifications</h3>
-              <div className="specs-grid">
-                {!isInvalidSpecValue(productData.material) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Material:</span>
-                    <span className="spec-val">{productData.material}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.colour) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Colour:</span>
-                    <span className="spec-val">{productData.colour}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.theme) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Theme:</span>
-                    <span className="spec-val">{productData.theme}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.style) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Style:</span>
-                    <span className="spec-val">{productData.style}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.specialFeature) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Special Feature:</span>
-                    <span className="spec-val">{productData.specialFeature}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.brand) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Brand:</span>
-                    <span className="spec-val">{productData.brand}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.Height) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Height:</span>
-                    <span className="spec-val">{productData.Height}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.Dimension) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Base Dimension:</span>
-                    <span className="spec-val">{productData.Dimension}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.Weight) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Weight:</span>
-                    <span className="spec-val">{productData.Weight}</span>
-                  </div>
-                )}
-                {!isInvalidSpecValue(productData.ProductCode) && (
-                  <div className="spec-item">
-                    <span className="spec-label">Product Code:</span>
-                    <span className="spec-val code-val">
-                      {productData.ProductCode}
-                    </span>
-                  </div>
-                )}
-                <div className="spec-item">
-                  <span className="spec-label">Energization:</span>
-                  <span className="spec-val highlight-val">
-                    Prana Pratishtha Blessed
+            {/* 🚚 Sacred Delivery & Dispatch Information */}
+            <div className="delivery-card">
+              <div className="delivery-header">
+                <FaTruck className="truck-icon" />
+                <div className="delivery-info-text-col">
+                  <span className="delivery-title">
+                    {isFreeDelivery ? (
+                      <strong className="text-green">FREE Delivery Across India</strong>
+                    ) : (
+                      <strong>Delivery Charge: ₹{baseDeliveryCharge.toFixed(2)}</strong>
+                    )}
                   </span>
+                  {productData?.estimated_delivery_days && (
+                    <p className="transit-text">
+                      Estimated Transit: <strong>{productData.estimated_delivery_days}</strong>
+                    </p>
+                  )}
                 </div>
               </div>
+
+              {productData?.dispatch_time && (
+                <div className="dispatch-badge">
+                  <FaBolt className="bolt-icon" />
+                  <span>{productData.dispatch_time}</span>
+                </div>
+              )}
             </div>
+
+            {/* 📦 Package Inclusions (What's in the box) */}
+            {packageInclusions && packageInclusions.length > 0 ? (
+              <div className="inclusions-card">
+                <h4>📦 Package Includes:</h4>
+                <ul className="inclusions-list">
+                  {packageInclusions.map((item, index) => (
+                    <li key={index} className="inclusion-item">
+                      <FaCheck className="check-icon" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              /* Quick Key Attributes / Highlights */
+              <div className="pdetail-quick-specs-row">
+                {!isInvalidSpecValue(productData.material) && (
+                  <div className="quick-spec-pill">
+                    <span className="qspec-label">Material:</span>
+                    <span className="qspec-val">{productData.material}</span>
+                  </div>
+                )}
+                {!isInvalidSpecValue(productData.style || productData.theme) && (
+                  <div className="quick-spec-pill">
+                    <span className="qspec-label">Style:</span>
+                    <span className="qspec-val">{productData.style || productData.theme}</span>
+                  </div>
+                )}
+                <div className="quick-spec-pill sacred-pill">
+                  <span className="qspec-label">Consecration:</span>
+                  <span className="qspec-val">Prana Pratishtha</span>
+                </div>
+              </div>
+            )}
 
             {/* Quantity Selector & CTAs */}
             <div className="pdetail-purchase-section">
@@ -993,7 +1066,7 @@ const Productdetails = () => {
                   <div className="pdetail-qty-stepper">
                     <button
                       onClick={handleDecrement}
-                      disabled={quantity <= 1}
+                      disabled={quantity <= 1 || !isStockAvailable}
                       className="qty-btn"
                     >
                       -
@@ -1001,7 +1074,7 @@ const Productdetails = () => {
                     <span className="qty-value">{quantity}</span>
                     <button
                       onClick={handleIncrement}
-                      disabled={!isStockAvailable}
+                      disabled={!isStockAvailable || (currentStock > 0 && quantity >= currentStock)}
                       className="qty-btn"
                     >
                       +
@@ -1031,25 +1104,27 @@ const Productdetails = () => {
                 </div>
               </div>
 
-              {!isFreeDelivery && totalSubtotal < 499 && (
+              {!isFreeDelivery && freeDeliveryAbove > 0 && remainingForFree > 0 && (
                 <div className="pdetail-delivery-tip">
                   <FaTruck style={{ marginRight: "6px", color: "#ea580c" }} />
-                  <span>Add <strong>₹{(499 - totalSubtotal).toLocaleString("en-IN")}</strong> more item(s) for <strong>FREE Delivery</strong>!</span>
+                  <span>Add <strong>₹{remainingForFree.toLocaleString("en-IN")}</strong> more item(s) for <strong>FREE Delivery</strong>!</span>
                 </div>
               )}
 
               {/* Action Buttons */}
               <div className="pdetail-action-btns-row">
                 <button
-                  className="pdetail-addcart-btn"
+                  className={`pdetail-addcart-btn ${isOutOfStock ? "btn-disabled" : ""}`}
                   onClick={handleAddToCart}
-                  disabled={addingToCart || !isStockAvailable}
+                  disabled={addingToCart || isOutOfStock}
                 >
                   {addingToCart ? (
                     <>
                       <TailSpin height="18" width="18" color="#ea580c" />
                       Adding...
                     </>
+                  ) : isOutOfStock ? (
+                    "🔴 Sold Out"
                   ) : (
                     <>
                       <FaShoppingCart /> Add to Cart
@@ -1058,30 +1133,18 @@ const Productdetails = () => {
                 </button>
 
                 <button
-                  className="pdetail-buynow-btn"
+                  className={`pdetail-buynow-btn ${isOutOfStock ? "btn-disabled" : ""}`}
                   onClick={handleBuyNow}
-                  disabled={!isStockAvailable}
+                  disabled={isOutOfStock}
                 >
-                  <FaBolt /> Buy Now
+                  {isOutOfStock ? "Unavailable" : <><FaBolt /> Buy Now</>}
                 </button>
-              </div>
-            </div>
-
-            {/* Sacred Guarantee Box */}
-            <div className="pdetail-guarantee-box">
-              <MdOutlineSecurity className="guarantee-icon" />
-              <div>
-                <h4>PrabhuPooja Devotional Promise</h4>
-                <p>
-                  Every idol and sacred item is cleansed with sacred Gangajal and
-                  sanctified with authentic Vedic mantras prior to dispatch.
-                </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 📑 TABS: DESCRIPTION, HIGHLIGHTS, BENEFITS, REVIEWS */}
+        {/* 📑 TABS: DESCRIPTION, SPECIFICATIONS, REVIEWS */}
         <div className="pdetail-tabs-section">
           <div className="pdetail-tabs-header">
             <button
@@ -1091,6 +1154,14 @@ const Productdetails = () => {
               onClick={() => setSelectedTab("description")}
             >
               Description & Highlights
+            </button>
+            <button
+              className={`pdetail-tab-btn ${
+                selectedTab === "specifications" ? "active" : ""
+              }`}
+              onClick={() => setSelectedTab("specifications")}
+            >
+              Specifications
             </button>
             <button
               className={`pdetail-tab-btn ${
@@ -1155,6 +1226,99 @@ const Productdetails = () => {
                     </ul>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Specifications Tab */}
+            {selectedTab === "specifications" && (
+              <div className="tab-specs-pane">
+                <div className="pdetail-specs-card in-tab">
+                  <h3 className="specs-card-title">Technical & Sacred Specifications</h3>
+                  <div className="specs-grid">
+                    {!isInvalidSpecValue(productData.productType || productData.category) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Product Type:</span>
+                        <span className="spec-val">{productData.productType || productData.category}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.material) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Material:</span>
+                        <span className="spec-val">{productData.material}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.colour) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Colour:</span>
+                        <span className="spec-val">{productData.colour}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.theme) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Theme:</span>
+                        <span className="spec-val">{productData.theme}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.style) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Style:</span>
+                        <span className="spec-val">{productData.style}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.specialFeature) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Special Feature:</span>
+                        <span className="spec-val">{productData.specialFeature}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.brand) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Brand:</span>
+                        <span className="spec-val">{productData.brand}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.Height) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Height:</span>
+                        <span className="spec-val">{productData.Height}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.Dimension || productData.size_fit || productData.size) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Dimensions / Size:</span>
+                        <span className="spec-val">{productData.Dimension || productData.size_fit || productData.size}</span>
+                      </div>
+                    )}
+                    {!isInvalidSpecValue(productData.Weight) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Weight:</span>
+                        <span className="spec-val">{productData.Weight}</span>
+                      </div>
+                    )}
+                    <div className="spec-item">
+                      <span className="spec-label">Country of Origin:</span>
+                      <span className="spec-val">{productData.country_of_origin || "India"}</span>
+                    </div>
+                    <div className="spec-item">
+                      <span className="spec-label">Replacement:</span>
+                      <span className="spec-val">{productData.replacement_period || 7} Days Replacement Policy</span>
+                    </div>
+                    {!isInvalidSpecValue(productData.ProductCode) && (
+                      <div className="spec-item">
+                        <span className="spec-label">Product Code:</span>
+                        <span className="spec-val code-val">
+                          {productData.ProductCode}
+                        </span>
+                      </div>
+                    )}
+                    <div className="spec-item">
+                      <span className="spec-label">Energization:</span>
+                      <span className="spec-val highlight-val">
+                        Prana Pratishtha Blessed (Vedic Rituals)
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 

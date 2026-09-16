@@ -673,9 +673,16 @@ const NewHome = () => {
     <>
       <div className="hero-section">
         <Swiper
-          navigation={true}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 4500, disableOnInteraction: false }}
+          autoHeight={true}
+          observer={true}
+          observeParents={true}
+          navigation={coupons.length > 1}
+          pagination={coupons.length > 1 ? { clickable: true } : false}
+          autoplay={
+            coupons.length > 1
+              ? { delay: 4500, disableOnInteraction: false }
+              : false
+          }
           loop={coupons.length > 1}
           modules={[Navigation, Autoplay, Pagination]}
           className="hero-swiper"

@@ -81,35 +81,81 @@ import api from "../../Components/Axios/api";
 
 const calculateCartSummary = (items, backendSummary = null) => {
   if (backendSummary && backendSummary.subtotal !== undefined) {
+    const subtotal = Number(backendSummary.subtotal || 0);
+    const deliveryCharge = Number(backendSummary.deliveryCharge || 0);
+    const grandTotal = Number(
+      backendSummary.grandTotal || subtotal + deliveryCharge
+    );
+    const freeDeliveryThreshold =
+      backendSummary.freeDeliveryThreshold !== undefined &&
+      backendSummary.freeDeliveryThreshold !== null
+        ? Number(backendSummary.freeDeliveryThreshold)
+        : null;
+
     return {
-      subtotal: Number(backendSummary.subtotal || 0),
-      deliveryCharge: Number(backendSummary.deliveryCharge || 0),
-      grandTotal: Number(backendSummary.grandTotal || (Number(backendSummary.subtotal || 0) + Number(backendSummary.deliveryCharge || 0))),
+      subtotal,
+      deliveryCharge,
+      grandTotal,
+      freeDeliveryThreshold,
+      isFreeDelivery: deliveryCharge === 0,
     };
   }
 
   const subtotal = (items || []).reduce((total, item) => {
-    const price = Number(item.offerPrice || item.product?.offerPrice || item.price || item.product?.price || 0);
+    const price = Number(
+      item.offerPrice ||
+        item.product?.offerPrice ||
+        item.price ||
+        item.product?.price ||
+        0
+    );
     const qty = Number(item.quantity || 1);
     return total + price * qty;
   }, 0);
 
   let deliveryCharge = 0;
-  if (subtotal > 0) {
-    const maxItemDelivery = (items || []).reduce((max, item) => {
-      const dCharge = item.delivery_charge ?? item.product?.delivery_charge;
-      return dCharge !== undefined && dCharge !== null ? Math.max(max, Number(dCharge)) : max;
-    }, -1);
+  let freeDeliveryThreshold = null;
 
-    if (maxItemDelivery >= 0) {
-      deliveryCharge = maxItemDelivery;
+  if (subtotal > 0 && Array.isArray(items) && items.length > 0) {
+    const charges = items.map((item) => {
+      const p = item.product || item;
+      const hasCharge =
+        p.delivery_charge !== undefined &&
+        p.delivery_charge !== null &&
+        p.delivery_charge !== "";
+      const charge = hasCharge ? Number(p.delivery_charge) : 40;
+      const rawFreeAbove =
+        p.free_delivery_above ?? p.free_delivery_threshold ?? 700;
+      const freeAbove =
+        rawFreeAbove !== undefined &&
+        rawFreeAbove !== null &&
+        rawFreeAbove !== ""
+          ? Number(rawFreeAbove)
+          : 700;
+      return { charge, freeAbove };
+    });
+
+    const maxCharge = Math.max(0, ...charges.map((c) => c.charge));
+    const thresholds = charges
+      .map((c) => c.freeAbove)
+      .filter((t) => t !== null && t > 0);
+    freeDeliveryThreshold = thresholds.length > 0 ? Math.min(...thresholds) : 700;
+
+    if (freeDeliveryThreshold && subtotal >= freeDeliveryThreshold) {
+      deliveryCharge = 0;
     } else {
-      deliveryCharge = subtotal >= 499 ? 0 : 40;
+      deliveryCharge = maxCharge;
     }
   }
 
   const grandTotal = subtotal + deliveryCharge;
-  return { subtotal, deliveryCharge, grandTotal };
+  return {
+    subtotal,
+    deliveryCharge,
+    grandTotal,
+    freeDeliveryThreshold,
+    isFreeDelivery: deliveryCharge === 0,
+  };
 };
 
 const initialGuestCart = JSON.parse(localStorage.getItem("guestCart")) || [];

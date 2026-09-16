@@ -213,6 +213,27 @@ const Cart = () => {
             <h2>Shopping Cart ({cartItems.length} {cartItems.length === 1 ? "item" : "items"})</h2>
           </div>
 
+          {/* Dynamic Free Shipping Goal Progress Bar */}
+          {currentSummary.freeDeliveryThreshold && !currentSummary.isFreeDelivery && currentSummary.subtotal < currentSummary.freeDeliveryThreshold ? (
+            <div className="free-shipping-banner">
+              <p>
+                <FaTruck className="banner-truck-icon" /> Add <strong>₹{(currentSummary.freeDeliveryThreshold - currentSummary.subtotal).toLocaleString("en-IN")}</strong> more to get <strong className="highlight-green">FREE Delivery</strong>!
+              </p>
+              <div className="progress-bar-bg">
+                <div
+                  className="progress-bar-fill"
+                  style={{
+                    width: `${Math.min(100, Math.max(5, (currentSummary.subtotal / currentSummary.freeDeliveryThreshold) * 100))}%`,
+                  }}
+                />
+              </div>
+            </div>
+          ) : currentSummary.isFreeDelivery && currentSummary.subtotal > 0 ? (
+            <div className="free-shipping-banner success">
+              🎉 Congratulations! You have unlocked <strong className="highlight-green">FREE Delivery</strong> on this sacred order!
+            </div>
+          ) : null}
+
           <div className="cart-split-layout">
             {/* Left: Cart Items List */}
             <div className="cart-items-container">
@@ -311,12 +332,14 @@ const Cart = () => {
                   </span>
                 </div>
 
-                {currentSummary.deliveryCharge > 0 && (
-                  <div className="delivery-tip-banner">
-                    <FaTruck style={{ marginRight: "6px" }} />
-                    Add ₹{(499 - currentSummary.subtotal > 0 ? (499 - currentSummary.subtotal).toLocaleString("en-IN") : "0")} more for FREE Delivery!
-                  </div>
-                )}
+                {currentSummary.freeDeliveryThreshold &&
+                  currentSummary.deliveryCharge > 0 &&
+                  currentSummary.subtotal < currentSummary.freeDeliveryThreshold && (
+                    <div className="delivery-tip-banner">
+                      <FaTruck style={{ marginRight: "6px" }} />
+                      Add ₹{(currentSummary.freeDeliveryThreshold - currentSummary.subtotal).toLocaleString("en-IN")} more for FREE Delivery!
+                    </div>
+                  )}
 
                 <hr className="summary-divider" />
 
