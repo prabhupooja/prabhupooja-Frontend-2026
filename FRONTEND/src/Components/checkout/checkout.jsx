@@ -11,6 +11,7 @@ import { GoHome } from "react-icons/go";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import { FiEdit } from "react-icons/fi";
+import { MdDeleteOutline } from "react-icons/md";
 import { normalizeImageUrl, DEFAULT_FALLBACK_IMAGE } from "../../utils/imageHelper";
 import { calculateDeliveryFee, fetchDeliverySettings } from "../../utils/deliveryHelper";
 
