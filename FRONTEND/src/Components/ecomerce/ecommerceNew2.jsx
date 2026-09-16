@@ -1168,6 +1168,12 @@ const EcommerceNew2 = () => {
                       product.id
                   );
                   const inCartQty = Number(cartItem?.quantity || 0);
+                  const isOutOfStock =
+                    product.inStock === false ||
+                    (product.stock !== undefined &&
+                      product.stock !== null &&
+                      Number(product.stock) <= 0) ||
+                    product.stock_status === "Out of Stock";
 
                   return (
                     <div
@@ -1248,7 +1254,22 @@ const EcommerceNew2 = () => {
                         </div>
 
                         {/* Action CTA Button or Interactive Stepper with Go to Cart */}
-                        {inCartQty > 0 ? (
+                        {isOutOfStock ? (
+                          <button
+                            type="button"
+                            className="card-add-btn"
+                            disabled
+                            style={{
+                              background: "#f1f5f9",
+                              color: "#94a3b8",
+                              borderColor: "#e2e8f0",
+                              cursor: "not-allowed",
+                              boxShadow: "none",
+                            }}
+                          >
+                            Sold Out
+                          </button>
+                        ) : inCartQty > 0 ? (
                           <div className="card-stepper-and-cart-row">
                             <div
                               className="card-qty-stepper"

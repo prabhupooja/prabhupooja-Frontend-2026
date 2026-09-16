@@ -446,6 +446,7 @@ const Productdetails = () => {
     : 0;
 
   // 📦 Stock Management (Auto Low-Stock / Out-of-Stock Alert)
+  const isExplicitOutOfStock = productData?.inStock === false || productData?.stock_status === 'Out of Stock';
   const currentStock = Number(
     productData?.stock !== undefined && productData?.stock !== null
       ? productData?.stock
@@ -454,7 +455,7 @@ const Productdetails = () => {
       : 10
   );
   const lowStockThreshold = Number(productData?.low_stock_threshold || 5);
-  const isOutOfStock = currentStock <= 0;
+  const isOutOfStock = currentStock <= 0 || isExplicitOutOfStock;
   const isLowStock = !isOutOfStock && currentStock <= lowStockThreshold;
   const isStockAvailable = !isOutOfStock;
 
