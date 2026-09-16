@@ -174,9 +174,11 @@ export const getDeliveryBadgeInfo = (priceOrSubtotal, productCustomCharge = null
   };
 };
 
-export default {
+const deliveryHelper = {
   fetchDeliverySettings,
   calculateDeliveryFee,
   getDeliveryBadgeInfo,
   getCachedDeliverySettings,
 };
+
+export default deliveryHelper;

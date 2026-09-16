@@ -12,7 +12,6 @@ import useProblemPoojaStore from "../../Store/ProblemPoojaStore/ProblemPoojaStor
 import CryptoJS from "crypto-js";
 import Swal from "sweetalert2";
 import NewLoader from "../NewLoader/NewLoader";
-import Poojapanditprofile from "../onlinepuja/poojapanditprofile";
 import { parseContentToList } from "../../utils/poojaContentHelper";
 
 const PoojaDetailMasterPage = () => {

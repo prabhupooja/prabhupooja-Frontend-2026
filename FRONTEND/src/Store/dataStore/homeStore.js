@@ -182,7 +182,7 @@ const useHomeStore = create((set, get) => ({
     }
   },
 
-  getTinyBlogById: async (blogId) => {
+  getBlogById: async (blogId) => {
     try {
       const response = await api.get(`/blog/getbyId/${blogId}`);
       return response;
@@ -190,7 +190,7 @@ const useHomeStore = create((set, get) => ({
       try {
         return await api.get(`/blog/get/${blogId}`);
       } catch (err2) {
-        console.error("Error in getTinyBlogById:", err2?.message || err2);
+        console.error("Error in getBlogById:", err2?.message || err2);
         return null;
       }
     }

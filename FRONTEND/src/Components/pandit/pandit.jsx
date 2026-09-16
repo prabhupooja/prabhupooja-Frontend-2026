@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { TailSpin } from "react-loader-spinner";
 import "../../styles/panditkicss.css";
 import usePanditStore from "../../Store/PanditStore/PanditStore";
 import CryptoJS from "crypto-js";

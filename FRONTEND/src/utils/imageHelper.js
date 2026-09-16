@@ -35,7 +35,7 @@ export const normalizeImageUrl = (raw, fallback = DEFAULT_FALLBACK_IMAGE) => {
     }
 
     // Strip wrapping quotes, brackets, and whitespace
-    str = str.replace(/^[\[\"\'\`\s]+|[\]\"\'\`\s]+$/g, "").trim();
+    str = str.replace(/^[[\]"'`\s]+|[[\]"'`\s]+$/g, "").trim();
 
     // Check if what's left is a lone bracket, comma, or too short to be a valid URL/path
     if (!str || str === "[" || str === "]" || str.length < 3) {

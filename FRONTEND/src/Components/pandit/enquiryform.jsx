@@ -13,7 +13,6 @@ import {
   FaPaperPlane,
   FaShieldHalved,
   FaHeadset,
-  FaCheck,
   FaXmark
 } from "react-icons/fa6";
 import { GiSparkles } from "react-icons/gi";
