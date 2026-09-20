@@ -9,7 +9,7 @@ import { BiBadgeCheck } from "react-icons/bi";
 import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
-import { FaShoppingCart, FaArrowRight } from "react-icons/fa";
+import { FaShoppingCart, FaArrowRight, FaExternalLinkAlt, FaBolt } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 import testimonialImg from "../Assets/customerreview.jpeg";
 import testimonialImg1 from "../Assets/customerreview1.jpeg";
@@ -506,6 +506,15 @@ const NewHome = () => {
       e.preventDefault();
       e.stopPropagation();
     }
+
+    // 🌐 If External Product -> Redirect directly to partner store in new tab
+    if (product?.isExternal || (product?.redirect_url && String(product.redirect_url).trim() !== "")) {
+      const rawUrl = String(product.redirect_url).trim();
+      const targetUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`;
+      window.open(targetUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
     setAddCartloading(product.id);
     try {
       const response = await addToCart({
@@ -760,6 +769,12 @@ const NewHome = () => {
         <div className="fp-grid">
           {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
             const discountLabel = calculateProductDiscount(product);
+            const isExternal = Boolean(
+              product?.isExternal ||
+                (product?.redirect_url &&
+                  typeof product.redirect_url === "string" &&
+                  product.redirect_url.trim() !== "")
+            );
             const cartItem = (cartItems || []).find(
               (item) =>
                 (item.productId || item.product?.id || item.id) === product.id
@@ -800,7 +815,22 @@ const NewHome = () => {
                     )}
                   </div>
                   <div className="fp-footer">
-                    {inCartQty > 0 ? (
+                    {isExternal ? (
+                      <button
+                        type="button"
+                        className="fp-cart-btn fp-external-cta-btn"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const rawUrl = String(product.redirect_url).trim();
+                          const targetUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`;
+                          window.open(targetUrl, "_blank", "noopener,noreferrer");
+                        }}
+                        title="Buy Now"
+                      >
+                        <FaBolt className="cart-btn-icon" /> Buy Now
+                      </button>
+                    ) : inCartQty > 0 ? (
                       <div className="card-stepper-and-cart-row">
                         <div
                           className="card-qty-stepper"
@@ -1121,6 +1151,12 @@ const NewHome = () => {
         <div className="fp-grid">
           {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
             const discountLabel = calculateProductDiscount(product);
+            const isExternal = Boolean(
+              product?.isExternal ||
+                (product?.redirect_url &&
+                  typeof product.redirect_url === "string" &&
+                  product.redirect_url.trim() !== "")
+            );
             const cartItem = (cartItems || []).find(
               (item) =>
                 (item.productId || item.product?.id || item.id) === product.id
@@ -1161,7 +1197,22 @@ const NewHome = () => {
                     )}
                   </div>
                   <div className="fp-footer">
-                    {inCartQty > 0 ? (
+                    {isExternal ? (
+                      <button
+                        type="button"
+                        className="fp-cart-btn fp-external-cta-btn"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const rawUrl = String(product.redirect_url).trim();
+                          const targetUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`;
+                          window.open(targetUrl, "_blank", "noopener,noreferrer");
+                        }}
+                        title="Buy Now"
+                      >
+                        <FaBolt className="cart-btn-icon" /> Buy Now
+                      </button>
+                    ) : inCartQty > 0 ? (
                       <div className="card-stepper-and-cart-row">
                         <div
                           className="card-qty-stepper"

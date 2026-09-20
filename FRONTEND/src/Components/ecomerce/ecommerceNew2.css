@@ -1248,6 +1248,40 @@
   box-shadow: none;
 }
 
+/* 🌐 External Partner Store Card CTA & Badge */
+.card-external-store-pill {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(2, 132, 199, 0.92);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  z-index: 3;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card-external-cta-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+  box-shadow: 0 3px 10px rgba(234, 88, 12, 0.3) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.card-external-cta-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) !important;
+  color: #1e293b !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4) !important;
+}
+
+
 /* 🛒 Interactive Quantity Stepper (+ 1 -) */
 .card-qty-stepper {
   width: 100%;

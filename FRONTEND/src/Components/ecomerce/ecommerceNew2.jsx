@@ -47,6 +47,8 @@ import {
   FaOm,
   FaGift,
   FaSeedling,
+  FaExternalLinkAlt,
+  FaBolt,
 } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
 import debounce from "lodash.debounce";
@@ -574,6 +576,15 @@ const EcommerceNew2 = () => {
   const handleAddToCart = async (e, product) => {
     e.preventDefault();
     e.stopPropagation();
+
+    // 🌐 If External Product -> Redirect directly to external partner store
+    if (product?.isExternal || (product?.redirect_url && String(product.redirect_url).trim() !== "")) {
+      const rawUrl = String(product.redirect_url).trim();
+      const targetUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`;
+      window.open(targetUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
     setLoading(product.id);
     try {
       const response = await addToCart({
@@ -1168,6 +1179,12 @@ const EcommerceNew2 = () => {
                       product.id
                   );
                   const inCartQty = Number(cartItem?.quantity || 0);
+                  const isExternal = Boolean(
+                    product?.isExternal ||
+                      (product?.redirect_url &&
+                        typeof product.redirect_url === "string" &&
+                        product.redirect_url.trim() !== "")
+                  );
                   const isOutOfStock =
                     product.inStock === false ||
                     (product.stock !== undefined &&
@@ -1268,6 +1285,22 @@ const EcommerceNew2 = () => {
                             }}
                           >
                             Sold Out
+                          </button>
+                        ) : isExternal ? (
+                          <button
+                            type="button"
+                            className="card-add-btn card-external-cta-btn"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const rawUrl = String(product.redirect_url).trim();
+                              const targetUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`;
+                              window.open(targetUrl, "_blank", "noopener,noreferrer");
+                            }}
+                            title="Buy Now"
+                          >
+                            <FaBolt size={12} style={{ marginRight: "4px" }} />
+                            <span>Buy Now</span>
                           </button>
                         ) : inCartQty > 0 ? (
                           <div className="card-stepper-and-cart-row">

@@ -23,6 +23,7 @@ import {
   FaCamera,
   FaTimes,
   FaTrash,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { MdVerified, MdOutlineSecurity } from "react-icons/md";
 import useUserCardStore from "../../Store/userCardStore/userCardStore";
@@ -642,9 +643,32 @@ const Productdetails = () => {
     });
   };
 
+  // 🌐 External Store / Affiliate Product Check & Safe Redirect Helper
+  const isExternalProduct = Boolean(
+    productData?.isExternal ||
+      (productData?.redirect_url &&
+        typeof productData.redirect_url === "string" &&
+        productData.redirect_url.trim() !== "")
+  );
+
+  const handleExternalRedirect = (url) => {
+    const rawUrl = url || productData?.redirect_url;
+    if (!rawUrl) return;
+    const trimmed = String(rawUrl).trim();
+    const targetUrl = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
+  };
+
   // Add To Cart
   const handleAddToCart = async () => {
     if (!productData?.id) return;
+
+    // 🌐 If External Product -> Redirect directly to external partner store
+    if (isExternalProduct) {
+      handleExternalRedirect(productData.redirect_url);
+      return;
+    }
+
     setAddingToCart(true);
     try {
       const response = await addToCart({
@@ -676,6 +700,13 @@ const Productdetails = () => {
   // Buy Now
   const handleBuyNow = () => {
     if (!productData?.id) return;
+
+    // 🌐 If External Product -> Redirect directly to external partner store
+    if (isExternalProduct) {
+      handleExternalRedirect(productData.redirect_url);
+      return;
+    }
+
     const itemDelivery = effectiveDeliveryFee;
     const finalTotal = totalSubtotal + itemDelivery;
 
@@ -1092,30 +1123,36 @@ const Productdetails = () => {
               )}
 
               {/* Action Buttons */}
-              <div className="pdetail-action-btns-row">
-                <button
-                  className={`pdetail-addcart-btn ${isOutOfStock ? "btn-disabled" : ""}`}
-                  onClick={handleAddToCart}
-                  disabled={addingToCart || isOutOfStock}
-                >
-                  {addingToCart ? (
-                    <>
-                      <TailSpin height="18" width="18" color="#ea580c" />
-                      Adding...
-                    </>
-                  ) : isOutOfStock ? (
-                    "🔴 Sold Out"
-                  ) : (
-                    <>
-                      <FaShoppingCart /> Add to Cart
-                    </>
-                  )}
-                </button>
+              <div
+                className="pdetail-action-btns-row"
+                style={isExternalProduct ? { gridTemplateColumns: "1fr" } : {}}
+              >
+                {!isExternalProduct && (
+                  <button
+                    className={`pdetail-addcart-btn ${isOutOfStock ? "btn-disabled" : ""}`}
+                    onClick={handleAddToCart}
+                    disabled={addingToCart || isOutOfStock}
+                  >
+                    {addingToCart ? (
+                      <>
+                        <TailSpin height="18" width="18" color="#ea580c" />
+                        Adding...
+                      </>
+                    ) : isOutOfStock ? (
+                      "🔴 Sold Out"
+                    ) : (
+                      <>
+                        <FaShoppingCart /> Add to Cart
+                      </>
+                    )}
+                  </button>
+                )}
 
                 <button
                   className={`pdetail-buynow-btn ${isOutOfStock ? "btn-disabled" : ""}`}
                   onClick={handleBuyNow}
                   disabled={isOutOfStock}
+                  style={isExternalProduct ? { width: "100%", padding: "14px 20px", fontSize: "16px" } : {}}
                 >
                   {isOutOfStock ? "Unavailable" : <><FaBolt /> Buy Now</>}
                 </button>

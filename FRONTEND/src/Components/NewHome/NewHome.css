@@ -455,6 +455,41 @@
   font-size: 16px;
 }
 
+/* 🌐 External Partner Store Badges & Button */
+.fp-external-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(2, 132, 199, 0.94);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  z-index: 5;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.fp-external-cta-btn {
+  background: linear-gradient(135deg, #f59e0b, #ea580c) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4) !important;
+  font-weight: 800 !important;
+}
+
+.fp-external-cta-btn:hover {
+  background: linear-gradient(135deg, #fbbf24, #d97706) !important;
+  color: #1e293b !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
+}
+
+
 /* 🛒 Card Stepper and Quick View Cart Row (Consistent with Pooja Store) */
 .card-stepper-and-cart-row {
   display: flex;
