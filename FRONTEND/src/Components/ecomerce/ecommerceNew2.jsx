@@ -383,7 +383,7 @@ const EcommerceNew2 = () => {
 
   const { addToCart, getCartItems, cartItems, deleteFromCart, setCartItems } =
     useUserCardStore();
-  const { user1 } = useAuthStore();
+  const { user1, isLoggin, setIsLoginPopup } = useAuthStore();
   const {
     products = [],
     setProducts,
@@ -585,6 +585,12 @@ const EcommerceNew2 = () => {
       return;
     }
 
+    // 🔒 Auth Check - Directly Open Login Modal
+    if (!isLoggin || !user1?.id) {
+      setIsLoginPopup(true);
+      return;
+    }
+
     setLoading(product.id);
     try {
       const response = await addToCart({
@@ -617,6 +623,11 @@ const EcommerceNew2 = () => {
   const handleIncrementCart = async (e, product) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!isLoggin || !user1?.id) {
+      setIsLoginPopup(true);
+      return;
+    }
     setLoading(product.id);
 
     const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];

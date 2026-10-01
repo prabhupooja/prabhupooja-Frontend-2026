@@ -15,6 +15,7 @@ import {
   FaTimesCircle,
   FaBoxOpen,
   FaRegCalendarTimes,
+  FaFileInvoice,
 } from "react-icons/fa";
 
 const MyOrders = ({ userId }) => {
@@ -243,6 +244,27 @@ const MyOrders = ({ userId }) => {
                     >
                       <FaTruck /> Track
                     </Link>
+
+                    <a
+                      href={`${process.env.REACT_APP_API_URL || "http://localhost:3002/api/v1"}/orders/download-invoice/${ord.orderId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        padding: "8px 14px",
+                        borderRadius: "8px",
+                        border: "1.5px solid #64748b",
+                        background: "#f8fafc",
+                        color: "#334155",
+                        fontWeight: "700",
+                        fontSize: "13px",
+                        textDecoration: "none",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <FaFileInvoice /> Invoice
+                    </a>
 
                     {/* Return / Replace Button (When Delivered) */}
                     {isDelivered && (

@@ -26,18 +26,9 @@ const Ecommerce = () => {
 
   const handleAddToCart = async (productId) => {
     if (!user1) {
-      Swal.fire({
-        title: "Please login first",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Login Now",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setIsLoginPopup(true);
-        }
-      });
-    } else {
+      setIsLoginPopup(true);
+      return;
+    }
       try {
         const response = await addToCart({
           user_id: user1?.id,

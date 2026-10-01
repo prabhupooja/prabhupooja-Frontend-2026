@@ -55,11 +55,8 @@ function BookPoojaForm({ onClose, data }) {
     e.preventDefault();
 
     if (!user1) {
-      Swal.fire({
-        icon: "warning",
-        title: "Please Login First",
-        text: "You must be logged in to book this Pooja.",
-      });
+      useAuthStore.getState().setIsLoginPopup(true);
+      onClose?.();
       return;
     }
 

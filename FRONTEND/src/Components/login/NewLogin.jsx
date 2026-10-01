@@ -4,6 +4,39 @@ import { IoClose } from "react-icons/io5";
 import { FaEdit, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
 
+const spiritualSlides = [
+  {
+    image: require("../Assets/login_illustrationsImg.png"),
+    tag: "प्रभु पूजा • PrabhuPooja",
+    title: "Divine Blessings & Spiritual Journey",
+    description: "Experience authentic Pujas, Prasad Delivery, Astrological consultations, and sacred Vedic rituals at your doorstep.",
+  },
+  {
+    image: require("../Assets/loginImage.png"),
+    tag: "पवित्र प्रसाद • Sacred Prasad",
+    title: "Pure Temple Prasad Delivery",
+    description: "Receive consecrated Maha Prasad from 12 Jyotirlingas and revered shrines delivered with divine sanctity.",
+  },
+  {
+    image: require("../Assets/littlekrishnafront.jpg"),
+    tag: "वैदिक पूजा • Vedic Rituals",
+    title: "Verified Vedic Pandits & Acharyas",
+    description: "Book experienced Pandits for Griha Pravesh, Hawan, Rudrabhishek, and special ceremonies.",
+  },
+  {
+    image: require("../Assets/ramji1.jpg"),
+    tag: "ज्योतिष मार्गदर्शन • Astrology",
+    title: "Accurate Kundli & Vedic Guidance",
+    description: "Get personalized horoscope consultations and spiritual guidance from certified Vedic Astrologers.",
+  },
+  {
+    image: require("../Assets/adhiyogi1.jpg"),
+    tag: "आध्यात्मिक समुदाय • Devotee Network",
+    title: "Trusted by 100,000+ Devotees",
+    description: "Connecting devotees across the globe with eternal Sanatan traditions and authentic Vedic rituals.",
+  },
+];
+
 const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [input, setInput] = useState("");
@@ -16,6 +49,18 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const otpInputRefs = useRef([]);
+
+  // 🖼️ Dynamic Image Slideshow
+  const [currentSlide, setCurrentSlide] = useState(() =>
+    Math.floor(Math.random() * spiritualSlides.length)
+  );
+
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % spiritualSlides.length);
+    }, 4000);
+    return () => clearInterval(slideTimer);
+  }, []);
 
   // Close on Escape key press
   useEffect(() => {
@@ -55,7 +100,6 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
 
   const handleOtpChange = (e, index) => {
     const value = e.target.value;
-    // Allow single numeric digit
     if (value && !/^\d+$/.test(value)) return;
 
     const digit = value.slice(-1);
@@ -107,7 +151,7 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
         return false;
       }
     } else if (!emailRegex.test(cleanInput)) {
-      setInputError("Please enter a valid 10-digit mobile number or email address.");
+      setInputError("Please enter a valid email address.");
       return false;
     }
 
@@ -116,75 +160,84 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
   };
 
   const handleSendOtp = async (e) => {
-    e?.preventDefault?.();
+    e.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
 
     if (!validateInput()) return;
 
     setIsLoading(true);
-
     try {
-      const cleanInput = input.trim();
-      const response = await login({ input: cleanInput });
-
-      if (response?.status === 200 || response?.status === 201 || response?.data?.success) {
-        setSuccessMessage(`OTP sent successfully to ${cleanInput}`);
+      const response = await login({ input: input.trim() });
+      if (response && response.data) {
         setOtpSent(true);
         setResendTimer(30);
-        setOtp(["", "", "", "", "", ""]);
+        setSuccessMessage(
+          response.data.message || `OTP sent successfully to ${input.trim()}`
+        );
         setTimeout(() => {
           otpInputRefs.current[0]?.focus();
         }, 100);
       } else {
-        setErrorMessage(
-          response?.data?.message || "Failed to send OTP. Please try again."
-        );
+        throw new Error("Invalid response format from server.");
       }
     } catch (error) {
-      console.error("Login request failed:", error);
-      const serverMsg =
+      console.error("Login send OTP failed:", error);
+      const msg =
         error?.response?.data?.message ||
         (error?.message === "Network Error"
-          ? "Cannot connect to server. Please check your internet connection or server status."
+          ? "Unable to connect to server. Please check your internet connection."
           : error?.message) ||
-        "Login failed. Please try again later.";
-      setErrorMessage(serverMsg);
+        "Failed to send OTP. Please try again.";
+      setErrorMessage(msg);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleVerifyOtp = async (e) => {
-    e?.preventDefault?.();
+    e.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
-    const otpCode = otp.join("");
 
-    if (otpCode.length !== 6) {
+    const enteredOtp = otp.join("").trim();
+    if (enteredOtp.length < 6) {
       setErrorMessage("Please enter the complete 6-digit OTP.");
       return;
     }
 
     setIsLoading(true);
-
     try {
-      const response = await userOTP({ otp: otpCode, input: input.trim() });
-      if (response?.status === 200 || response?.data?.success || response?.data?.auth) {
-        setSuccessMessage("Login verified successfully!");
+      const response = await userOTP({
+        input: input.trim(),
+        otp: enteredOtp,
+      });
+
+      if (response?.data?.success || response?.status === 200) {
+        setSuccessMessage("Login successful! Welcome back.");
         setTimeout(() => {
-          window.location.reload();
+          onCloseLogin?.();
+          window.dispatchEvent(new Event("loginStatusChanged"));
         }, 600);
+      } else {
+        throw new Error(response?.data?.message || "Invalid OTP code.");
       }
     } catch (error) {
-      console.error("OTP verification failed:", error);
-      setErrorMessage(
+      console.error("OTP verification error:", error);
+      const msg =
         error?.response?.data?.message ||
-          "Invalid OTP. Please check the code and try again."
-      );
+        "Invalid OTP. Please check the code and try again.";
+      setErrorMessage(msg);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleEditInput = () => {
+    setOtpSent(false);
+    setOtp(["", "", "", "", "", ""]);
+    setErrorMessage("");
+    setSuccessMessage("");
   };
 
   return (
@@ -195,7 +248,7 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
       }}
     >
       <div className="login-modal-card">
-        {/* Close Button */}
+        {/* Close Modal Button */}
         <button
           className="login-close-btn"
           onClick={onCloseLogin}
@@ -205,15 +258,26 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
         </button>
 
         <div className="login-modal-layout">
-          {/* Left Decorative Illustration */}
+          {/* Left Hero Dynamic Slideshow */}
           <div className="login-modal-left">
+            {spiritualSlides.map((slide, idx) => (
+              <div
+                key={idx}
+                className={`login-slide-bg ${
+                  idx === currentSlide ? "active" : ""
+                }`}
+                style={{ backgroundImage: `url(${slide.image})` }}
+              />
+            ))}
+
             <div className="login-left-overlay">
               <div className="login-left-content">
-                <span className="login-brand-tag">प्रभु पूजा • PrabhuPooja</span>
-                <h2>Divine Blessings & Spiritual Journey</h2>
-                <p>
-                  Experience authentic Pujas, Prasad Delivery, Astrological consultations, and sacred Vedic rituals at your doorstep.
-                </p>
+                <span className="login-brand-tag">
+                  {spiritualSlides[currentSlide].tag}
+                </span>
+                <h2>{spiritualSlides[currentSlide].title}</h2>
+                <p>{spiritualSlides[currentSlide].description}</p>
+                
                 <div className="login-features-list">
                   <div className="feature-pill">
                     <FaCheckCircle className="pill-icon" /> 100% Verified Vedic Pandits
@@ -224,6 +288,17 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
                   <div className="feature-pill">
                     <FaCheckCircle className="pill-icon" /> Secure & Hassle-free
                   </div>
+                </div>
+
+                {/* Slide Indicators */}
+                <div className="login-slide-dots">
+                  {spiritualSlides.map((_, idx) => (
+                    <span
+                      key={idx}
+                      className={`login-dot ${idx === currentSlide ? "active" : ""}`}
+                      onClick={() => setCurrentSlide(idx)}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
@@ -307,42 +382,39 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
                   </button>
                 </form>
               ) : (
-                /* Step 2: 6-Digit OTP Verification */
+                /* Step 2: OTP Verification */
                 <form onSubmit={handleVerifyOtp} className="login-form">
                   <div className="otp-sent-info">
                     <span>
-                      Code sent to <strong>{input}</strong>
+                      OTP sent to: <strong>{input}</strong>
                     </span>
                     <button
                       type="button"
                       className="edit-number-btn"
-                      onClick={() => {
-                        setOtpSent(false);
-                        setErrorMessage("");
-                        setSuccessMessage("");
-                      }}
+                      onClick={handleEditInput}
                     >
-                      <FaEdit /> Change
+                      <FaEdit /> Edit
                     </button>
                   </div>
 
-                  <div className="login-otp-grid" onPaste={handlePaste}>
-                    {otp.map((digit, index) => (
-                      <input
-                        key={index}
-                        ref={(el) => (otpInputRefs.current[index] = el)}
-                        id={`login-otp-${index}`}
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        maxLength="1"
-                        value={digit}
-                        onChange={(e) => handleOtpChange(e, index)}
-                        onKeyDown={(e) => handleOtpKeyDown(e, index)}
-                        className={`login-otp-box ${digit ? "filled" : ""}`}
-                        autoComplete="one-time-code"
-                      />
-                    ))}
+                  <div className="login-input-group">
+                    <label>Enter 6-Digit OTP</label>
+                    <div className="login-otp-grid" onPaste={handlePaste}>
+                      {otp.map((digit, index) => (
+                        <input
+                          key={index}
+                          ref={(el) => (otpInputRefs.current[index] = el)}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={1}
+                          value={digit}
+                          onChange={(e) => handleOtpChange(e, index)}
+                          onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                          className={`login-otp-box ${digit ? "filled" : ""}`}
+                          autoFocus={index === 0}
+                        />
+                      ))}
+                    </div>
                   </div>
 
                   <div className="login-resend-wrapper">
@@ -357,7 +429,7 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
                         onClick={handleSendOtp}
                         disabled={isLoading}
                       >
-                        Didn’t receive OTP? <strong>Resend</strong>
+                        Didn't receive code? <strong>Resend OTP</strong>
                       </button>
                     )}
                   </div>
@@ -378,7 +450,7 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
                 </form>
               )}
 
-              {/* Signup Link */}
+              {/* Bottom Switch to Sign Up */}
               <div className="login-switch-action">
                 <span>Don't have an account? </span>
                 <button
@@ -390,12 +462,12 @@ const NewLogin = ({ onCloseLogin, onOpenSignup }) => {
                 </button>
               </div>
 
-              {/* Divider */}
+              {/* Social Login Separator */}
               <div className="login-divider">
                 <span>OR</span>
               </div>
 
-              {/* Google OAuth Login */}
+              {/* Google One-Click Login */}
               <div className="login-social-section">
                 <button
                   type="button"

@@ -237,6 +237,7 @@ function Navbar() {
 
   const closePopup = () => {
     setIsLoginPopup(false);
+    sessionStorage.setItem("lastAuthModalDismissed", Date.now().toString());
   };
 
   const openOtpPopup = () => {
@@ -247,6 +248,7 @@ function Navbar() {
 
   const closeOtpPopup = () => {
     setIsOtpPopup(false);
+    sessionStorage.setItem("lastAuthModalDismissed", Date.now().toString());
   };
 
   const openSingPopup = () => {

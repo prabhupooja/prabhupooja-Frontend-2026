@@ -84,15 +84,7 @@ const AstrologyForm = () => {
   const createRequest = async (astrologerId, type, price, id) => {
     // console.log(astrologerId, type, price, id);
     if (!user1) {
-      // navigate("/login");
-      Swal.fire({
-        title: "Login Required",
-        text: "Please login!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Login Now",
-        cancelButtonText: "Cancel",
-      });
+      useAuthStore.getState().setIsLoginPopup(true);
       return;
     }
     try {

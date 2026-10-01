@@ -515,6 +515,12 @@ const NewHome = () => {
       return;
     }
 
+    // 🔒 Auth Check - Directly Open Login Modal
+    if (!isLoggin || !user1?.id) {
+      setIsLoginPopup(true);
+      return;
+    }
+
     setAddCartloading(product.id);
     try {
       const response = await addToCart({
@@ -548,6 +554,10 @@ const NewHome = () => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
+    }
+    if (!isLoggin || !user1?.id) {
+      setIsLoginPopup(true);
+      return;
     }
     setAddCartloading(product.id);
 

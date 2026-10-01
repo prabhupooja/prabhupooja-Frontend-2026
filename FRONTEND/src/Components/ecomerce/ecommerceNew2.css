@@ -1392,7 +1392,7 @@
   justify-content: space-between;
   box-shadow: 0 10px 25px rgba(234, 88, 12, 0.45);
   cursor: pointer;
-  z-index: 9999;
+  z-index: 990;
   animation: floatUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   transition: transform 0.2s, box-shadow 0.2s;
   box-sizing: border-box;

@@ -230,17 +230,7 @@ const Checkout = () => {
 
   const handlePayment = async (e) => {
     if (!user1) {
-      Swal.fire({
-        title: "Please login first",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Login Now",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setIsLoginPopup(true);
-        }
-      });
+      setIsLoginPopup(true);
       return; 
     }
 

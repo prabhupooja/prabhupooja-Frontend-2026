@@ -314,20 +314,10 @@ const PoojaDetailMasterPage = () => {
 
   const handleOpenPopup = () => {
     if (!user1) {
-      Swal.fire({
-        title: "Please login first",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Login Now",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setIsLoginPopup(true);
-        }
-      });
-    } else {
-      setShowPopup(true);
+      setIsLoginPopup(true);
+      return;
     }
+    setShowPopup(true);
   };
 
   const handleClosePopup = () => {

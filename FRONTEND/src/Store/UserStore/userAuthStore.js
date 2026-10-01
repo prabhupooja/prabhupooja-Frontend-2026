@@ -64,15 +64,58 @@ const useAuthStore = create((set) => ({
     }
   },
 
+  sendRegistrationOtp: async (payload) => {
+    set({ error: null, isLoading: true });
+    try {
+      const response = await api.post("/auth/send-registration-otp", payload);
+      return response;
+    } catch (error) {
+      const errorMsg =
+        error?.response?.data?.message ||
+        (error?.message === "Network Error"
+          ? "Unable to connect to server. Please check your internet connection."
+          : error?.message) ||
+        "Failed to send verification OTP";
+      set({ error: errorMsg });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   register: async (payload) => {
     set({ error: null, isLoading: true });
     try {
-      const response = await api.post("/users/register", payload);
+      let response;
+      try {
+        response = await api.post("/auth/register", payload);
+      } catch (err) {
+        if (err?.response?.status === 404) {
+          response = await api.post("/users/register", payload);
+        } else {
+          throw err;
+        }
+      }
+
+      const token = response?.data?.token || response?.data?.auth;
+      if (token) {
+        localStorage.setItem("token", token);
+        const userData = response?.data?.user || response?.data?.data || response?.data;
+        if (userData && typeof userData === "object") {
+          localStorage.setItem("user", JSON.stringify(userData));
+        }
+        set({ user1: userData, isLoggin: true });
+      }
+
       return response;
     } catch (error) {
-      set({
-        error: error.response?.data?.message || "Registration failed",
-      });
+      const errorMsg =
+        error?.response?.data?.message ||
+        (error?.message === "Network Error"
+          ? "Unable to connect to server. Please check your internet connection."
+          : error?.message) ||
+        "Registration failed";
+      set({ error: errorMsg });
       throw error;
     } finally {
       set({ isLoading: false });

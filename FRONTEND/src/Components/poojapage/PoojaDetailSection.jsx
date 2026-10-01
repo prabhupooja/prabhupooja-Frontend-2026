@@ -215,18 +215,7 @@ const PoojaDetailSection = ({ poojaId: propPoojaId }) => {
     const currentUser = user1 || (userStr ? JSON.parse(userStr) : null);
 
     if (!currentUser) {
-      Swal.fire({
-        title: "Please Login First",
-        text: "You must be logged in to book this Pooja and choose your preferred Vedic Pandit.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Login Now",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed && setIsLoginPopup) {
-          setIsLoginPopup(true);
-        }
-      });
+      if (setIsLoginPopup) setIsLoginPopup(true);
       return;
     }
 

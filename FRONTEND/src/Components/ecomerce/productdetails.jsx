@@ -669,6 +669,12 @@ const Productdetails = () => {
       return;
     }
 
+    // 🔒 Auth Check - Directly Open Login Modal
+    if (!user1?.id) {
+      setIsLoginPopup(true);
+      return;
+    }
+
     setAddingToCart(true);
     try {
       const response = await addToCart({
@@ -704,6 +710,12 @@ const Productdetails = () => {
     // 🌐 If External Product -> Redirect directly to external partner store
     if (isExternalProduct) {
       handleExternalRedirect(productData.redirect_url);
+      return;
+    }
+
+    // 🔒 Auth Check - Directly Open Login Modal
+    if (!user1?.id) {
+      setIsLoginPopup(true);
       return;
     }
 

@@ -45,12 +45,14 @@
 }
 
 .events-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  max-width: 1320px;
-  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: stretch;
+  gap: 32px;
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .katha-card {
@@ -62,8 +64,9 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  width: 100%;
+  flex: 1 1 340px;
   max-width: 400px;
+  min-width: 280px;
 }
 
 .katha-card:hover {
@@ -197,7 +200,10 @@
     font-size: 26px;
   }
   .events-container {
-    grid-template-columns: 1fr;
     gap: 20px;
+  }
+  .katha-card {
+    max-width: 100%;
+    flex: 1 1 100%;
   }
 }

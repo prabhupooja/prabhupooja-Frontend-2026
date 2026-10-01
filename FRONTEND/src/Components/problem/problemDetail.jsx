@@ -177,21 +177,11 @@ function ProblemDetail() {
 
   const handleOpenPopup = (box) => {
     if (!user1) {
-      Swal.fire({
-        title: "Please login first",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Login Now",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setIsLoginPopup(true);
-        }
-      });
-    } else {
-      setSelectedBox(box);
-      setShowPopup(true);
+      setIsLoginPopup(true);
+      return;
     }
+    setSelectedBox(box);
+    setShowPopup(true);
   };
 
   const handleClosePopup = () => {
