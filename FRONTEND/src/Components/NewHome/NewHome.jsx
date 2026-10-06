@@ -530,19 +530,22 @@ const NewHome = () => {
       });
       getCartItems(user1?.id);
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: response?.success !== false ? "success" : "error",
-        title: response?.success !== false ? "Added to Cart!" : "Could Not Add",
-        text: `"${product.productName}" added to your sacred cart.`,
-        timer: 1400,
+        title: response?.success !== false ? `Added "${product.productName}" to cart` : "Could Not Add",
         showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
       });
     } catch {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
-        title: "Error",
-        text: "Something went wrong while adding product.",
-        timer: 1800,
+        title: "Something went wrong while adding product.",
         showConfirmButton: false,
+        timer: 2000,
       });
     } finally {
       setAddCartloading(null);
@@ -777,7 +780,7 @@ const NewHome = () => {
         </p>
 
         <div className="fp-grid">
-          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
+          {(Array.isArray(products) ? products : []).slice(0, 4).map((product) => {
             const discountLabel = calculateProductDiscount(product);
             const isExternal = Boolean(
               product?.isExternal ||
@@ -1159,7 +1162,12 @@ const NewHome = () => {
         </div>
 
         <div className="fp-grid">
-          {(Array.isArray(products) ? products : []).slice(0, 8).map((product) => {
+          {(Array.isArray(products)
+            ? products.length >= 8
+              ? products.slice(4, 8)
+              : products.slice(0, 4)
+            : []
+          ).map((product) => {
             const discountLabel = calculateProductDiscount(product);
             const isExternal = Boolean(
               product?.isExternal ||

@@ -684,19 +684,24 @@ const Productdetails = () => {
       });
       getCartItems(user1?.id);
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: response.success ? "success" : "error",
-        title: response.success ? "Sacred Item Added!" : "Could Not Add",
-        text: response.success
-          ? `${quantity}x "${productData.productName}" added to your cart.`
-          : "Please try again.",
-        confirmButtonColor: "#ea580c",
+        title: response.success
+          ? `Added ${quantity}x "${productData.productName}" to cart`
+          : "Could Not Add",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
       });
     } catch {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
-        title: "Error",
-        text: "Something went wrong while adding to cart.",
-        confirmButtonColor: "#ea580c",
+        title: "Something went wrong while adding to cart.",
+        showConfirmButton: false,
+        timer: 2000,
       });
     } finally {
       setAddingToCart(false);

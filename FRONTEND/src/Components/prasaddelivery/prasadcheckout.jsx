@@ -7,7 +7,7 @@ import useAuthStore from "../../Store/UserStore/userAuthStore";
 import { FaShieldAlt, FaTruck, FaOm, FaCheckCircle } from "react-icons/fa";
 
 function Prasadcheckout() {
-  const { user1 } = useAuthStore();
+  const { user1, userGet } = useAuthStore();
   const location = useLocation();
   const stateData = location.state || {};
   
@@ -145,6 +145,71 @@ function Prasadcheckout() {
     }
 
     setIsSubmitting(true);
+
+    if (paymentMethod === "WALLET") {
+      const walletBal = Number(user1?.balance || 0);
+      if (walletBal < grandTotal) {
+        setIsSubmitting(false);
+        Swal.fire({
+          title: "Insufficient Wallet Balance",
+          text: `Your current wallet balance is ₹${walletBal.toLocaleString("en-IN")}, but Prasad booking total is ₹${grandTotal.toLocaleString("en-IN")}.`,
+          icon: "warning",
+          confirmButtonColor: "#ea580c",
+        });
+        return;
+      }
+
+      try {
+        await api.post(
+          "/user/prasad/booking",
+          {
+            prasadid: prasad_id,
+            userid: user1?.id,
+            quantity: qty,
+            sankalpaGotra: sankalpaGotra || "Kashyap",
+            sankalpaName: sankalpaName || formValues.name,
+            amount: grandTotal,
+            subtotal: subtotal,
+            deliveryCharge: deliveryCharge,
+            paymentMethod: "WALLET",
+            weight: weight,
+            prasadweight: prasadWeight,
+            deliveryAddress: {
+              name: `${formValues.name} ${formValues.lastName}`.trim(),
+              email: formValues.email,
+              mobile: formValues.mobile,
+              address: formValues.address,
+              city: formValues.city,
+              state: formValues.state,
+              country: formValues.country,
+              postalCode: formValues.postalCode,
+            },
+            status: "Booked",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setIsSubmitting(false);
+        if (userGet) {
+          try { await userGet(); } catch (e) { console.error(e); }
+        }
+        Swal.fire({
+          title: "Prasad Booking Confirmed! 🕉️",
+          text: `₹${grandTotal.toLocaleString("en-IN")} was paid from your Prabhu Pooja Wallet. Blessed Holy Prasad will be dispatched soon!`,
+          icon: "success",
+          confirmButtonColor: "#ea580c",
+        });
+        navigate("/prasadbookingpage");
+      } catch (error) {
+        setIsSubmitting(false);
+        console.error("Wallet Prasad booking failed:", error);
+        Swal.fire("Error", "Failed to create Prasad booking with wallet. Please try again.", "error");
+      }
+      return;
+    }
 
     if (paymentMethod === "COD") {
       try {
@@ -507,58 +572,101 @@ function Prasadcheckout() {
                   <label style={{ fontSize: "14px", fontWeight: "700", color: "#1e293b", marginBottom: "8px", display: "block" }}>
                     Select Payment Method
                   </label>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "10px" }}>
+                    
+                    {/* Wallet Option */}
                     <div
-                      onClick={() => setPaymentMethod("UPI")}
+                      onClick={() => setPaymentMethod("WALLET")}
                       style={{
                         padding: "12px 14px",
                         borderRadius: "12px",
-                        border: paymentMethod === "UPI" ? "2px solid #ea580c" : "1.5px solid #e2e8f0",
-                        background: paymentMethod === "UPI" ? "#fff7ed" : "#f8fafc",
+                        border: paymentMethod === "WALLET" ? "2px solid #ea580c" : "1.5px solid #e2e8f0",
+                        background: paymentMethod === "WALLET" ? "#fff7ed" : "#ffffff",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
-                        gap: "8px",
+                        justifyContent: "space-between",
                         fontWeight: "600",
-                        color: paymentMethod === "UPI" ? "#ea580c" : "#475569",
+                        color: paymentMethod === "WALLET" ? "#ea580c" : "#334155",
                         transition: "all 0.2s"
                       }}
                     >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        checked={paymentMethod === "UPI"}
-                        onChange={() => setPaymentMethod("UPI")}
-                        style={{ accentColor: "#ea580c" }}
-                      />
-                      <span>Online UPI / Card</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          checked={paymentMethod === "WALLET"}
+                          onChange={() => setPaymentMethod("WALLET")}
+                          style={{ accentColor: "#ea580c" }}
+                        />
+                        <span>🪙 Prabhu Pooja Sacred Wallet</span>
+                      </div>
+                      <span style={{
+                        fontSize: "12px",
+                        padding: "2px 8px",
+                        borderRadius: "9999px",
+                        background: Number(user1?.balance || 0) >= grandTotal ? "#dcfce7" : "#fee2e2",
+                        color: Number(user1?.balance || 0) >= grandTotal ? "#15803d" : "#b91c1c",
+                        fontWeight: "700"
+                      }}>
+                        Balance: ₹{Number(user1?.balance || 0).toLocaleString("en-IN")}
+                      </span>
                     </div>
 
-                    <div
-                      onClick={() => setPaymentMethod("COD")}
-                      style={{
-                        padding: "12px 14px",
-                        borderRadius: "12px",
-                        border: paymentMethod === "COD" ? "2px solid #ea580c" : "1.5px solid #e2e8f0",
-                        background: paymentMethod === "COD" ? "#fff7ed" : "#f8fafc",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        fontWeight: "600",
-                        color: paymentMethod === "COD" ? "#ea580c" : "#475569",
-                        transition: "all 0.2s"
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        checked={paymentMethod === "COD"}
-                        onChange={() => setPaymentMethod("COD")}
-                        style={{ accentColor: "#ea580c" }}
-                      />
-                      <span>Cash on Delivery</span>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                      <div
+                        onClick={() => setPaymentMethod("UPI")}
+                        style={{
+                          padding: "12px 14px",
+                          borderRadius: "12px",
+                          border: paymentMethod === "UPI" ? "2px solid #ea580c" : "1.5px solid #e2e8f0",
+                          background: paymentMethod === "UPI" ? "#fff7ed" : "#f8fafc",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          fontWeight: "600",
+                          color: paymentMethod === "UPI" ? "#ea580c" : "#475569",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          checked={paymentMethod === "UPI"}
+                          onChange={() => setPaymentMethod("UPI")}
+                          style={{ accentColor: "#ea580c" }}
+                        />
+                        <span>Online UPI / Card</span>
+                      </div>
+
+                      <div
+                        onClick={() => setPaymentMethod("COD")}
+                        style={{
+                          padding: "12px 14px",
+                          borderRadius: "12px",
+                          border: paymentMethod === "COD" ? "2px solid #ea580c" : "1.5px solid #e2e8f0",
+                          background: paymentMethod === "COD" ? "#fff7ed" : "#f8fafc",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          fontWeight: "600",
+                          color: paymentMethod === "COD" ? "#ea580c" : "#475569",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          checked={paymentMethod === "COD"}
+                          onChange={() => setPaymentMethod("COD")}
+                          style={{ accentColor: "#ea580c" }}
+                        />
+                        <span>Cash on Delivery</span>
+                      </div>
                     </div>
+
                   </div>
                 </div>
               </form>

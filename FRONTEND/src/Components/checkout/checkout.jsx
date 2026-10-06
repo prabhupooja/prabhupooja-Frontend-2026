@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import "../../styles/checkout.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import api from "../Axios/api";
 import Swal from "sweetalert2";
 import useAuthStore from "../../Store/UserStore/userAuthStore";
@@ -10,8 +10,20 @@ import { IoCloseSharp } from "react-icons/io5";
 import { GoHome } from "react-icons/go";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
-import { FiEdit } from "react-icons/fi";
-import { MdDeleteOutline } from "react-icons/md";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { 
+  FaWallet, 
+  FaCreditCard, 
+  FaMoneyBillWave, 
+  FaMapMarkerAlt, 
+  FaPlus, 
+  FaCheckCircle, 
+  FaPhoneAlt, 
+  FaEnvelope, 
+  FaShieldAlt,
+  FaCheck,
+  FaArrowRight
+} from "react-icons/fa";
 import { normalizeImageUrl, DEFAULT_FALLBACK_IMAGE } from "../../utils/imageHelper";
 import { calculateDeliveryFee, fetchDeliverySettings } from "../../utils/deliveryHelper";
 
@@ -136,33 +148,36 @@ const Checkout = () => {
     email: "",
     mobile: "",
     address: "",
-    city: selectedCity,
-    state: selectedState,
-    country: selectedCountry,
+    city: null,
+    state: null,
+    country: null,
     postalCode: "",
   });
+  
   const [editFromValues, setEditFormValues] = useState({
+    id: null,
     name: "",
     lastname: "",
     email: "",
     mobile: "",
     address: "",
-    city: selectedCity,
-    state: selectedState,
-    country: selectedCountry,
+    city: null,
+    state: null,
+    country: null,
     postalCode: "",
   });
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { user1, setIsLoginPopup } = useAuthStore();
+  const { user1, setIsLoginPopup, userGet } = useAuthStore();
   const {
     getAddressById,
-    userAddress,
+    userAddress = [],
     addAddress,
     updateAddress,
     deleteAddress,
   } = useUserStore();
+  
   const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [couponMessage, setCouponMessage] = useState("");
@@ -173,32 +188,49 @@ const Checkout = () => {
   const [showAddressPopup, setShowAddressPopup] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showEditAddressPopup, setShowEditAddressPopup] = useState(false);
-  const [ppaymentId, setPpyamentId] = useState(null);
-  // const hasReloaded = useRef(false);
-  const handlePaymentChange = (selectedOption) => {
-    setPaymentMethod(selectedOption ? selectedOption.value : "");
-  };
 
-  
+  const walletBalance = Number(user1?.balance || 0);
+  const isWalletSufficient = walletBalance >= offeredPrice;
+
+  // Auto-set default payment method: Default to Wallet if user has enough balance, otherwise UPI
+  useEffect(() => {
+    if (user1 && walletBalance >= offeredPrice && offeredPrice > 0) {
+      setPaymentMethod("WALLET");
+    }
+  }, [user1, walletBalance, offeredPrice]);
+
   const getAddress = async () => {
+    if (!user1?.id) return;
     setLoading(true);
-    await getAddressById(user1?.id);
-    setLoading(false);
+    try {
+      await getAddressById(user1?.id);
+    } catch (err) {
+      console.error("Error fetching addresses:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     if (user1) {
-      setFormValues(user1);
       getAddress();
     }
-  }, [user1, navigate]);
+  }, [user1]);
+
+  // Automatically select default/first address
+  useEffect(() => {
+    if (userAddress && userAddress.length > 0) {
+      if (!selectedAddress || !userAddress.some((a) => a.id === selectedAddress.id)) {
+        setSelectedAddress(userAddress[0]);
+      }
+    }
+  }, [userAddress, selectedAddress]);
 
   useEffect(() => {
     if (!productId) {
-        navigate("/cart");
+      navigate("/cart");
     }
-  }, [productId]);
-
+  }, [productId, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -228,7 +260,18 @@ const Checkout = () => {
     }));
   };
 
+  const getAddressField = (addr, field) => {
+    if (!addr) return "";
+    if (typeof addr.address === "object" && addr.address !== null) {
+      return addr.address[field] || addr[field] || "";
+    }
+    if (field === "address") return addr.address || "";
+    return addr[field] || "";
+  };
+
   const handlePayment = async (e) => {
+    if (e) e.preventDefault();
+
     if (!user1) {
       setIsLoginPopup(true);
       return; 
@@ -236,18 +279,104 @@ const Checkout = () => {
 
     if (!selectedAddress) {
       Swal.fire({
-        title: "Address Required",
-        text: "Please Select Address!",
+        title: "Delivery Address Required",
+        text: "Please select or add a delivery address to proceed with your sacred order.",
         icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Ok",
-        cancelButtonText: "Cancel",
+        confirmButtonText: "Select Address",
+        confirmButtonColor: "#ea580c",
       });
       return;
     }
 
     setLoading(true);
 
+    const addrLine = getAddressField(selectedAddress, "address");
+    const addrCity = getAddressField(selectedAddress, "city");
+    const addrState = getAddressField(selectedAddress, "state");
+    const addrCountry = getAddressField(selectedAddress, "country") || "India";
+    const addrPostalCode = getAddressField(selectedAddress, "postalCode");
+
+    // 🪙 Case 1: Paid via Sacred Wallet
+    if (paymentMethod === "WALLET") {
+      if (walletBalance < offeredPrice) {
+        setLoading(false);
+        Swal.fire({
+          title: "Insufficient Wallet Balance",
+          text: `Your current wallet balance is ₹${walletBalance.toLocaleString("en-IN")}, but the order total is ₹${offeredPrice.toLocaleString("en-IN")}.`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Recharge Wallet",
+          cancelButtonText: "Pay Online / COD",
+          confirmButtonColor: "#ea580c",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/editprofile", { state: { activeTab: "wallet" } });
+          }
+        });
+        return;
+      }
+
+      try {
+        const response = await api.post(
+          "/orders/create",
+          {
+            productId,
+            userId: user1?.id,
+            quantity,
+            totalPrice: offeredPrice,
+            delivery_charge: deliveryCharge,
+            booking,
+            images: normalizedImages,
+            paymentMethod: "WALLET",
+            status: "paid",
+            marchentId,
+            name: selectedAddress.name,
+            lastname: selectedAddress.lastname,
+            email: selectedAddress.email,
+            number: selectedAddress.number,
+            address: addrLine,
+            country: addrCountry,
+            state: addrState,
+            city: addrCity,
+            postalCode: addrPostalCode,
+            paymentId: `WALLET_${Date.now()}`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setLoading(false);
+        if (response.data?.success !== false) {
+          if (userGet) {
+            try { await userGet(); } catch (e) { console.error(e); }
+          }
+          Swal.fire({
+            title: "Order Placed Successfully! 🕉️",
+            text: `₹${offeredPrice.toLocaleString("en-IN")} was paid from your Prabhu Pooja Wallet. Your sacred items are being prepared!`,
+            icon: "success",
+            confirmButtonText: "View My Orders",
+            confirmButtonColor: "#D35400",
+          });
+          navigate("/myorders");
+        } else {
+          Swal.fire("Order Failed", response.data?.message || "Could not complete wallet order.", "error");
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("Wallet Order failed:", error);
+        Swal.fire(
+          "Payment Failed",
+          error?.response?.data?.message || "Could not complete wallet payment. Please try again or use UPI.",
+          "error"
+        );
+      }
+      return;
+    }
+
+    // 📦 Case 2: Cash on Delivery
     if (paymentMethod === "COD") {
       try {
         await api.post(
@@ -267,11 +396,11 @@ const Checkout = () => {
             lastname: selectedAddress.lastname,
             email: selectedAddress.email,
             number: selectedAddress.number,
-            address: selectedAddress.address.address,
-            country: selectedAddress.address.country,
-            state: selectedAddress.address.state,
-            city: selectedAddress.address.city,
-            postalCode: selectedAddress.address.postalCode,
+            address: addrLine,
+            country: addrCountry,
+            state: addrState,
+            city: addrCity,
+            postalCode: addrPostalCode,
             paymentId: "null",
           },
           {
@@ -282,13 +411,11 @@ const Checkout = () => {
         );
         setLoading(false);
         Swal.fire({
-          title: "Order Placed Successfully!",
-          text: "Thank you for your purchase. Your order is being processed!",
+          title: "Order Placed Successfully! 📦",
+          text: "Thank you for your purchase. Your order is confirmed for Cash on Delivery!",
           icon: "success",
-          confirmButtonText: "Ok!",
+          confirmButtonText: "View My Orders",
           confirmButtonColor: "#D35400",
-          background: "#f4f4f4",
-          color: "#333",
         });
         navigate("/myorders");
       } catch (error) {
@@ -296,13 +423,14 @@ const Checkout = () => {
         console.error("COD Order creation failed:", error);
         Swal.fire(
           "Error",
-          "An error occurred during COD order creation.",
+          error?.response?.data?.message || "An error occurred during COD order creation.",
           "error"
         );
       }
-    } else {
+    } 
+    // ⚡ Case 3: Online Payment via Razorpay
+    else {
       try {
-        setLoading(true);
         const paymentResponse = await api.post(
           "/payment/create-payment",
           {
@@ -320,24 +448,28 @@ const Checkout = () => {
 
         setLoading(false);
         const { id: orderId, amount } = paymentResponse.data.data;
-
-        const razorpayKey = paymentResponse.data?.key_id || paymentResponse.data?.data?.key_id || process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_test_J3QKwQbU1OGf1Y";
+        const razorpayKey =
+          paymentResponse.data?.key_id ||
+          paymentResponse.data?.data?.key_id ||
+          process.env.REACT_APP_RAZORPAY_KEY_ID ||
+          "rzp_test_J3QKwQbU1OGf1Y";
 
         const options = {
           key: razorpayKey,
           amount,
           currency: "INR",
           name: "Prabhu Pooja",
-          description: "Product Purchase",
+          description: "Sacred Pooja Items Purchase",
           order_id: orderId,
-          handler: async function (response) {
+          handler: async function (razorResponse) {
             try {
+              setLoading(true);
               const verifyResponse = await api.post(
                 "/payment/verify-payment",
                 {
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
+                  razorpay_order_id: razorResponse.razorpay_order_id,
+                  razorpay_payment_id: razorResponse.razorpay_payment_id,
+                  razorpay_signature: razorResponse.razorpay_signature,
                 },
                 {
                   headers: {
@@ -346,11 +478,6 @@ const Checkout = () => {
                 }
               );
 
-              setPpyamentId(response.razorpay_payment_id, "lklklk");
-
-              // console.log(response.razorpay_payment_id, ppaymentId, "lkjkjk");
-
-              setLoading(false);
               if (verifyResponse.data.success) {
                 const response = await api.post(
                   "/orders/create",
@@ -369,12 +496,12 @@ const Checkout = () => {
                     lastname: selectedAddress.lastname,
                     email: selectedAddress.email,
                     number: selectedAddress.number,
-                    address: selectedAddress.address.address,
-                    country: selectedAddress.address.country,
-                    state: selectedAddress.address.state,
-                    city: selectedAddress.address.city,
-                    postalCode: selectedAddress.address.postalCode,
-                    paymentId: ppaymentId,
+                    address: addrLine,
+                    country: addrCountry,
+                    state: addrState,
+                    city: addrCity,
+                    postalCode: addrPostalCode,
+                    paymentId: razorResponse.razorpay_payment_id,
                   },
                   {
                     headers: {
@@ -383,16 +510,14 @@ const Checkout = () => {
                   }
                 );
 
+                setLoading(false);
                 if (response.data.success) {
-                  setLoading(false);
                   Swal.fire({
-                    title: "Order Placed Successfully!",
-                    text: "Thank you for your purchase. Your order is being processed!",
+                    title: "Order Placed Successfully! 🕉️",
+                    text: "Thank you for your purchase. Your payment was verified!",
                     icon: "success",
-                    confirmButtonText: "Ok!",
+                    confirmButtonText: "View My Orders",
                     confirmButtonColor: "#D35400",
-                    background: "#f4f4f4",
-                    color: "#333",
                   });
                   navigate("/myorders");
                 }
@@ -403,19 +528,16 @@ const Checkout = () => {
             } catch (error) {
               setLoading(false);
               console.error("Verification or order creation failed:", error);
-              Swal.fire("Payment or Order creation failed", "", "error");
+              Swal.fire("Order creation failed", "Payment was processed, please contact support if order does not appear.", "error");
             }
           },
           prefill: {
-            email: user1?.email,
-            contact: user1?.mobile,
+            name: `${selectedAddress.name || ""} ${selectedAddress.lastname || ""}`.trim(),
+            email: selectedAddress.email || user1?.email,
+            contact: selectedAddress.number || user1?.mobile,
           },
           theme: {
-            color: "#3399cc",
-          },
-          method: {
-            upi: true,
-            qr: true,
+            color: "#ea580c",
           },
         };
 
@@ -423,28 +545,28 @@ const Checkout = () => {
         rzp1.open();
 
         rzp1.on("payment.failed", function (response) {
-          Swal.fire(`Error: ${response.error.description}`, "", "error");
+          Swal.fire(`Payment Failed: ${response.error.description}`, "", "error");
         });
       } catch (error) {
         setLoading(false);
-        Swal.fire("Error", "An error occurred during payment.", "error");
+        Swal.fire("Error", "An error occurred initiating online payment.", "error");
       }
     }
   };
 
   const handleApply = async () => {
-    if (!couponCode) {
+    if (!couponCode.trim()) {
       setErrorCouponMessage("Coupon Code is required!");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await getValidCoupon(couponCode);
+      const response = await getValidCoupon(couponCode.trim());
       if (response?.data?.success) {
         setLoading(false);
         const discountType = response?.data?.type?.toLowerCase();
-        const value = response?.data?.value || 0;
+        const value = Number(response?.data?.value) || 0;
         let discount = 0;
 
         if (discountType === "percent") {
@@ -455,15 +577,17 @@ const Checkout = () => {
           discount = Math.floor((totalPrice * value) / 100);
         }
 
-        setCouponDiscount(discount);
+        const finalDiscount = Math.min(discount, totalPrice);
+        setCouponDiscount(finalDiscount);
         setCouponMessage(
-          `Coupon applied successfully! You saved ₹${discount}/-`
+          `Coupon applied successfully! You saved ₹${finalDiscount}/-`
         );
         setErrorCouponMessage("");
-        setOfferedPrice(totalPrice - discount);
+        setOfferedPrice(Math.max(0, totalPrice - finalDiscount));
         setCouponCode("");
         setIsCouponApplied(true);
       } else {
+        setLoading(false);
         setCouponDiscount(0);
         setErrorCouponMessage("Invalid coupon code. Please try again.");
         setCouponMessage("");
@@ -472,13 +596,9 @@ const Checkout = () => {
       }
     } catch (error) {
       setLoading(false);
-      console.error(
-        "Error applying couponddddddddd:",
-        error.response.data.message
-      );
       setCouponDiscount(0);
       setErrorCouponMessage(
-        error.response.data.message ||
+        error.response?.data?.message ||
           "Invalid coupon code. Please try again later."
       );
       setCouponMessage("");
@@ -496,6 +616,25 @@ const Checkout = () => {
     setIsCouponApplied(false);
   };
 
+  const openAddAddressModal = () => {
+    if (!user1) {
+      setIsLoginPopup(true);
+      return;
+    }
+    setFormValues({
+      name: user1?.name || "",
+      lastname: user1?.lastname || "",
+      email: user1?.email || "",
+      mobile: user1?.mobile || user1?.number || "",
+      address: "",
+      city: null,
+      state: null,
+      country: null,
+      postalCode: "",
+    });
+    setErrors({});
+    setShowAddressPopup(true);
+  };
 
   const addNewAddress = async () => {
     setLoading(true);
@@ -510,32 +649,28 @@ const Checkout = () => {
       country,
       postalCode,
     } = formValues;
+
     const newErrors = {};
-    if (!user1?.id) {
-      navigate("/");
-      setLoading(false);
-
-      return;
-    }
-    if (!name) newErrors.name = "First name is required.";
-    if (!lastname) newErrors.lastname = "Last name is required.";
-    if (!email) newErrors.email = "Email is required.";
-    if (!mobile) newErrors.mobile = "Mobile number is required.";
-
+    if (!name?.trim()) newErrors.name = "First name is required.";
+    if (!lastname?.trim()) newErrors.lastname = "Last name is required.";
+    if (!email?.trim()) newErrors.email = "Email is required.";
+    
     const cleanMobile = (mobile || "").replace(/\D/g, "");
     if (!cleanMobile || !/^[6-9]\d{9}$/.test(cleanMobile)) {
-      newErrors.mobile = "Enter a valid 10-digit mobile number.";
+      newErrors.mobile = "Enter a valid 10-digit Indian mobile number.";
     }
 
-    if (!address) newErrors.address = "Address is required.";
+    if (!address?.trim()) newErrors.address = "Street address is required.";
     if (!city) newErrors.city = "City is required.";
     if (!state) newErrors.state = "State is required.";
     if (!country) newErrors.country = "Country is required.";
-    if (!postalCode) newErrors.postalCode = "Postal code is required.";
+    if (!postalCode?.trim() || postalCode.length < 6) {
+      newErrors.postalCode = "Enter a valid 6-digit postal code.";
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setLoading(false);
-
       return;
     }
 
@@ -544,44 +679,66 @@ const Checkout = () => {
     try {
       const response = await addAddress({
         userId: user1?.id,
-        name,
-        lastname,
-        email,
+        name: name.trim(),
+        lastname: lastname.trim(),
+        email: email.trim(),
         number: mobile,
         city: city,
         state: state,
-        address: address,
+        address: address.trim(),
         country: country,
-        postalCode: postalCode,
+        postalCode: postalCode.trim(),
       });
 
-      if (response?.success) {
+      if (response?.success !== false) {
         Swal.fire({
-          title: "Address Added!",
-          text: "Your delivery address has been saved successfully.",
+          toast: true,
+          position: "top-end",
           icon: "success",
-          confirmButtonText: "Ok!",
-          confirmButtonColor: "#D35400",
-          background: "#f4f4f4",
-          color: "#333",
+          title: "Address saved successfully!",
+          showConfirmButton: false,
+          timer: 2000,
         });
 
-        await getAddressById(user1?.id);
-
+        await getAddress();
         setShowAddressPopup(false);
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error adding address:", error);
-      setErrors("Failed to add address. Please try again.");
+      Swal.fire("Error", "Failed to add address. Please check your fields and try again.", "error");
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleupdateAddress = async (id) => {
+  const editAddressClick = (addr) => {
+    const addrLine = getAddressField(addr, "address");
+    const addrCity = getAddressField(addr, "city");
+    const addrState = getAddressField(addr, "state");
+    const addrCountry = getAddressField(addr, "country") || "India";
+    const addrPostalCode = getAddressField(addr, "postalCode");
+
+    setEditFormValues({
+      id: addr.id,
+      name: addr.name || "",
+      lastname: addr.lastname || "",
+      email: addr.email || "",
+      mobile: addr.number || "",
+      address: addrLine,
+      city: addrCity,
+      state: addrState,
+      country: addrCountry,
+      postalCode: addrPostalCode,
+    });
+    setErrors({});
+    setShowEditAddressPopup(true);
+  };
+
+  const handleUpdateAddress = async () => {
+    if (!editFromValues.id) return;
     try {
       setLoading(true);
-      const res = await updateAddress(id, {
+      const res = await updateAddress(editFromValues.id, {
         name: editFromValues.name,
         lastname: editFromValues.lastname,
         email: editFromValues.email,
@@ -593,31 +750,35 @@ const Checkout = () => {
         postalCode: editFromValues.postalCode,
       });
 
-      // console.log(res);
-
-      if (res.data.success) {
-        setLoading(false);
-        Swal.fire("Success!", "Address updated successfully!", "success");
-        getAddress();
+      if (res?.data?.success !== false) {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Address updated successfully!",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        setShowEditAddressPopup(false);
+        await getAddress();
       }
     } catch (error) {
-      // console.log(error);
-      Swal.fire(
-        "Error",
-        "Something went wrong while updating the address.",
-        "error"
-      );
+      console.error("Update error:", error);
+      Swal.fire("Error", "Something went wrong while updating the address.", "error");
+    } finally {
+      setLoading(false);
     }
   };
+
   const handleDeleteAddress = async (id) => {
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you really want to delete this address?",
+      title: "Delete this address?",
+      text: "Are you sure you want to remove this delivery address?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, delete",
       cancelButtonText: "Cancel",
     });
 
@@ -625,594 +786,524 @@ const Checkout = () => {
       try {
         setLoading(true);
         const res = await deleteAddress(id);
-        if (res.data.success) {
-          Swal.fire(
-            "Deleted!",
-            "Address has been deleted successfully.",
-            "success"
-          );
+        if (res?.data?.success !== false) {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: "Address removed successfully!",
+            showConfirmButton: false,
+            timer: 1800,
+          });
+          if (selectedAddress?.id === id) {
+            setSelectedAddress(null);
+          }
+          await getAddress();
         }
-        setLoading(false);
-        window.location.reload();
       } catch (error) {
+        Swal.fire("Error", "Could not delete address.", "error");
+      } finally {
         setLoading(false);
-        // console.log(error);
-        Swal.fire(
-          "Error",
-          "Something went wrong while deleting the address.",
-          "error"
-        );
       }
     }
   };
 
-  const selectYourAddress = (addr) => {
-    setSelectedAddress(addr);
-  };
-
-  const editEditAddress = (addr) => {
-    setShowEditAddressPopup(true);
-    setEditFormValues({
-      name: addr.name,
-      lastname: addr.lastname,
-      email: addr.email,
-      number: addr.number,
-      address: addr.address.address,
-      city: addr.address.city,
-      state: addr.address.state,
-      country: addr.address.country,
-      postalCode: addr.address.postalCode,
-    });
-  };
-
-  const paymentOptions = [
-    { label: "Online Payment", value: "UPI" },
-    { label: "Cash on Delivery (COD)", value: "COD" },
-  ];
-
-  const ShowAddressPopup = () => {
-    if (!user1) {
-      Swal.fire({
-        title: "Please login first",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Login Now",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setIsLoginPopup(true);
-        }
-        return;
-      });
-    } else {
-      setShowAddressPopup(true);
-    }
-  };
-
   return (
-    <section style={{ marginBottom: "1.5rem" }}>
+    <section className="checkout-main-section">
       <div className="container">
-        <h1 className="checkout-heading">Billing Details</h1>
-        <div className="checkout">
-          <div className="checkout-left">
-            <button
-              className="add-address-btn"
-              onClick={() => ShowAddressPopup()}
-            >
-              <GoHome size={20} />
-              Add New Address
-            </button>
+        {/* Checkout Header Banner */}
+        <div className="checkout-page-header">
+          <div>
+            <h1 className="checkout-title">Checkout & Place Order</h1>
+            <p className="checkout-subtitle">Complete your sacred purchase with 100% verified authentic pooja items.</p>
+          </div>
+          <div className="checkout-security-badge">
+            <FaShieldAlt className="shield-icon" />
+            <span>256-Bit SSL Encrypted Checkout</span>
+          </div>
+        </div>
 
-            <div className="store-addressDetails">
-              <div className="address-list">
+        <div className="checkout-layout-grid">
+          {/* LEFT SIDE: Address Selection & Payment Methods */}
+          <div className="checkout-left-col">
+            
+            {/* 1. Address Section */}
+            <div className="checkout-section-card">
+              <div className="card-header-flex">
+                <div className="header-title-group">
+                  <span className="step-number">1</span>
+                  <h3>Select Delivery Address</h3>
+                </div>
+                <button
+                  type="button"
+                  className="btn-add-new-address"
+                  onClick={openAddAddressModal}
+                >
+                  <FaPlus size={12} />
+                  <span>Add New Address</span>
+                </button>
+              </div>
+
+              <div className="addresses-container">
                 {userAddress.length === 0 ? (
-                  <p>
-                    No Order Address Available, Please Add Your Addresss First.
-                  </p>
+                  <div className="empty-address-box">
+                    <FaMapMarkerAlt className="empty-icon" />
+                    <h4>No Delivery Address Found</h4>
+                    <p>Please add a delivery address where you'd like your sacred items delivered.</p>
+                    <button
+                      type="button"
+                      className="btn-primary-add"
+                      onClick={openAddAddressModal}
+                    >
+                      <FaPlus /> Add Address Now
+                    </button>
+                  </div>
                 ) : (
-                  userAddress.map((addr) => (
-                    <div key={addr.id} className="address-card">
-                      <p>
-                        <strong>
-                          {addr.name} {addr.lastname}
-                        </strong>
-                      </p>
-                      <p>
-                        {addr.number}, {addr.email}
-                      </p>
-                      <p>{addr.address.address}</p>
-                      <p>
-                        {addr.address.city}, {addr.address.state},{" "}
-                        {addr.address.country}
-                      </p>
-                      <p>{addr.address.postalCode}</p>
-                      <button
-                        onClick={() => selectYourAddress(addr)}
-                        className={`addressSelectedBtn ${
-                          selectedAddress?.id === addr.id ? "selected" : ""
-                        }`}
-                      >
-                        {selectedAddress?.id === addr.id
-                          ? "Selected!"
-                          : "Select"}
-                      </button>
-                      <div className="selectedAddressactionbtn">
-                        <button
-                          className="addressEditdBtn"
-                          onClick={() => editEditAddress(addr)}
+                  <div className="address-cards-grid">
+                    {userAddress.map((addr) => {
+                      const isSelected = selectedAddress?.id === addr.id;
+                      const addrLine = getAddressField(addr, "address");
+                      const addrCity = getAddressField(addr, "city");
+                      const addrState = getAddressField(addr, "state");
+                      const addrPostal = getAddressField(addr, "postalCode");
+
+                      return (
+                        <div
+                          key={addr.id}
+                          className={`modern-address-card ${isSelected ? "card-selected" : ""}`}
+                          onClick={() => setSelectedAddress(addr)}
                         >
-                          <FiEdit size={15} />
-                          Edit
-                        </button>
-                        <button
-                          className="addressRemoveBtn"
-                          onClick={() => {
-                            handleDeleteAddress(addr.id);
-                          }}
-                        >
-                          <MdDeleteOutline size={18} />
-                          Remove
-                        </button>
-                        {showEditAddressPopup && (
-                          <div className="deliveryadd-overlay">
-                            <div className="deliveryadd-modal">
-                              <h2 className="deliveryadd-title">
-                                Update Delivery Address
-                              </h2>
-                              <form className="deliveryadd-form">
-                                <div className="deliveryadd-row">
-                                  <div className="deliveryadd-field">
-                                    <input
-                                      type="text"
-                                      name="name"
-                                      placeholder="First Name"
-                                      value={editFromValues.name}
-                                      onChange={handleEditChange}
-                                      className="deliveryadd-input"
-                                    />
-                                    {errors.name && (
-                                      <p className="deliveryadd-error">
-                                        {errors.name}
-                                      </p>
-                                    )}
-                                  </div>
-                                  <div className="deliveryadd-field">
-                                    <input
-                                      type="text"
-                                      name="lastname"
-                                      placeholder="Last Name"
-                                      value={editFromValues.lastname}
-                                      onChange={handleEditChange}
-                                      className="deliveryadd-input"
-                                    />
-                                    {errors.lastname && (
-                                      <p className="deliveryadd-error">
-                                        {errors.lastname}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
+                          <div className="address-card-top">
+                            <div className="address-radio-box">
+                              <span className={`radio-circle ${isSelected ? "checked" : ""}`}>
+                                {isSelected && <span className="inner-dot" />}
+                              </span>
+                              <strong className="recipient-name">
+                                {addr.name} {addr.lastname}
+                              </strong>
+                            </div>
+                            {isSelected && (
+                              <span className="selected-tag">
+                                <FaCheck size={10} /> Selected
+                              </span>
+                            )}
+                          </div>
 
-                                <div className="deliveryadd-row">
-                                  <div className="deliveryadd-field">
-                                    <input
-                                      type="email"
-                                      name="email"
-                                      placeholder="Email"
-                                      value={editFromValues.email}
-                                      onChange={handleEditChange}
-                                      className="deliveryadd-input"
-                                    />
-                                    {errors.email && (
-                                      <p className="deliveryadd-error">
-                                        {errors.email}
-                                      </p>
-                                    )}
-                                  </div>
-                                  <div className="deliveryadd-field">
-                                    <input
-                                      type="tel"
-                                      name="mobile"
-                                      placeholder="Mobile (10 Digits)"
-                                      maxLength={10}
-                                      value={editFromValues.number}
-                                      onChange={handleEditChange}
-                                      className="deliveryadd-input"
-                                    />
-                                    {errors.mobile && (
-                                      <p className="deliveryadd-error">
-                                        {errors.mobile}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="deliveryadd-row">
-                                  <div className="deliveryadd-field">
-                                    <input
-                                      type="text"
-                                      name="address"
-                                      placeholder="Address"
-                                      value={editFromValues.address}
-                                      onChange={handleEditChange}
-                                      className="deliveryadd-input"
-                                    />
-                                    {errors.address && (
-                                      <p className="deliveryadd-error">
-                                        {errors.address}
-                                      </p>
-                                    )}
-                                  </div>
-
-                                  <div className="deliveryadd-field">
-                                    <input
-                                      type="text"
-                                      name="postalCode"
-                                      placeholder="Postal Code"
-                                      value={editFromValues.postalCode}
-                                      onChange={handleEditChange}
-                                      className="deliveryadd-input"
-                                    />
-                                    {errors.postalCode && (
-                                      <p className="deliveryadd-error">
-                                        {errors.postalCode}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="deliveryadd-row">
-                                  <div className="deliveryadd-field">
-                                    <Select
-                                      options={Country.getAllCountries().map(
-                                        (country) => ({
-                                          label: country.name,
-                                          value: country.isoCode,
-                                        })
-                                      )}
-                                      placeholder="Select Country"
-                                      onChange={(country) => {
-                                        setSelectedCountry(country);
-                                        setSelectedState(null);
-                                        setSelectedCity(null);
-                                        setEditFormValues((prev) => ({
-                                          ...prev,
-                                          country: country.label,
-                                        }));
-                                      }}
-                                    />
-                                    {errors.country && (
-                                      <p className="deliveryadd-error">
-                                        {errors.country}
-                                      </p>
-                                    )}
-                                  </div>
-
-                                  <div className="deliveryadd-field">
-                                    <Select
-                                      options={
-                                        selectedCountry
-                                          ? State.getStatesOfCountry(
-                                              selectedCountry.value
-                                            ).map((state) => ({
-                                              label: state.name,
-                                              value: state.isoCode,
-                                            }))
-                                          : []
-                                      }
-                                      placeholder="Select State"
-                                      onChange={(state) => {
-                                        setSelectedState(state);
-                                        setSelectedCity(null);
-                                        setEditFormValues((prev) => ({
-                                          ...prev,
-                                          state: state.label,
-                                        }));
-                                      }}
-                                      isDisabled={!selectedCountry}
-                                    />
-                                    {errors.state && (
-                                      <p className="deliveryadd-error">
-                                        {errors.state}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="deliveryadd-row">
-                                  <div className="deliveryadd-field">
-                                    <Select
-                                      options={
-                                        selectedState
-                                          ? City.getCitiesOfState(
-                                              selectedCountry.value,
-                                              selectedState.value
-                                            ).map((city) => ({
-                                              label: city.name,
-                                              value: city.name,
-                                            }))
-                                          : []
-                                      }
-                                      placeholder="Select City"
-                                      onChange={(city) => {
-                                        setSelectedCity(city);
-                                        setEditFormValues((prev) => ({
-                                          ...prev,
-                                          city: city.label,
-                                        }));
-                                      }}
-                                      isDisabled={!selectedState}
-                                    />
-                                    {errors.city && (
-                                      <p className="deliveryadd-error">
-                                        {errors.city}
-                                      </p>
-                                    )}
-                                  </div>
-                                  <div className="deliveryadd-field" />
-                                </div>
-
-                                <div className="deliveryadd-actions">
-                                  <button
-                                    type="button"
-                                    className="deliveryadd-submit deliveryadd-actions-btn"
-                                    onClick={() => handleupdateAddress(addr.id)}
-                                    disabled={loading}
-                                  >
-                                    {loading ? "Please wait..." : "Submit"}
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="deliveryadd-cancel deliveryadd-actions-btn"
-                                    onClick={() =>
-                                      setShowEditAddressPopup(false)
-                                    }
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </form>
+                          <div className="address-card-body">
+                            <p className="address-street">
+                              <FaMapMarkerAlt className="pin-icon" />
+                              <span>{addrLine}, {addrCity}, {addrState} - {addrPostal}</span>
+                            </p>
+                            <div className="address-contact-pills">
+                              <span className="contact-pill">
+                                <FaPhoneAlt size={10} /> {addr.number}
+                              </span>
+                              {addr.email && (
+                                <span className="contact-pill">
+                                  <FaEnvelope size={10} /> {addr.email}
+                                </span>
+                              )}
                             </div>
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  ))
+
+                          <div className="address-card-actions" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              type="button"
+                              className="action-btn edit-btn"
+                              onClick={() => editAddressClick(addr)}
+                              title="Edit Address"
+                            >
+                              <FiEdit /> Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="action-btn delete-btn"
+                              onClick={() => handleDeleteAddress(addr.id)}
+                              title="Remove Address"
+                            >
+                              <FiTrash2 /> Remove
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </div>
-            <div className="checkoutform-group">
-              <Select
-                id="paymentMethod"
-                options={paymentOptions}
-                value={paymentOptions.find(
-                  (option) => option.value === paymentMethod
-                )}
-                onChange={handlePaymentChange}
-                placeholder="-- Select Payment Method --"
-                className="form-control"
-              />
 
-              <button
-                type="button"
-                className="primary_btn OrdetNowBtn"
-                onClick={handlePayment}
-              >
-                {loading ? "Waiting..." : "Order Now"}
-              </button>
-            </div>
-          </div>
+            {/* 2. Payment Method Section */}
+            <div className="checkout-section-card mt-4">
+              <div className="card-header-flex">
+                <div className="header-title-group">
+                  <span className="step-number">2</span>
+                  <h3>Select Payment Method</h3>
+                </div>
+              </div>
 
-          <div className="checkout-right">
-            <h2>Product Details</h2>
-            <div className="checkout-summary">
-              {normalizedImages && normalizedImages.length > 0 ? (
-                normalizedImages.map((url, index) => {
-                  const currentName = Array.isArray(productName)
-                    ? productName[index] || "Sacred Pooja Item"
-                    : productName || "Sacred Pooja Item";
-
-                  const currentQty = Array.isArray(quantity)
-                    ? quantity[index] || 1
-                    : quantity || 1;
-
-                  return (
-                    <div className="checkout-item" key={index}>
-                      <img
-                        src={url}
-                        alt={currentName}
-                        className="checkout-img"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = DEFAULT_FALLBACK_IMAGE;
-                        }}
-                      />
-                      <div className="checkout-details">
-                        <h3 className="product-name">{currentName}</h3>
-                        <p>Quantity: {currentQty}</p>
-                      </div>
+              <div className="payment-options-list">
+                
+                {/* Option 1: Prabhu Pooja Wallet */}
+                <div
+                  className={`payment-option-tile ${paymentMethod === "WALLET" ? "active" : ""}`}
+                  onClick={() => setPaymentMethod("WALLET")}
+                >
+                  <div className="tile-radio">
+                    <span className={`radio-circle ${paymentMethod === "WALLET" ? "checked" : ""}`}>
+                      {paymentMethod === "WALLET" && <span className="inner-dot" />}
+                    </span>
+                  </div>
+                  <div className="tile-icon-box wallet-theme">
+                    <FaWallet />
+                  </div>
+                  <div className="tile-details">
+                    <div className="tile-heading-row">
+                      <strong>Prabhu Pooja Wallet</strong>
+                      <span className={`balance-badge ${isWalletSufficient ? "sufficient" : "low"}`}>
+                        Balance: ₹{walletBalance.toLocaleString("en-IN")}
+                      </span>
                     </div>
-                  );
-                })
-              ) : (
-                <div className="checkout-item">
-                  <img
-                    src={DEFAULT_FALLBACK_IMAGE}
-                    alt="Spiritual Item"
-                    className="checkout-img"
-                  />
-                  <div className="checkout-details">
-                    <h3 className="product-name">{productName || "Spiritual Offering"}</h3>
-                    <p>Quantity: {Array.isArray(quantity) ? quantity[0] || 1 : quantity || 1}</p>
+                    <p className="tile-desc">
+                      {isWalletSufficient ? (
+                        <span className="text-success-bold">✓ 1-Click Instant Payment from your sacred balance.</span>
+                      ) : (
+                        <span className="text-warning-bold">
+                          ⚠️ Insufficient balance for this order (Need ₹{offeredPrice.toLocaleString("en-IN")}).
+                          <Link to="/editprofile" state={{ activeTab: "wallet" }} className="recharge-link">
+                            + Recharge Wallet
+                          </Link>
+                        </span>
+                      )}
+                    </p>
                   </div>
                 </div>
-              )}
 
-              {/* Order Summary on Cart / Checkout Page */}
-              <div className="order-summary-box card p-3 mt-3">
-                <h5>Order Summary</h5>
-                <div className="d-flex justify-content-between my-1">
-                  <span>Items Subtotal:</span>
-                  <span>₹{cartSummary.subtotal.toLocaleString("en-IN")}</span>
+                {/* Option 2: Online Payment (UPI, Cards, NetBanking) */}
+                <div
+                  className={`payment-option-tile ${paymentMethod === "UPI" ? "active" : ""}`}
+                  onClick={() => setPaymentMethod("UPI")}
+                >
+                  <div className="tile-radio">
+                    <span className={`radio-circle ${paymentMethod === "UPI" ? "checked" : ""}`}>
+                      {paymentMethod === "UPI" && <span className="inner-dot" />}
+                    </span>
+                  </div>
+                  <div className="tile-icon-box online-theme">
+                    <FaCreditCard />
+                  </div>
+                  <div className="tile-details">
+                    <div className="tile-heading-row">
+                      <strong>Online Payment (Instant & Secure)</strong>
+                      <span className="fast-tag">Instant Confirmation</span>
+                    </div>
+                    <p className="tile-desc">
+                      Pay via Google Pay, PhonePe, Paytm, BHIM UPI, Credit/Debit Cards, or NetBanking.
+                    </p>
+                  </div>
                 </div>
-                <div className="d-flex justify-content-between my-1">
-                  <span>Delivery Fee:</span>
+
+                {/* Option 3: Cash on Delivery (COD) */}
+                <div
+                  className={`payment-option-tile ${paymentMethod === "COD" ? "active" : ""}`}
+                  onClick={() => setPaymentMethod("COD")}
+                >
+                  <div className="tile-radio">
+                    <span className={`radio-circle ${paymentMethod === "COD" ? "checked" : ""}`}>
+                      {paymentMethod === "COD" && <span className="inner-dot" />}
+                    </span>
+                  </div>
+                  <div className="tile-icon-box cod-theme">
+                    <FaMoneyBillWave />
+                  </div>
+                  <div className="tile-details">
+                    <div className="tile-heading-row">
+                      <strong>Cash on Delivery (COD)</strong>
+                    </div>
+                    <p className="tile-desc">
+                      Pay securely with cash or UPI directly when your package is delivered to your doorstep.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Order Now CTA Button */}
+              <div className="place-order-cta-box">
+                <button
+                  type="button"
+                  className="btn-place-order"
+                  disabled={loading}
+                  onClick={handlePayment}
+                >
+                  {loading ? (
+                    "Processing Order..."
+                  ) : (
+                    <>
+                      <span>
+                        Place Order • ₹{offeredPrice.toLocaleString("en-IN")}
+                      </span>
+                      <FaArrowRight />
+                    </>
+                  )}
+                </button>
+                <p className="order-trust-note">
+                  🔒 By placing this order, you agree to Prabhu Pooja's Terms of Service and Privacy Policy.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* RIGHT SIDE: Product Details, Coupon & Price Summary */}
+          <div className="checkout-right-col">
+            
+            {/* Products in Checkout */}
+            <div className="checkout-summary-card">
+              <h3 className="summary-card-title">Order Items</h3>
+              
+              <div className="checkout-items-list">
+                {normalizedImages && normalizedImages.length > 0 ? (
+                  normalizedImages.map((url, index) => {
+                    const currentName = Array.isArray(productName)
+                      ? productName[index] || "Sacred Pooja Item"
+                      : productName || "Sacred Pooja Item";
+
+                    const currentQty = Array.isArray(quantity)
+                      ? quantity[index] || 1
+                      : quantity || 1;
+
+                    return (
+                      <div className="checkout-product-row" key={index}>
+                        <img
+                          src={url}
+                          alt={currentName}
+                          className="product-thumb"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_FALLBACK_IMAGE;
+                          }}
+                        />
+                        <div className="product-info-col">
+                          <h4 className="p-title">{currentName}</h4>
+                          <span className="p-qty">Quantity: <strong>{currentQty}</strong></span>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="checkout-product-row">
+                    <img
+                      src={DEFAULT_FALLBACK_IMAGE}
+                      alt="Sacred Item"
+                      className="product-thumb"
+                    />
+                    <div className="product-info-col">
+                      <h4 className="p-title">{productName || "Sacred Pooja Offering"}</h4>
+                      <span className="p-qty">Quantity: <strong>{Array.isArray(quantity) ? quantity[0] || 1 : quantity || 1}</strong></span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Coupon Code Input */}
+              <div className="modern-coupon-box">
+                <label className="coupon-label">Have a Promo / Devotee Coupon?</label>
+                <div className="coupon-input-group">
+                  <input
+                    type="text"
+                    placeholder="Enter Coupon Code"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    disabled={isCouponApplied}
+                    className="coupon-input"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApply}
+                    disabled={isCouponApplied || loading}
+                    className={`btn-apply-coupon ${isCouponApplied ? "applied" : ""}`}
+                  >
+                    {isCouponApplied ? "Applied ✓" : "Apply"}
+                  </button>
+                </div>
+
+                {couponMessage && (
+                  <div className="coupon-feedback success">
+                    <span>{couponMessage}</span>
+                    <button type="button" className="btn-remove-coupon" onClick={handleRemoveCoupon}>
+                      <IoCloseSharp size={18} />
+                    </button>
+                  </div>
+                )}
+                {errorCouponMessage && (
+                  <div className="coupon-feedback error">
+                    <span>{errorCouponMessage}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="price-breakdown-card">
+                <h4 className="breakdown-title">Price Breakdown</h4>
+                
+                <div className="breakdown-row">
+                  <span>Items Subtotal</span>
+                  <strong>₹{cartSummary.subtotal.toLocaleString("en-IN")}</strong>
+                </div>
+
+                <div className="breakdown-row">
+                  <span>Delivery Charges</span>
                   <span>
                     {Number(cartSummary.deliveryCharge) === 0 ? (
-                      <strong className="text-success">FREE</strong>
+                      <span className="free-delivery-badge">FREE</span>
                     ) : (
                       `₹${Number(cartSummary.deliveryCharge).toFixed(2)}`
                     )}
                   </span>
                 </div>
+
                 {coupanDiscount > 0 && (
-                  <div className="d-flex justify-content-between my-1 text-success">
-                    <span>Coupon Discount:</span>
-                    <span>-₹{Number(coupanDiscount).toLocaleString("en-IN")}</span>
+                  <div className="breakdown-row discount-row">
+                    <span>Coupon Discount</span>
+                    <span className="discount-val">-₹{Number(coupanDiscount).toLocaleString("en-IN")}</span>
                   </div>
                 )}
-                <hr />
-                <div className="d-flex justify-content-between font-weight-bold h5">
-                  <span>Total Amount:</span>
-                  <span>₹{offeredPrice.toLocaleString("en-IN")}</span>
+
+                {paymentMethod === "WALLET" && (
+                  <div className="breakdown-row wallet-deduct-row">
+                    <span>Paid via Pooja Wallet</span>
+                    <span className="wallet-deduct-val">-₹{offeredPrice.toLocaleString("en-IN")}</span>
+                  </div>
+                )}
+
+                <div className="breakdown-divider" />
+
+                <div className="breakdown-total-row">
+                  <div>
+                    <span className="total-lbl">Total Payable</span>
+                    <p className="tax-inclusive-text">(Inclusive of all taxes & blessings)</p>
+                  </div>
+                  <strong className="total-val">
+                    ₹{offeredPrice.toLocaleString("en-IN")}
+                  </strong>
                 </div>
-              </div>
-            </div>
 
-            <div className="customerCoupon">
-              <div className="customerCoupon-box">
-                <input
-                  type="text"
-                  placeholder="Enter your coupon code"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  required
-                />
-
-                <button
-                  onClick={handleApply}
-                  disabled={isCouponApplied}
-                  className={`coupon-btn ${isCouponApplied ? "applied" : ""}`}
-                >
-                  {isCouponApplied ? "Applied!" : "Apply"}
-                </button>
               </div>
 
-              {couponMessage && (
-                <div className="coupon-msg">
-                  <span>{couponMessage}</span>
-                  <span className="remove-button" onClick={handleRemoveCoupon}>
-                    <IoCloseSharp size={20} />
-                  </span>
-                </div>
-              )}
-              {errorCouponMessage && (
-                <div className="error coupon-msg">{errorCouponMessage}</div>
-              )}
             </div>
+
           </div>
         </div>
       </div>
+
+      {/* 🏡 ADD ADDRESS MODAL */}
       {showAddressPopup && (
-        <div className="deliveryadd-overlay">
-          <div className="deliveryadd-modal">
-            <h2 className="deliveryadd-title">Add New Delivery Address</h2>
-            <form className="deliveryadd-form">
-              <div className="deliveryadd-row">
-                <div className="deliveryadd-field">
+        <div className="modal-backdrop-overlay" onClick={() => setShowAddressPopup(false)}>
+          <div className="modern-address-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-bar">
+              <h3>Add New Delivery Address</h3>
+              <button
+                type="button"
+                className="modal-close-icon-btn"
+                onClick={() => setShowAddressPopup(false)}
+              >
+                <IoCloseSharp size={22} />
+              </button>
+            </div>
+
+            <form className="modal-address-form" onSubmit={(e) => { e.preventDefault(); addNewAddress(); }}>
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>First Name *</label>
                   <input
                     type="text"
                     name="name"
-                    placeholder="First Name"
+                    placeholder="Enter first name"
                     value={formValues.name}
                     onChange={handleChange}
-                    className="deliveryadd-input"
+                    className="modal-input"
                   />
-                  {errors.name && (
-                    <p className="deliveryadd-error">{errors.name}</p>
-                  )}
+                  {errors.name && <span className="field-error-msg">{errors.name}</span>}
                 </div>
-                <div className="deliveryadd-field">
+
+                <div className="form-input-field">
+                  <label>Last Name *</label>
                   <input
                     type="text"
                     name="lastname"
-                    placeholder="Last Name"
+                    placeholder="Enter last name"
                     value={formValues.lastname}
                     onChange={handleChange}
-                    className="deliveryadd-input"
+                    className="modal-input"
                   />
-                  {errors.lastname && (
-                    <p className="deliveryadd-error">{errors.lastname}</p>
-                  )}
+                  {errors.lastname && <span className="field-error-msg">{errors.lastname}</span>}
                 </div>
               </div>
 
-              <div className="deliveryadd-row">
-                <div className="deliveryadd-field">
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>Email Address *</label>
                   <input
                     type="email"
                     name="email"
-                    placeholder="Email"
+                    placeholder="name@example.com"
                     value={formValues.email}
                     onChange={handleChange}
-                    className="deliveryadd-input"
+                    className="modal-input"
                   />
-                  {errors.email && (
-                    <p className="deliveryadd-error">{errors.email}</p>
-                  )}
+                  {errors.email && <span className="field-error-msg">{errors.email}</span>}
                 </div>
-                <div className="deliveryadd-field">
+
+                <div className="form-input-field">
+                  <label>Mobile Number (10 Digits) *</label>
                   <input
                     type="tel"
                     name="mobile"
-                    placeholder="Mobile (10 Digits)"
+                    placeholder="9876543210"
                     maxLength={10}
                     value={formValues.mobile}
                     onChange={handleChange}
-                    className="deliveryadd-input"
+                    className="modal-input"
                   />
-                  {errors.mobile && (
-                    <p className="deliveryadd-error">{errors.mobile}</p>
-                  )}
+                  {errors.mobile && <span className="field-error-msg">{errors.mobile}</span>}
                 </div>
               </div>
 
-              <div className="deliveryadd-row">
-                <div className="deliveryadd-field">
-                  <input
-                    type="text"
-                    name="address"
-                    placeholder="Address"
-                    value={formValues.address}
-                    onChange={handleChange}
-                    className="deliveryadd-input"
-                  />
-                  {errors.address && (
-                    <p className="deliveryadd-error">{errors.address}</p>
-                  )}
-                </div>
+              <div className="form-input-field">
+                <label>Complete House / Flat / Street Address *</label>
+                <textarea
+                  name="address"
+                  rows={2}
+                  placeholder="House No., Building Name, Street, Landmark"
+                  value={formValues.address}
+                  onChange={handleChange}
+                  className="modal-input"
+                />
+                {errors.address && <span className="field-error-msg">{errors.address}</span>}
+              </div>
 
-                <div className="deliveryadd-field">
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>Postal PIN Code *</label>
                   <input
                     type="text"
                     name="postalCode"
-                    placeholder="Postal Code"
+                    placeholder="6-digit PIN code"
+                    maxLength={6}
                     value={formValues.postalCode}
                     onChange={handleChange}
-                    className="deliveryadd-input"
+                    className="modal-input"
                   />
-                  {errors.postalCode && (
-                    <p className="deliveryadd-error">{errors.postalCode}</p>
-                  )}
+                  {errors.postalCode && <span className="field-error-msg">{errors.postalCode}</span>}
                 </div>
-              </div>
 
-              <div className="deliveryadd-row">
-                <div className="deliveryadd-field">
+                <div className="form-input-field">
+                  <label>Country *</label>
                   <Select
-                    options={Country.getAllCountries().map((country) => ({
-                      label: country.name,
-                      value: country.isoCode,
+                    options={Country.getAllCountries().map((c) => ({
+                      label: c.name,
+                      value: c.isoCode,
                     }))}
                     placeholder="Select Country"
                     onChange={(country) => {
@@ -1224,90 +1315,232 @@ const Checkout = () => {
                         country: country.label,
                       }));
                     }}
+                    className="react-select-container"
                   />
-                  {errors.country && (
-                    <p className="deliveryadd-error">{errors.country}</p>
-                  )}
-                </div>
-
-                <div className="deliveryadd-field">
-                  <Select
-                    options={
-                      selectedCountry
-                        ? State.getStatesOfCountry(selectedCountry.value).map(
-                            (state) => ({
-                              label: state.name,
-                              value: state.isoCode,
-                            })
-                          )
-                        : []
-                    }
-                    placeholder="Select State"
-                    onChange={(state) => {
-                      setSelectedState(state);
-                      setSelectedCity(null);
-                      setFormValues((prev) => ({
-                        ...prev,
-                        state: state.label,
-                      }));
-                    }}
-                    isDisabled={!selectedCountry}
-                  />
-                  {errors.state && (
-                    <p className="deliveryadd-error">{errors.state}</p>
-                  )}
+                  {errors.country && <span className="field-error-msg">{errors.country}</span>}
                 </div>
               </div>
 
-              <div className="deliveryadd-row">
-                <div className="deliveryadd-field">
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>State *</label>
                   <Select
                     options={
-                      selectedState
-                        ? City.getCitiesOfState(
-                            selectedCountry.value,
-                            selectedState.value
-                          ).map((city) => ({
-                            label: city.name,
-                            value: city.name,
+                      selectedCountry
+                        ? State.getStatesOfCountry(selectedCountry.value).map((s) => ({
+                            label: s.name,
+                            value: s.isoCode,
+                          }))
+                        : []
+                    }
+                    placeholder="Select State"
+                    onChange={(st) => {
+                      setSelectedState(st);
+                      setSelectedCity(null);
+                      setFormValues((prev) => ({
+                        ...prev,
+                        state: st.label,
+                      }));
+                    }}
+                    isDisabled={!selectedCountry}
+                    className="react-select-container"
+                  />
+                  {errors.state && <span className="field-error-msg">{errors.state}</span>}
+                </div>
+
+                <div className="form-input-field">
+                  <label>City *</label>
+                  <Select
+                    options={
+                      selectedState && selectedCountry
+                        ? City.getCitiesOfState(selectedCountry.value, selectedState.value).map((c) => ({
+                            label: c.name,
+                            value: c.name,
                           }))
                         : []
                     }
                     placeholder="Select City"
                     onChange={(city) => {
                       setSelectedCity(city);
-                      setFormValues((prev) => ({ ...prev, city: city.label }));
+                      setFormValues((prev) => ({
+                        ...prev,
+                        city: city.label,
+                      }));
                     }}
                     isDisabled={!selectedState}
+                    className="react-select-container"
                   />
-                  {errors.city && (
-                    <p className="deliveryadd-error">{errors.city}</p>
-                  )}
+                  {errors.city && <span className="field-error-msg">{errors.city}</span>}
                 </div>
-                <div className="deliveryadd-field" />
               </div>
 
-              <div className="deliveryadd-actions">
+              <div className="modal-actions-footer">
                 <button
                   type="button"
-                  className="deliveryadd-submit deliveryadd-actions-btn"
-                  onClick={addNewAddress}
-                  disabled={loading}
-                >
-                  {loading ? "Please wait..." : "Submit"}
-                </button>
-                <button
-                  type="button"
-                  className="deliveryadd-cancel deliveryadd-actions-btn"
+                  className="btn-modal-cancel"
                   onClick={() => setShowAddressPopup(false)}
                 >
                   Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-modal-save"
+                  disabled={loading}
+                >
+                  {loading ? "Saving Address..." : "Save Delivery Address"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {/* ✏️ EDIT ADDRESS MODAL */}
+      {showEditAddressPopup && (
+        <div className="modal-backdrop-overlay" onClick={() => setShowEditAddressPopup(false)}>
+          <div className="modern-address-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-bar">
+              <h3>Edit Delivery Address</h3>
+              <button
+                type="button"
+                className="modal-close-icon-btn"
+                onClick={() => setShowEditAddressPopup(false)}
+              >
+                <IoCloseSharp size={22} />
+              </button>
+            </div>
+
+            <form className="modal-address-form" onSubmit={(e) => { e.preventDefault(); handleUpdateAddress(); }}>
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>First Name *</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editFromValues.name}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+
+                <div className="form-input-field">
+                  <label>Last Name *</label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    value={editFromValues.lastname}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+              </div>
+
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={editFromValues.email}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+
+                <div className="form-input-field">
+                  <label>Mobile Number *</label>
+                  <input
+                    type="tel"
+                    name="mobile"
+                    maxLength={10}
+                    value={editFromValues.mobile}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+              </div>
+
+              <div className="form-input-field">
+                <label>Address *</label>
+                <textarea
+                  name="address"
+                  rows={2}
+                  value={editFromValues.address}
+                  onChange={handleEditChange}
+                  className="modal-input"
+                />
+              </div>
+
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>Postal Code *</label>
+                  <input
+                    type="text"
+                    name="postalCode"
+                    maxLength={6}
+                    value={editFromValues.postalCode}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+
+                <div className="form-input-field">
+                  <label>City *</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={editFromValues.city || ""}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+              </div>
+
+              <div className="form-two-col">
+                <div className="form-input-field">
+                  <label>State *</label>
+                  <input
+                    type="text"
+                    name="state"
+                    value={editFromValues.state || ""}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+
+                <div className="form-input-field">
+                  <label>Country</label>
+                  <input
+                    type="text"
+                    name="country"
+                    value={editFromValues.country || "India"}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                  />
+                </div>
+              </div>
+
+              <div className="modal-actions-footer">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setShowEditAddressPopup(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-modal-save"
+                  disabled={loading}
+                >
+                  {loading ? "Updating..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </section>
   );
 };

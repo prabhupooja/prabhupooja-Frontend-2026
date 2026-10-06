@@ -2,7 +2,7 @@ import { create } from "zustand";
 import api from "../../Components/Axios/api";
 import axios from "axios";
 
-// Default Demo Banner with Deity Asset & Dynamic Promotional Data
+// Default Demo Banners with Deity Asset & Dynamic Promotional Data
 const defaultEcommerceBanners = [
   {
     id: "default-ecom-1",
@@ -36,6 +36,39 @@ const defaultEcommerceBanners = [
       backgroundStyle: "golden-spiritual",
     },
     redirect_url: "/ecommerce?category=Idols",
+  },
+  {
+    id: "default-ecom-2",
+    title: "Shri Hanuman Chalisa Wooden Plaque",
+    smallHeading: "Divine Blessings of Shri Hanuman Ji",
+    subtitle: "Beautiful Handcrafted Devotional Decor for Your Home & Sacred Space",
+    image: "https://prabhupooja1.s3.ap-south-1.amazonaws.com/products/1788864543885-test_banner.png",
+    offer: {
+      enabled: true,
+      label: "SPECIAL OFFER",
+      title: "SPECIAL OFFER",
+      prefix: "UPTO",
+      discount: "28%",
+      value: "28%",
+      suffix: "OFF",
+    },
+    features: [
+      { icon: "hand", title: "Handcrafted in India", subtitle: "Traditional Craftsmanship" },
+      { icon: "shield", title: "Vedic Mantra Energised", subtitle: "Divine Blessings" },
+      { icon: "heart", title: "Devotional Home Decor", subtitle: "For Home Mandir & Pooja Room" },
+      { icon: "award", title: "Quality Assured", subtitle: "Carefully Selected & Verified" },
+    ],
+    cta: {
+      text: "Shop Now →",
+      link: "/ecommerce",
+    },
+    theme: {
+      primaryColor: "#7c2d12",
+      accentColor: "#ea580c",
+      textColor: "#431407",
+      backgroundStyle: "golden-spiritual",
+    },
+    redirect_url: "/ecommerce",
   },
 ];
 

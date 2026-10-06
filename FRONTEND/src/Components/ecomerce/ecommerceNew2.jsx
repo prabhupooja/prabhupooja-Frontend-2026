@@ -274,6 +274,9 @@ const EcommerceHeroBannerSlider = ({ banners = [] }) => {
   return (
     <div className="ecom-hero-banner-wrapper">
       <Swiper
+        key={validBanners.length}
+        observer={true}
+        observeParents={true}
         navigation={validBanners.length > 1}
         pagination={
           validBanners.length > 1
@@ -282,11 +285,15 @@ const EcommerceHeroBannerSlider = ({ banners = [] }) => {
         }
         autoplay={
           validBanners.length > 1
-            ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
+            ? {
+                delay: 3800,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: false,
+              }
             : false
         }
         loop={validBanners.length > 1}
-        speed={600}
+        speed={700}
         modules={[Navigation, Autoplay, Pagination]}
         className="ecom-hero-swiper"
       >
@@ -600,19 +607,22 @@ const EcommerceNew2 = () => {
       });
       getCartItems(user1?.id);
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: response?.success !== false ? "success" : "error",
-        title: response?.success !== false ? "Added to Cart!" : "Could Not Add",
-        text: `"${product.productName}" added to your sacred cart.`,
-        timer: 1400,
+        title: response?.success !== false ? `Added "${product.productName}" to cart` : "Could Not Add",
         showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
       });
     } catch {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
-        title: "Error",
-        text: "Something went wrong while adding product.",
-        timer: 1800,
+        title: "Something went wrong while adding product.",
         showConfirmButton: false,
+        timer: 2000,
       });
     } finally {
       setLoading(null);
